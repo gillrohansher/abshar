@@ -1,19 +1,18 @@
-import { Welcome } from '../../components/Welcome/Welcome';
-import { ColorSchemeToggle } from '../../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Button, Center, Fieldset, Group, PasswordInput, Stack, TextInput } from '@mantine/core';
+import { Anchor, Button, Center, Fieldset, Group, PasswordInput, Stack, TextInput } from '@mantine/core';
 import { useState } from 'react';
-import { connect } from 'react-redux';
 import { showNotification } from '@mantine/notifications';
+import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch } from '../../lib/hooks';
 import { set_account_data, set_token } from '../../lib/generalActions/generalActions';
 
 function LoginPage(props) {
-    const [email, setEmail] = useState('test');
+    const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const store = useAppStore();
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     const login=()=>{
         SignInPost({email, password}, res=>{
@@ -24,6 +23,7 @@ function LoginPage(props) {
                 });
                 dispatch(set_account_data(res.data.data));
                 dispatch(set_token(res.data.data.token));
+                router.push('/');
             }else{
                 showNotification({
                     color: 'red',
@@ -50,6 +50,9 @@ function LoginPage(props) {
                         onChange={(event) => setPassword(event.currentTarget.value)}
                         />
                     </Stack>
+                    <Group>
+                        <Anchor href='/signup' style={{fontSize: '12px'}} underline='never'>Create new account.</Anchor>
+                    </Group>
                     <Group grow>
                         <Button onClick={()=> login()}>Login</Button>
                     </Group>
