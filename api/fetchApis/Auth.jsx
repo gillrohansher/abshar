@@ -20,7 +20,7 @@ export async function SignInPost(data, res) {
         });
 }
 
-export async function SignUpPost(data, set_loader, res) {
+export async function SignUpPost(data, res) {
   await APIClientPOST({
     url: api_config.authorization.signup.signup_post,
     data: data
@@ -30,7 +30,7 @@ export async function SignUpPost(data, set_loader, res) {
         res(response);
     })
     .catch(e => {
-        console.log('response.result: SignUpPost: ', e.response.data.message);
+        console.log('error response.result: SignUpPost: ', e.response.data.message);
         showNotification({
           color: 'red',
           message: e.response.data.message
