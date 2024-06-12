@@ -1,4 +1,4 @@
-'use client';
+
 // pages/index.js
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
