@@ -27,6 +27,12 @@ function SignUpPage(props) {
         message: 'You have signed up successfully!',
         color: 'green',
       });
+
+      dispatch(set_account_data(response.data.data));
+      dispatch(set_token(response.data.data.token));
+      router.push('/dashboard');
+
+
     } else {
       showNotification({
         title: 'Error',

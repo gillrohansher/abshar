@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
+import 'bootstrap/dist/css/bootstrap.css'
 
 import { theme } from '../theme';
 import StoreProvider from '../StoreProvider.jsx';
