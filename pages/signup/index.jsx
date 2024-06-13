@@ -1,4 +1,4 @@
-import { Button, Center, PasswordInput, Stack, TextInput, Select, Fieldset, LoadingOverlay, Box } from '@mantine/core';
+import { Button, Center, PasswordInput, Stack, TextInput, Select, Fieldset, LoadingOverlay, Box, Group } from '@mantine/core';
 import { useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
@@ -71,62 +71,67 @@ function SignUpPage(props) {
 
   return (
     <Center h={'100vh'}>
+      <Stack>
+        <Group justify={'center'}>
+            <img src={'/images/aabsar_logo.png'} style={{width: '150px'}}/>
+        </Group>
         <Box pos="relative">
-            <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-            <Fieldset style={{padding: 30}}>
-                <form onSubmit={handleSubmit}>
-                    <Stack spacing="md">
-                    <TextInput
-                        label="First Name"
-                        placeholder="Enter your first name"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.currentTarget.value)}
-                        required
-                    />
-                    <TextInput
-                        label="Last Name"
-                        placeholder="Enter your last name"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.currentTarget.value)}
-                        required
-                    />
-                    <TextInput
-                        label="Email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.currentTarget.value)}
-                        required
-                    />
-                    <TextInput
-                        label="Phone"
-                        placeholder="Enter your phone number"
-                        value={phone}
-                        onChange={(e) => setPhone(e.currentTarget.value)}
-                        required
-                    />
-                    <PasswordInput
-                        label="Password"
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.currentTarget.value)}
-                        required
-                    />
-                    <Select
-                        label="Type"
-                        placeholder="Select type"
-                        data={[
-                        { value: '0', label: 'User' },
-                        { value: '1', label: 'Admin' },
-                        ]}
-                        value={type}
-                        onChange={(value) => setType(value)}
-                        required
-                    />
-                    <Button type="submit">Sign Up</Button>
-                    </Stack>
-                </form>
-            </Fieldset>
+          <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+          <Fieldset style={{padding: 30}}>
+              <form onSubmit={handleSubmit}>
+                  <Stack spacing="md">
+                  <TextInput
+                      label="First Name"
+                      placeholder="Enter your first name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.currentTarget.value)}
+                      required
+                  />
+                  <TextInput
+                      label="Last Name"
+                      placeholder="Enter your last name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.currentTarget.value)}
+                      required
+                  />
+                  <TextInput
+                      label="Email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.currentTarget.value)}
+                      required
+                  />
+                  <TextInput
+                      label="Phone"
+                      placeholder="Enter your phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.currentTarget.value)}
+                      required
+                  />
+                  <PasswordInput
+                      label="Password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.currentTarget.value)}
+                      required
+                  />
+                  <Select
+                      label="Type"
+                      placeholder="Select type"
+                      data={[
+                      { value: '0', label: 'User' },
+                      { value: '1', label: 'Admin' },
+                      ]}
+                      value={type}
+                      onChange={(value) => setType(value)}
+                      required
+                  />
+                  <Button color={'#5185a6'} type="submit">Sign Up</Button>
+                  </Stack>
+              </form>
+          </Fieldset>
         </Box>
+      </Stack>
     </Center>
   );
 }

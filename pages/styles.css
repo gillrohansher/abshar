@@ -1,0 +1,13 @@
+.mantine-TextInput-label, .mantine-PasswordInput-label, .mantine-Select-label{
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    color: #727293;
+}
+
+.dashboard-card-main-text{
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #000000;
+}

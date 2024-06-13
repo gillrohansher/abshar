@@ -1,4 +1,4 @@
-import { Anchor, Box, Button, Center, Fieldset, Group, LoadingOverlay, PasswordInput, Stack, TextInput } from '@mantine/core';
+import { ActionIcon, Anchor, Box, Button, Center, Fieldset, Group, Image, LoadingOverlay, PasswordInput, Stack, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -15,6 +15,7 @@ function LoginPage(props) {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const [loader, setLoader] = useState(false);
+    const { setColorScheme } = useMantineColorScheme();
 
     useEffect(() => {
         // setLoader(true);
@@ -50,35 +51,42 @@ function LoginPage(props) {
 
     console.log('loader: ', loader);
     return (
-        <Center h={'100vh'}>
-            <Box pos="relative">
-                <LoadingOverlay visible={loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-                <Fieldset style={{padding: 30}}>
-                    <Stack>
-                        <Stack>
-                            <TextInput 
-                            label="Email" 
-                            placeholder="Your email"
-                            value={email}
-                            onChange={(event) => setEmail(event.currentTarget.value)}
-                            />
-                            <PasswordInput
-                            label="Password"
-                            placeholder="Your password"
-                            value={password}
-                            onChange={(event) => setPassword(event.currentTarget.value)}
-                            />
-                        </Stack>
-                        <Group>
-                            <Anchor href='/signup' style={{fontSize: '12px'}} underline='never'>Create new account.</Anchor>
-                        </Group>
-                        <Group grow>
-                            <Button onClick={()=> login()}>Login</Button>
-                        </Group>
-                    </Stack>
-                </Fieldset>
-            </Box>
-        </Center>
+        <Stack>
+            <Center h={'100vh'}>
+                <Stack>
+                    <Group justify={'center'}>
+                        <img src={'/images/aabsar_logo.png'} style={{width: '150px'}}/>
+                    </Group>
+                    <Box pos="relative">
+                        <LoadingOverlay visible={loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+                        <Fieldset style={{padding: 30}}>
+                            <Stack>
+                                <Stack>
+                                    <TextInput 
+                                    label="Email" 
+                                    placeholder="Your email"
+                                    value={email}
+                                    onChange={(event) => setEmail(event.currentTarget.value)}
+                                    />
+                                    <PasswordInput
+                                    label="Password"
+                                    placeholder="Your password"
+                                    value={password}
+                                    onChange={(event) => setPassword(event.currentTarget.value)}
+                                    />
+                                </Stack>
+                                <Group>
+                                    <Anchor href='/signup' style={{fontSize: '12px', color: '#5185a6'}} underline='never'>Create new account.</Anchor>
+                                </Group>
+                                <Group grow>
+                                    <Button color={'#5185a6'} onClick={()=> login()}>Login</Button>
+                                </Group>
+                            </Stack>
+                        </Fieldset>
+                    </Box>
+                </Stack>
+            </Center>
+        </Stack>
     );
 }
 

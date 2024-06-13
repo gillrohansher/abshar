@@ -4,8 +4,11 @@ import { useAppDispatch, useAppStore } from '../lib/hooks';
 import { Welcome } from '../components/Welcome/Welcome';
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { clearStorageRedirectLogin } from "../helpers/helpers";
-import { Box, Button, LoadingOverlay } from '@mantine/core';
+import { AppShell, Box, Burger, Button, LoadingOverlay, NavLink } from '@mantine/core';
 import { useState } from 'react';
+import Link from 'next/link';
+import { useDisclosure } from '@mantine/hooks';
+import { IconHome2, IconGauge, IconChevronRight, IconActivity, IconCircleOff } from '@tabler/icons-react';
 
 export default function HomePage() {
   const store = useAppStore();
@@ -23,14 +26,15 @@ export default function HomePage() {
     }else{
       setLoader(false);
       setMainVisibility(true);
+      router.push('/dashboard');
     }
   });
   return (
     <Box pos="relative" style={{visibility: !mainVisibility && 'hidden'}}>
       <LoadingOverlay visible={loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 10 }} />
-      <Welcome />
+      {/* <Welcome />
       <ColorSchemeToggle />
-      <Button onClick={()=> clearStorageRedirectLogin()}>Logout</Button>
+      <Button onClick={()=> clearStorageRedirectLogin()}>Logout</Button> */}
     </Box>
   );
 }
