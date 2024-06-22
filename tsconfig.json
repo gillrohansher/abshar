@@ -17,8 +17,25 @@
     "incremental": true,
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/login/index.jsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/login/index.jsx",
+    ".next/types/**/*.ts",
+    "pages/dashboard/index.jsx",
+    "pages/signup/index.jsx",
+    "pages/properties/index.jsx",
+    "pages/surveys/index.jsx",
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
