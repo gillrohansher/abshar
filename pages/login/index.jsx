@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, Box, Button, Center, Fieldset, Group, Image, LoadingOverlay, PasswordInput, Stack, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Alert, Anchor, Box, Button, Center, Fieldset, Group, Image, LoadingOverlay, PasswordInput, Stack, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -15,6 +15,7 @@ function LoginPage(props) {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const [loader, setLoader] = useState(false);
+    const [showEmailVerificationMessage, setShowEmailVerificationMessage] = useState(false);
     const { setColorScheme } = useMantineColorScheme();
 
     useEffect(() => {
@@ -39,11 +40,15 @@ function LoginPage(props) {
                 dispatch(set_token(res.data.token));
                 router.push('/');
             }else{
-                showNotification({
-                    title: 'Failed',
-                    color: 'red',
-                    message: res.message
-                });
+                if(res.code === 609){
+                    setShowEmailVerificationMessage(true);
+                }else{
+                    showNotification({
+                        title: 'Failed',
+                        color: 'red',
+                        message: res.message
+                    });
+                }
             }
             setLoader(false);
         });
@@ -59,6 +64,20 @@ function LoginPage(props) {
                     </Group>
                     <Box pos="relative">
                         <LoadingOverlay visible={loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+                        {showEmailVerificationMessage ?
+                        <Alert variant="light" color="blue" title="Email verification">
+                            <Stack>
+                                <span>Your email is not verified. Kindly check your email to proceed further.</span>
+                                <Group justify={'flex-end'}>
+                                    <Button 
+                                    color={'#5185a6'}
+                                    onClick={()=> setShowEmailVerificationMessage(false)}>
+                                        Okay
+                                    </Button>
+                                </Group>
+                            </Stack>
+                        </Alert>
+                        :
                         <Fieldset style={{padding: 30}}>
                             <Stack>
                                 <Stack>
@@ -82,7 +101,7 @@ function LoginPage(props) {
                                     <Button color={'#5185a6'} onClick={()=> login()}>Login</Button>
                                 </Group>
                             </Stack>
-                        </Fieldset>
+                        </Fieldset>}
                     </Box>
                 </Stack>
             </Center>

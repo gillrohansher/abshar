@@ -34,6 +34,7 @@
     "pages/signup/index.jsx",
     "pages/properties/index.jsx",
     "pages/surveys/index.jsx",
+    "pages/account-confirmation/[token].jsx"
   ],
   "exclude": [
     "node_modules"

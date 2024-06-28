@@ -1,6 +1,6 @@
 import { api_config } from "../apis";
 import { showNotification } from "@mantine/notifications";
-import { APIClientPOST } from "./APIClient";
+import { APIClientPOST, APIClientPUT } from "./APIClient";
 import { clearStorageRedirectLogin } from "../../helpers/helpers";
 
 export async function SignInPost(data, res) {
@@ -43,6 +43,56 @@ export async function SignUpPost(data, res) {
         }else{
           res(e.response.data);
           console.log('error response.result: SignUpPost: ', e.response.data.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e.response.data.message
+          });
+        }
+        
+    });
+}
+
+export async function EmailVerificationPut(data, res) {
+  await APIClientPUT({
+    url: api_config.authorization.signup.email_verification_put+`/${data}`
+  })
+    .then(response => {
+        console.log('response.result: EmailVerificationPut: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        console.log('error: ', e);
+        if(e.response.data.code ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e.response.data);
+          console.log('error response.result: EmailVerificationPut: ', e.response.data.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e.response.data.message
+          });
+        }
+        
+    });
+}
+
+export async function ResendEmailVerificationPut(data, res) {
+  await APIClientPUT({
+    url: api_config.authorization.signup.resend_email_verification_put+`/${data}`
+  })
+    .then(response => {
+        console.log('response.result: ResendEmailVerificationPut: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        console.log('error: ', e);
+        if(e.response.data.code ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e.response.data);
+          console.log('error response.result: ResendEmailVerificationPut: ', e.response.data.message);
           showNotification({
             title: 'Failed',
             color: 'red',

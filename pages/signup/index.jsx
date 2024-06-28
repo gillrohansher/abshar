@@ -1,4 +1,4 @@
-import { Button, Center, PasswordInput, Stack, TextInput, Select, Fieldset, LoadingOverlay, Box, Group } from '@mantine/core';
+import { Button, Center, PasswordInput, Stack, TextInput, Select, Fieldset, LoadingOverlay, Box, Group, Alert } from '@mantine/core';
 import { useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
@@ -19,7 +19,8 @@ function SignUpPage(props) {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [type, setType] = useState('0'); // Default value as string
-  const [visible, { toggle }] = useDisclosure(false);
+  const [showEmailVerificationMessage, setShowEmailVerificationMessage] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   const responseHandler = (response) => {
     console.log('Response from handler: ', response);
@@ -29,9 +30,10 @@ function SignUpPage(props) {
             message: 'You have signed up successfully!',
             color: 'green',
         });
-        dispatch(set_account_data(response.data));
-        dispatch(set_token(response.data.token));
-        router.push('/');
+        setShowEmailVerificationMessage(true);
+        // dispatch(set_account_data(response.data));
+        // dispatch(set_token(response.data.token));
+        //router.push('/login');
     } else {
         console.log('error');
         showNotification({
@@ -40,6 +42,7 @@ function SignUpPage(props) {
             color: 'red',
         });
     }
+    setLoader(false);
   };
 
   const handleSubmit = async (e) => {
@@ -56,11 +59,13 @@ function SignUpPage(props) {
 
     try {
       console.log('Called');
+      setLoader(true);
       const response = await SignUpPost(data, responseHandler);
       
       
     } catch (error) {
       console.log(error);
+      setLoader(false);
       showNotification({
         title: 'Error',
         message: 'An error occurred during sign up',
@@ -76,7 +81,21 @@ function SignUpPage(props) {
             <img src={'/images/aabsar_logo.png'} style={{width: '150px'}}/>
         </Group>
         <Box pos="relative">
-          <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+          <LoadingOverlay visible={loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+          {showEmailVerificationMessage ?
+          <Alert variant="light" color="blue" title="Email verification">
+            <Stack>
+              <span>An email for verification has been sent. Kindly check your email to proceed further.</span>
+              <Group justify={'flex-end'}>
+                <Button 
+                color={'#5185a6'}
+                onClick={()=> router.push('/login')}>
+                  Okay
+                </Button>
+              </Group>
+            </Stack>
+          </Alert>
+          :
           <Fieldset style={{padding: 30}}>
               <form onSubmit={handleSubmit}>
                   <Stack spacing="md">
@@ -130,6 +149,7 @@ function SignUpPage(props) {
                   </Stack>
               </form>
           </Fieldset>
+          }
         </Box>
       </Stack>
     </Center>

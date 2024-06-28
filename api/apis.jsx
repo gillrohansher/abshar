@@ -7,7 +7,9 @@ export const api_config = {
       signin_post: "user/login"
     },
     signup: {
-      signup_post: "user/register"
+      signup_post: "user/register",
+      email_verification_put: "user/register-confirmation",
+      resend_email_verification_put: "user/register-token-refresh"
     }
   }
 };
