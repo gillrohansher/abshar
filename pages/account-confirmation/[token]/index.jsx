@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
 
-import { EmailVerificationPut, ResendEmailVerificationPut, SignInPost } from '../../api/fetchApis/Auth';
-import { useAppStore, useAppDispatch } from '../../lib/hooks';
-import { set_account_data, set_token } from '../../lib/generalActions/generalActions';
+import { EmailVerificationPut, ResendEmailVerificationPut, SignInPost } from '../../../api/fetchApis/Auth';
+import { useAppStore, useAppDispatch } from '../../../lib/hooks';
+import { set_account_data, set_token } from '../../../lib/generalActions/generalActions';
 import { useDisclosure } from '@mantine/hooks';
 
 function AccountConfirmationPage(props) {
