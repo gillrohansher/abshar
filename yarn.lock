@@ -1569,6 +1569,11 @@
     pump "^3.0.0"
     tar-fs "^2.1.1"
 
+"@netlify/plugin-nextjs@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.npmjs.org/@netlify/plugin-nextjs/-/plugin-nextjs-5.4.0.tgz"
+  integrity sha512-ZQSDx1ccZz8Lfc0JdAARwmEJj8QbCrHvHjklsNym3b13FeG4uvS1i25ePePt/t53TJyIu5qsgC1pXka9CsKBLw==
+
 "@next/bundle-analyzer@^14.1.3":
   version "14.2.3"
   resolved "https://registry.npmjs.org/@next/bundle-analyzer/-/bundle-analyzer-14.2.3.tgz"
