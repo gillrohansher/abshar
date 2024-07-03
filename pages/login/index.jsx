@@ -94,9 +94,10 @@ function LoginPage(props) {
                                     onChange={(event) => setPassword(event.currentTarget.value)}
                                     />
                                 </Stack>
-                                <Group>
+                                <Stack gap={5}>
                                     <Anchor href='/signup' style={{fontSize: '12px', color: '#5185a6'}} underline='never'>Create new account.</Anchor>
-                                </Group>
+                                    <Anchor href='/forget-password' style={{fontSize: '12px', color: '#5185a6'}} underline='never'>Forget Password?</Anchor>
+                                </Stack>
                                 <Group grow>
                                     <Button color={'#5185a6'} onClick={()=> login()}>Login</Button>
                                 </Group>

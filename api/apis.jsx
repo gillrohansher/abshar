@@ -10,6 +10,10 @@ export const api_config = {
       signup_post: "user/register",
       email_verification_put: "user/register-confirmation",
       resend_email_verification_put: "user/register-token-refresh"
+    },
+    forget_password: {
+      reset_password: "user/reset-password",
+      reset_password_confirm: "user/reset-password-confirm"
     }
   }
 };

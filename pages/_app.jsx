@@ -44,7 +44,7 @@ export default function App({ Component, pageProps }) {
     <StoreProvider>
       <MantineProvider theme={theme}>
         <Notifications />
-        {(pathName !== '/login' && pathName !== '/signup' && !pathName?.includes('/account-confirmation')) ?
+        {(pathName !== '/login' && pathName !== '/signup' && pathName !== '/forget-password' && !pathName?.includes('/reset-password-confirmation') && !pathName?.includes('/account-confirmation')) ?
         <AppShell
           //header={{ height: 40 }}
           navbar={{

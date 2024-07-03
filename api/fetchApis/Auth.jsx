@@ -102,3 +102,55 @@ export async function ResendEmailVerificationPut(data, res) {
         
     });
 }
+
+export async function ResetPasswordPost(data, res) {
+  await APIClientPOST({
+    url: api_config.authorization.forget_password.reset_password,
+    data: data
+  })
+    .then(response => {
+        console.log('response.result: ResetPasswordPost: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        console.log('error: ', e);
+        if(e.response.data.code ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e.response.data);
+          console.log('error response.result: ResetPasswordPost: ', e.response.data.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e.response.data.message
+          });
+        }
+        
+    });
+}
+
+export async function ResetPasswordConfirmPost(data, res) {
+  await APIClientPOST({
+    url: api_config.authorization.forget_password.reset_password_confirm,
+    data: data
+  })
+    .then(response => {
+        console.log('response.result: ResetPasswordConfirmPost: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        console.log('error: ', e);
+        if(e.response.data.code ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e.response.data);
+          console.log('error response.result: ResetPasswordConfirmPost: ', e.response.data.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e.response.data.message
+          });
+        }
+        
+    });
+}
