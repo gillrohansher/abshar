@@ -1,3 +1,4 @@
+'use client'
 import { ActionIcon, Alert, Anchor, Box, Button, Center, Fieldset, Group, Image, LoadingOverlay, PasswordInput, Stack, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
@@ -5,7 +6,8 @@ import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch } from '../../lib/hooks';
-import { set_account_data, set_token } from '../../lib/generalActions/generalActions';
+//import { set_account_data, set_token } from '../../lib/generalActions/generalActions';
+import { setToken, setAccountData } from '../../lib/generalSlice';
 import { useDisclosure } from '@mantine/hooks';
 
 function LoginPage(props) {
@@ -36,8 +38,8 @@ function LoginPage(props) {
                     color: 'green',
                     message: 'success'
                 });
-                dispatch(set_account_data(res.data));
-                dispatch(set_token(res.data.token));
+                dispatch(setAccountData(res.data));
+                dispatch(setToken(res.data.token));
                 router.push('/');
             }else{
                 if(res.code === 609){

@@ -15,5 +15,11 @@ export const api_config = {
       reset_password: "user/reset-password",
       reset_password_confirm: "user/reset-password-confirm"
     }
+  },
+  products:{
+    product_get: "product/",
+    product_post: "product/add",
+    product_put: "product/update",
+    product_delete: "product/delete/",
   }
 };

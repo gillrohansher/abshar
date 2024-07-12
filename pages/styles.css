@@ -11,3 +11,7 @@
     line-height: 20px;
     color: #000000;
 }
+
+.general-buttons{
+    min-width: 100px !important;
+}

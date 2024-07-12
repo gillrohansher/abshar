@@ -8,7 +8,7 @@ import '@mantine/notifications/styles.css';
 import { theme } from '../theme';
 import StoreProvider from '../StoreProvider.jsx';
 import './styles.css'
-import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled } from '@tabler/icons-react';
+import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
@@ -35,6 +35,11 @@ export default function App({ Component, pageProps }) {
       name: 'Surveys',
       path: '/surveys',
       icon: IconFlaskFilled
+    },
+    {
+      name: 'Products',
+      path: '/products',
+      icon: IconDropletFilled
     }
   ];
 
