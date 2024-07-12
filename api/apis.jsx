@@ -17,7 +17,7 @@ export const api_config = {
     }
   },
   products:{
-    product_get: "product/",
+    product_get: "product/all",
     product_post: "product/add",
     product_put: "product/update",
     product_delete: "product/delete/",
