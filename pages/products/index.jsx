@@ -48,6 +48,11 @@ function ProductsPage(props) {
             making
         }, token, res=>{
             if(res?.code === 200){
+                showNotification({
+                    message: 'Product added successfully.',
+                    color: 'green',
+                    id: 'productAdded'
+                });
                 getProducts();
             }
             setLoader(false);
@@ -58,6 +63,11 @@ function ProductsPage(props) {
         setLoader(true);
         ProductDelete(id, token, res=>{
             if(res?.code === 200){
+                showNotification({
+                    message: 'Product deleted successfully.',
+                    color: 'green',
+                    id: 'productDeleted'
+                });
                 getProducts();
             }
             setLoader(false);
@@ -73,6 +83,11 @@ function ProductsPage(props) {
             making
         }, token, res=>{
             if(res?.code === 200){
+                showNotification({
+                    message: 'Product updated successfully.',
+                    color: 'green',
+                    id: 'productUpdated'
+                });
                 getProducts();
             }
             setLoader(false);
@@ -98,7 +113,7 @@ function ProductsPage(props) {
                     <ActionIcon onClick={()=> setOpenAddProductModal(true)} variant="filled" aria-label="Add Product">
                         <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
                     </ActionIcon>
-                    <ActionIcon color={'red'} onClick={()=> selectedProducts.length > 0 ? selectedProducts.map((id)=> deleteProduct(id)) : showNotification({message: 'No products selected yet', color: 'red', id: 'noProductsSelected'})} variant="filled" aria-label="Delete Product">
+                    <ActionIcon disabled={selectedProducts.length === 0} color={'red'} onClick={()=> selectedProducts.length > 0 ? selectedProducts.map((id)=> deleteProduct(id)) : showNotification({message: 'No products selected yet', color: 'red', id: 'noProductsSelected'})} variant="filled" aria-label="Delete Product">
                         <IconTrashFilled style={{width: '70%', height: '70%'}}/>
                     </ActionIcon>
                 </Group>
@@ -113,8 +128,8 @@ function ProductsPage(props) {
                 <Table>
                     <Table.Thead>
                         <Table.Tr>
-                            <Table.Th>
-                                <Checkbox styles={{input: {cursor: 'pointer'}}} checked={selectedProducts.length === products.length}  onChange={() => setSelectedProducts(selectedProducts.length === products.length ? [] : products.map((product)=> product.id))}/>
+                            <Table.Th style={{width: '30px'}}>
+                                <Checkbox styles={{input: {cursor: 'pointer'}}} indeterminate={selectedProducts.length > 0 && selectedProducts.length !== products.length} checked={selectedProducts.length === products.length}  onChange={() => setSelectedProducts(selectedProducts.length === products.length ? [] : products.map((product)=> product.id))}/>
                             </Table.Th>
                             <Table.Th>
                                 Category
@@ -157,7 +172,7 @@ function ProductsPage(props) {
                             <Table.Td>
                                 {product.making === 'OUTSOURCE' ? 'Outsource' : product.making === 'IN_HOUSE' && 'In house'}
                             </Table.Td>
-                            <Table.Td>
+                            <Table.Td style={{textAlign: 'right'}}>
                                 <Menu>
                                     <Menu.Target>
                                         <ActionIcon onClick={()=> setContextMenu(!contextMenu)} variant="transparent" aria-label="Add Product">
@@ -165,21 +180,21 @@ function ProductsPage(props) {
                                         </ActionIcon>
                                     </Menu.Target>
                                     <Menu.Dropdown>
-                                        <Menu.Item>
+                                        <Menu.Item 
+                                        onClick={()=> {
+                                            setOpenAddProductModal(true);
+                                            setEditProduct(product);
+                                        }}>
                                             <Group wrap={'nowrap'} gap='xs'>
-                                                <ActionIcon 
-                                                onClick={()=> {
-                                                    setOpenAddProductModal(true);
-                                                    setEditProduct(product);
-                                                }} variant="filled" aria-label="Delete Product">
+                                                <ActionIcon variant="filled" aria-label="Delete Product">
                                                     <IconPencil style={{width: '60%', height: '60%'}}/>
                                                 </ActionIcon>
                                                 <Text size={'md'}>Edit</Text>
                                             </Group>
                                         </Menu.Item>
-                                        <Menu.Item>
+                                        <Menu.Item onClick={()=> deleteProduct(product.id)}>
                                             <Group wrap={'nowrap'} gap='xs'>
-                                                <ActionIcon color={'red'} onClick={()=> deleteProduct(product.id)} variant="filled" aria-label="Delete Product">
+                                                <ActionIcon color={'red'} variant="filled" aria-label="Delete Product">
                                                     <IconTrashFilled style={{width: '60%', height: '60%'}}/>
                                                 </ActionIcon>
                                                 <Text size={'md'}>Delete</Text>
