@@ -1,5 +1,5 @@
 'use client'
-import { ActionIcon, Alert, Anchor, Box, Button, Center, Fieldset, Group, Image, LoadingOverlay, PasswordInput, Stack, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Alert, Anchor, Box, Button, Center, Fieldset, Group, Image, LoadingOverlay, PasswordInput, Stack, Text, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -64,7 +64,7 @@ function LoginPage(props) {
                     <Group justify={'center'}>
                         <img src={'/images/aabsar_logo.png'} style={{width: '150px'}}/>
                     </Group>
-                    <Box pos="relative">
+                    <Box pos="relative" style={{minWidth: '320px'}}>
                         <LoadingOverlay visible={loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
                         {showEmailVerificationMessage ?
                         <Alert variant="light" color="blue" title="Email verification">
@@ -97,12 +97,19 @@ function LoginPage(props) {
                                     />
                                 </Stack>
                                 <Stack gap={5}>
-                                    <Anchor href='/signup' style={{fontSize: '12px', color: '#5185a6'}} underline='never'>Create new account.</Anchor>
                                     <Anchor href='/forget-password' style={{fontSize: '12px', color: '#5185a6'}} underline='never'>Forget Password?</Anchor>
                                 </Stack>
-                                <Group grow>
-                                    <Button color={'#5185a6'} onClick={()=> login()}>Login</Button>
-                                </Group>
+                                <Stack gap={8}>
+                                    <Group grow>
+                                        <Button color={'#5185a6'} onClick={()=> login()}>Login</Button>
+                                    </Group>
+                                    <Group justify={'center'}>
+                                        <Text size={'xs'}>Or</Text>
+                                    </Group>
+                                    <Group grow>
+                                        <Button color={'#5185a6'} onClick={()=> router.push('/signup')}>Create new account</Button>
+                                    </Group>
+                                </Stack>
                             </Stack>
                         </Fieldset>}
                     </Box>
