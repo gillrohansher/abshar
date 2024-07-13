@@ -1,21 +1,37 @@
-import { Button, Group, Modal, Stack, TextInput, useMantineColorScheme } from '@mantine/core';
+import { Button, Group, Modal, Select, Stack, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
-export function AddProductModal({opened, onClose, addProduct, editProduct, edit}) {
-const [category, setCategory] = useState(edit?.category);
-const [type, setType] = useState(edit?.type);
+export function AddProductModal({opened, onClose, addProduct, editProduct, edit, products}) {
+const [categoriesData, setCategoriesData] = useState([...products.reduce((acc, current) => {
+    if (!acc.some(item => item.category === current.category)) {
+      acc.push(current);
+    }
+    return acc;
+  }, []).map((product)=> ({value: product.category, label: product.category})), {value: 'other', label: 'Other'}]);
+const [othercategory, setOtherCategory] = useState(edit?.category);
+const [selectedCategory, setSelectedCategory] = useState(edit?.category);
+
+const [typesData, setTypesData] = useState([...products.reduce((acc, current) => {
+    if (!acc.some(item => item.type === current.type)) {
+      acc.push(current);
+    }
+    return acc;
+  }, []).map((product)=> ({value: product.type, label: product.type})), {value: 'other', label: 'Other'}]);
+const [otherType, setOtherType] = useState(edit?.type);
+const [selectedType, setSelectedType] = useState(edit?.type);
+
 const [making, setMaking] = useState(edit?.making);
 const [categoryError, setCategoryError] = useState(false);
 const [typeError, setTypeError] = useState(false);
 const [makingError, setMakingError] = useState(false);
 
 const validate=()=>{
-    setCategoryError(category ? false : 'required');
-    setTypeError(type ? false : 'required');
+    setCategoryError((selectedCategory === 'other' ? othercategory : selectedCategory) ? false : 'required');
+    setTypeError((selectedType === 'other' ? otherType : selectedType) ? false : 'required');
     setMakingError(making ? false : 'required');
 
-    if(category && type && making){
+    if((selectedCategory === 'other' ? othercategory : selectedCategory) && (selectedType === 'other' ? otherType : selectedType) && making){
         return true;
     }else{
         return false;
@@ -23,47 +39,79 @@ const validate=()=>{
 }
 
 useEffect(() => {
-    console.log('errors: ', categoryError, typeError, makingError);
-});
+    if(making){
+        setMakingError(false);
+    }
+    if(selectedCategory || othercategory){
+        setCategoryError(false);
+    }
+    if(selectedType || otherType){
+        setTypeError(false);
+    }
+}, [making, selectedCategory, othercategory, selectedType, otherType]);
   return (
     <Modal opened={opened} onClose={onClose} title="Add Product" centered>
         <Stack>
-            <TextInput
+            {/* Category */}
+            <Select
             label="Category"
-            value={category}
+            searchable
+            data={categoriesData}
+            value={selectedCategory}
+            required
+            error={selectedCategory !== 'other' && categoryError}
+            onChange={setSelectedCategory}
+            />
+
+            {selectedCategory === 'other' && 
+            <TextInput
+            label="New category name"
+            value={othercategory}
             required
             error={categoryError}
             onChange={(event) => {
                 setCategoryError(false);
-                setCategory(event.currentTarget.value);
+                setOtherCategory(event.currentTarget.value);
             }}
-            />
-            <TextInput
+            />}
+
+            {/* Type */}
+            <Select
             label="Type"
-            value={type}
+            searchable
+            data={typesData}
+            value={selectedType}
+            required
+            error={selectedType !== 'other' && typeError}
+            onChange={setSelectedType}
+            />
+            {selectedType === 'other' && 
+            <TextInput
+            label="New type name"
+            value={otherType}
             required
             error={typeError}
             onChange={(event) => {
                 setTypeError(false);
-                setType(event.currentTarget.value);
+                setOtherType(event.currentTarget.value);
             }}
-            />
-            <TextInput
+            />}
+
+            {/* Making */}
+            <Select
             label="Making"
+            data={[{value: "OUTSOURCE", label: "Outsource"}, {value: "IN_HOUSE", label: "In house"}]}
             value={making}
             required
             error={makingError}
-            onChange={(event) => {
-                setMakingError(false);
-                setMaking(event.currentTarget.value);
-            }}
+            onChange={setMaking}
             />
             <Group justify={'space-between'}>
                 <Button style={{background: 'rgba(0, 0, 0, 0.39)'}} className='general-buttons' onClick={()=> onClose()}>
                     Cancel
                 </Button>
-                <Button className='general-buttons' onClick={()=> validate() && (edit ? editProduct(category, type, making, edit?.id) : addProduct(category, type, making))}>
-                    Add
+                <Button className='general-buttons' onClick={()=> validate() && (edit ? editProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making, edit?.id) : addProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making))}>
+                    {edit ? 'Save' : 'Add'}
                 </Button>
             </Group>
             

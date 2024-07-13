@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch } from '../../lib/hooks';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal } from '@tabler/icons-react';
 import { ProductDelete, ProductGet, ProductPost, ProductPut } from '../../api/fetchApis/Products';
 import { AddProductModal } from '../../components/AddProductModal/AddProductModal';
 
@@ -19,6 +19,7 @@ function ProductsPage(props) {
     const [openAddProductModal, setOpenAddProductModal] = useState(false);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [editProduct, setEditProduct] = useState(null);
+    const [search, setSearch] = useState(null);
     const {token} = store.getState().general;
 
     useEffect(() => {
@@ -28,6 +29,7 @@ function ProductsPage(props) {
         }, 1000);
     },[]);
 
+    console.log('selectedProducts: ', selectedProducts);
     const getProducts=()=>{
         setLoader(true);
         ProductGet(null, token, res=>{
@@ -79,13 +81,27 @@ function ProductsPage(props) {
 
     return (
         <Stack>
-            <Group justify={'flex-end'}>
-                <ActionIcon onClick={()=> setOpenAddProductModal(true)} variant="filled" aria-label="Add Product">
-                    <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
-                </ActionIcon>
-                <ActionIcon onClick={()=> selectedProducts.length > 0 ? selectedProducts.map((id)=> deleteProduct(id)) : showNotification({message: 'No products selected yet', color: 'red', id: 'noProductsSelected'})} variant="filled" aria-label="Delete Product">
-                    <IconTrashFilled style={{width: '70%', height: '70%'}}/>
-                </ActionIcon>
+            <Group justify={'space-between'}>
+                <Group>
+                    <TextInput
+                    value={search}
+                    onChange={(event) => setSearch(event.currentTarget.value)}
+                    placeholder={'Search Category, Type or Making'}
+                    styles={{
+                        input: {
+                            minWidth: '250px'
+                        }
+                    }}
+                    />
+                </Group>
+                <Group>
+                    <ActionIcon onClick={()=> setOpenAddProductModal(true)} variant="filled" aria-label="Add Product">
+                        <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
+                    </ActionIcon>
+                    <ActionIcon color={'red'} onClick={()=> selectedProducts.length > 0 ? selectedProducts.map((id)=> deleteProduct(id)) : showNotification({message: 'No products selected yet', color: 'red', id: 'noProductsSelected'})} variant="filled" aria-label="Delete Product">
+                        <IconTrashFilled style={{width: '70%', height: '70%'}}/>
+                    </ActionIcon>
+                </Group>
             </Group>
             <Group>
                 {loader ?
@@ -98,7 +114,7 @@ function ProductsPage(props) {
                     <Table.Thead>
                         <Table.Tr>
                             <Table.Th>
-                                <Checkbox checked={selectedProducts.length === products.length}  onChange={() => setSelectedProducts(selectedProducts.length === products.length ? [] : products.map((product)=> product.id))}/>
+                                <Checkbox styles={{input: {cursor: 'pointer'}}} checked={selectedProducts.length === products.length}  onChange={() => setSelectedProducts(selectedProducts.length === products.length ? [] : products.map((product)=> product.id))}/>
                             </Table.Th>
                             <Table.Th>
                                 Category
@@ -113,10 +129,24 @@ function ProductsPage(props) {
                         </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
-                        {products.map((product)=>
+                        {products.filter((product)=> search ? (product.category.toLowerCase().includes(search.toLowerCase()) || product.type.toLowerCase().includes(search.toLowerCase()) || product.making.toLowerCase().includes(search.toLowerCase())) : product)
+                        // .filter((product)=> search ? product.type.includes(search) : product)
+                        // .filter((product)=> search ? product.making.includes(search) : product)
+                        .map((product)=>
                         <Table.Tr>
                             <Table.Td>
-                                <Checkbox checked={selectedProducts.find((selectedProduct)=> selectedProduct.id === product.id) !== undefined ? true : false}  onChange={() => setSelectedProducts(selectedProducts.find((selectedProduct)=> selectedProduct.id === product.id) !== undefined ? selectedProducts.filter((selectedProduct)=> selectedProduct.id !== product.id) : [...selectedProducts, product.id])}/>
+                                <Checkbox 
+                                styles={{input: {cursor: 'pointer'}}}
+                                checked={selectedProducts.find((selectedProduct)=> selectedProduct === product.id) !== undefined ? true : false}  
+                                onChange={() => {
+                                    if(selectedProducts.find((selectedProduct)=> selectedProduct === product.id) !== undefined){
+                                        setSelectedProducts(selectedProducts.filter((selectedProduct)=> selectedProduct !== product.id))
+                                    }else{
+                                        // var newSelectedProducts = selectedProducts;
+                                        // newSelectedProducts.push(product.id);
+                                        setSelectedProducts([...selectedProducts, product.id]);
+                                    }
+                                }}/>
                             </Table.Td>
                             <Table.Td>
                                 {product.category}
@@ -125,29 +155,35 @@ function ProductsPage(props) {
                                 {product.type}
                             </Table.Td>
                             <Table.Td>
-                                {product.making}
+                                {product.making === 'OUTSOURCE' ? 'Outsource' : product.making === 'IN_HOUSE' && 'In house'}
                             </Table.Td>
                             <Table.Td>
                                 <Menu>
                                     <Menu.Target>
                                         <ActionIcon onClick={()=> setContextMenu(!contextMenu)} variant="transparent" aria-label="Add Product">
-                                            <IconLineDotted style={{width: '60%', height: '60%'}}/>
+                                            <IconDotsCircleHorizontal style={{width: '80%', height: '80%'}}/>
                                         </ActionIcon>
                                     </Menu.Target>
                                     <Menu.Dropdown>
                                         <Menu.Item>
-                                            <ActionIcon onClick={()=> deleteProduct(product.id)} variant="filled" aria-label="Delete Product">
-                                                <IconTrashFilled style={{width: '60%', height: '60%'}}/>
-                                            </ActionIcon>
+                                            <Group wrap={'nowrap'} gap='xs'>
+                                                <ActionIcon 
+                                                onClick={()=> {
+                                                    setOpenAddProductModal(true);
+                                                    setEditProduct(product);
+                                                }} variant="filled" aria-label="Delete Product">
+                                                    <IconPencil style={{width: '60%', height: '60%'}}/>
+                                                </ActionIcon>
+                                                <Text size={'md'}>Edit</Text>
+                                            </Group>
                                         </Menu.Item>
                                         <Menu.Item>
-                                            <ActionIcon 
-                                            onClick={()=> {
-                                                setOpenAddProductModal(true);
-                                                setEditProduct(product);
-                                            }} variant="filled" aria-label="Delete Product">
-                                                <IconPencil style={{width: '60%', height: '60%'}}/>
-                                            </ActionIcon>
+                                            <Group wrap={'nowrap'} gap='xs'>
+                                                <ActionIcon color={'red'} onClick={()=> deleteProduct(product.id)} variant="filled" aria-label="Delete Product">
+                                                    <IconTrashFilled style={{width: '60%', height: '60%'}}/>
+                                                </ActionIcon>
+                                                <Text size={'md'}>Delete</Text>
+                                            </Group>
                                         </Menu.Item>
                                     </Menu.Dropdown>
                                 </Menu>
@@ -166,14 +202,17 @@ function ProductsPage(props) {
             <AddProductModal
             opened={openAddProductModal}
             edit={editProduct}
-            onClose={()=> setOpenAddProductModal(false)}
+            products={products}
+            onClose={()=> {setOpenAddProductModal(false); setEditProduct(null);}}
             addProduct={(category, type, making)=> {
                 postProduct(category, type, making);
                 setOpenAddProductModal(false);
+                setEditProduct(null);
             }}
             editProduct={(category, type, making, id)=> {
                 putProduct(category, type, making, id);
                 setOpenAddProductModal(false);
+                setEditProduct(null);
             }}
             />}
         </Stack>

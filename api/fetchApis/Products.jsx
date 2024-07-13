@@ -90,7 +90,7 @@ export async function ProductPut(data, token, res) {
 
 export async function ProductDelete(data, token, res) {
     await APIClientDELETE({
-      url: api_config.products.product_delete+`/${data}`,
+      url: api_config.products.product_delete+`${data}`,
       headers: {
         Authorization: token,
       }
