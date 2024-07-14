@@ -127,6 +127,20 @@ useEffect(() => {
                     <Text size="sm">{selectedProperty?.pocCommitteeCountryCode + selectedProperty?.pocCommitteeContact}</Text>
                 </Stack>
             </SimpleGrid>
+            <Stack gap={8}>
+                <Text size={'sm'} fw={600}>Products</Text>
+                <SimpleGrid>
+                    {selectedProperty?.products.length > 0 && selectedProperty?.products.map((product, index)=> 
+                    <Stack gap={0}>
+                        <Text c={'dimmed'} size="xs">{`Product ${index+1}`}</Text>
+                        <Text size="sm">Category: {product.category}</Text>
+                        <Text size="sm">Type: {product.type}</Text>
+                        <Text size="sm">Making: {product.making}</Text>
+                        <Text size="sm">Quantity: {product.quantity}</Text>
+                    </Stack>
+                    )}
+                </SimpleGrid>
+            </Stack>
             <Stack gap={0}>
                 <Text c={'dimmed'} size="xs">Remarks</Text>
                 <Text size="sm">{selectedProperty?.remarks}</Text>
