@@ -1,4 +1,4 @@
-.mantine-TextInput-label, .mantine-PasswordInput-label, .mantine-Select-label{
+.mantine-TextInput-label, .mantine-PasswordInput-label, .mantine-Select-label, .mantine-NumberInput-label, .mantine-Textarea-label{
     font-weight: 400;
     font-size: 12px;
     line-height: 20px;
@@ -14,4 +14,22 @@
 
 .general-buttons{
     min-width: 100px !important;
+}
+
+.react-slideshow-container .nav{
+    margin-right: 10px !important;
+    margin-left: 10px !important;
+}
+
+.mantine-Modal-header{
+    border-bottom: 1px solid #dee2e6;
+}
+
+.mantine-Modal-title{
+    font-weight: bold !important;
+    /* color: white !important; */
+}
+
+.mantine-Modal-body{
+    padding: 20px !important;
 }

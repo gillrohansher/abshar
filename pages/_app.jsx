@@ -1,14 +1,14 @@
 'use client'
 import '@mantine/core/styles.css';
 import Head from 'next/head';
-import { AppShell, Burger, Divider, Group, MantineProvider, NavLink, ScrollArea } from '@mantine/core';
+import { ActionIcon, AppShell, Burger, Divider, Group, MantineProvider, NavLink, ScrollArea, useMantineColorScheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 
 import { theme } from '../theme';
 import StoreProvider from '../StoreProvider.jsx';
 import './styles.css'
-import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled } from '@tabler/icons-react';
+import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled, IconBrightnessFilled } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
@@ -20,6 +20,7 @@ import { clearStorageRedirectLogin } from '../helpers/helpers';
 export default function App({ Component, pageProps }) {
   const [opened, { toggle }] = useDisclosure();
   const pathName = usePathname();
+  // const { setColorScheme } = useMantineColorScheme();
   const navList = [
     {
       name: 'Dashboard',
@@ -47,11 +48,15 @@ export default function App({ Component, pageProps }) {
 
   return (
     <StoreProvider>
-      <MantineProvider theme={theme}>
+      <MantineProvider 
+      theme={theme}
+      //defaultColorScheme="dark"
+      >
         <Notifications />
         {(pathName !== '/login' && pathName !== '/signup' && pathName !== '/forget-password' && !pathName?.includes('/reset-password-confirmation') && !pathName?.includes('/account-confirmation')) ?
         <AppShell
-          //header={{ height: 40 }}
+          layout="alt"
+          //header={{ height: '63px' }}
           navbar={{
           width: 250,
           breakpoint: 'sm',
@@ -70,15 +75,19 @@ export default function App({ Component, pageProps }) {
                   size="sm"
                   />
                 </Group>
+                {/* <ActionIcon onClick={()=> setColorScheme('auto')} variant="filled" aria-label="Add Product">
+                  <IconBrightnessFilled style={{width: '70%', height: '70%'}}/>
+                </ActionIcon> */}
+                
               </Group>
             </AppShell.Header>
 
             <AppShell.Navbar style={{padding: '0px'}}>
               <AppShell.Section>
                 <Group justify={'center'}>
-                  <img src={'/images/aabsar_logo.png'} style={{width: '150px', padding: '10px'}}/>
+                  <img src={'/images/aabsar_logo.png'} style={{width: '150px', height: '63px', padding: '10px'}}/>
                 </Group>
-                <Divider/>
+                {/* <Divider/> */}
               </AppShell.Section>
               <AppShell.Section grow component={ScrollArea}>
                   {navList.map((item)=>

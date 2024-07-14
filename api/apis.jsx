@@ -21,5 +21,13 @@ export const api_config = {
     product_post: "product/add",
     product_put: "product/update",
     product_delete: "product/delete/",
+  },
+  properties:{
+    property_get: "property/all",
+    property_post: "property/add",
+    property_delete: "property/delete/",
+    property_change_status: "property/change-status",
+    property_upload_image: "property/upload/images",
+    property_upload_feature_image: "property/upload/feature-image"
   }
 };
