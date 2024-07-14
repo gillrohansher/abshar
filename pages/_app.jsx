@@ -13,11 +13,12 @@ import Link from 'next/link';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { useAppStore } from '../lib/hooks';
+import { useAppStore, useWindowSize } from '../lib/hooks';
 import { usePathname, useRouter } from 'next/navigation';
 import { clearStorageRedirectLogin } from '../helpers/helpers';
 
 export default function App({ Component, pageProps }) {
+  const size = useWindowSize();
   const [opened, { toggle }] = useDisclosure();
   const pathName = usePathname();
   // const { setColorScheme } = useMantineColorScheme();
@@ -63,7 +64,6 @@ export default function App({ Component, pageProps }) {
           collapsed: { mobile: !opened },
           }}
           padding="md"
-          onBlur={toggle}
         >
             <AppShell.Header style={{padding: '0px 20px 0px 10px'}}>
               <Group style={{height: '100%'}} justify={'space-between'} align={"center"}>
@@ -96,6 +96,7 @@ export default function App({ Component, pageProps }) {
                   leftSection={<item.icon size="1rem" stroke={1.5} color={'#5185a6'} />}
                   component={Link} 
                   href={item.path}
+                  onClick={toggle}
                   active={pathName === item.path}
                   />)}
               </AppShell.Section>
@@ -109,7 +110,7 @@ export default function App({ Component, pageProps }) {
               </AppShell.Section>
             </AppShell.Navbar>
 
-            <AppShell.Main>
+            <AppShell.Main style={{marginTop: size.width < 767 && '30px'}}>
               <Component {...pageProps} />
             </AppShell.Main>
         </AppShell>
