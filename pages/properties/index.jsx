@@ -75,6 +75,7 @@ function PropertiesPage(props) {
                     color: 'green',
                     id: 'propertyDeleted'
                 });
+                setSelectedProperties([]);
                 getProperties();
             }
             setLoader(false);
@@ -123,13 +124,20 @@ function PropertiesPage(props) {
             padding="lg" 
             radius="md" 
             withBorder 
-            style={{cursor: 'pointer', minWidth: size.width < 650 && '100%'}}>
-                <Card.Section onClick={()=> handleOpenSelectedProperty(property)}>
+            style={{cursor: 'pointer', minWidth: '100%'}}>
+                <Card.Section>
                     <Badge style={{position: 'absolute', top: 10, right: 10}} color="blue">{property.propertyStatus}</Badge>
+                    <Checkbox
+                    style={{position: 'absolute', top: 10, left: 10}}
+                    styles={{input: {cursor: 'pointer'}}}
+                    checked={selectedProperties.find((selectedProperty)=> selectedProperty === property.id)}
+                    onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
+                    />
                     <Image
                         src={property.image.featuredImage ? property.image.featuredImage : "/images/no_image_available.png"}
                         height={160}
                         alt="No image"
+                        onClick={()=> handleOpenSelectedProperty(property)}
                     />
                 </Card.Section>
                 <Stack onClick={()=> handleOpenSelectedProperty(property)}>
@@ -180,10 +188,10 @@ function PropertiesPage(props) {
                 :
                 properties.length > 0 ?
                 <Group w={'100%'}>
-                    <SimpleGrid cols={size.width < 650 ? 1 : 3} style={{minWidth: size.width < 650 && '100%'}}>
+                    <SimpleGrid cols={size.width < 650 ? 1 : size.width < 1100 ? 2 : 3} style={{minWidth: '100%'}}>
                         {properties.filter((property)=> search ? (property.name.toLowerCase().includes(search.toLowerCase()) || property.street.toLowerCase().includes(search.toLowerCase()) || property.phase.toLowerCase().includes(search.toLowerCase()) || property.area.toLowerCase().includes(search.toLowerCase()) || property.zipCode.toLowerCase().includes(search.toLowerCase()) || property.city.toLowerCase().includes(search.toLowerCase()) || property.type.toLowerCase().includes(search.toLowerCase())) : property)
                         .map((property)=> 
-                        <Group key={property.id} style={{minWidth: size.width < 650 && '100%'}}>
+                        <Group key={property.id} style={{minWidth: '100%'}}>
                             {renderPropertyCard(property)}
                         </Group>)}
                     </SimpleGrid>
@@ -215,6 +223,7 @@ function PropertiesPage(props) {
             <AddPropertyModal
             opened={openAddPropertyModal}
             onClose={()=> setOpenAddPropertyModal(false)}
+            getProperties={()=> getProperties()}
             />}
 
             {openPropertyDetailsModal &&

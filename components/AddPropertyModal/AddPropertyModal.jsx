@@ -1,5 +1,5 @@
 import { useAppStore } from '@/lib/hooks';
-import { Anchor, Button, Center, Divider, Group, InputLabel, Loader, Modal, MultiSelect, NumberInput, Select, SimpleGrid, Stack, Text, Textarea, TextInput, useMantineColorScheme } from '@mantine/core';
+import { Anchor, Button, Center, Divider, FileInput, Group, InputLabel, Loader, Modal, MultiSelect, NumberInput, Select, SimpleGrid, Stack, Text, Textarea, TextInput, useMantineColorScheme } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconTrashFilled } from '@tabler/icons-react';
 import { useEffect } from 'react';
@@ -9,7 +9,7 @@ import { useGeolocated } from "react-geolocated";
 import { ProductGet } from "../../api/fetchApis/Products";
 import { PropertiesPost } from "../../api/fetchApis/Properties";
 
-export function AddPropertyModal({opened, onClose}) {
+export function AddPropertyModal({opened, onClose, getProperties}) {
 const store = useAppStore();
 const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
@@ -46,7 +46,10 @@ const [selectedProducts, setSelectedProducts] = useState([]);
 const [newProducts, setNewProducts] = useState(null);
 const {token} = store.getState().general;
 const [loader, setLoader] = useState(false);
+const [files, setFiles] = useState([]);
 
+
+console.log('files: ', files);
 
 const getProducts=()=>{
     ProductGet(null, token, res=>{
@@ -69,7 +72,7 @@ const postProperty=()=>{
         country,
         latitude: coords.latitude,
         longitude: coords.longitude,
-        sourceOfWater: selectedSourceOfWater,
+        sourceOfWater: [selectedSourceOfWater],
         estimatedConsumption,
         noOfPeople: numberOfPeople,
         waterBill,
@@ -97,6 +100,7 @@ const postProperty=()=>{
                 message: 'Property added successfully.',
                 color: 'green'
             });
+            getProperties();
             onClose();
         }
         setLoader(false);
@@ -148,6 +152,11 @@ useEffect(() => {
         :
         <Stack>
             <Stack gap={8}>
+                <Text size={'sm'} fw={600}>Images</Text>
+                <FileInput clearable multiple value={files} onChange={setFiles} />
+                {files.map((file)=> <img src={file.name} style={{width: '100px', height: '100px', objectFit: 'cover'}}/>)}
+
+                
                 <Text size={'sm'} fw={600}>Details</Text>
                 <SimpleGrid cols={2}>
                 {/* Name */}

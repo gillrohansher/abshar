@@ -117,8 +117,12 @@ export async function PropertyUploadFeatureImagePost(data, token, res) {
 }
 
 export async function PropertyChangeStatusPut(ids, status, token, res) {
+  let data = new FormData();
+  data.append('ids', ids);
+  data.append('status', status);
     await APIClientPUT({
-      url: api_config.properties.property_change_status+`?${ids.map((id, index)=> `${index > 0 ? '&' : ''}ids=${id}`)}&status=${status}`,
+      url: api_config.properties.property_change_status,//+`?${ids.map((id, index)=> `${index > 0 ? '&' : ''}ids=${id}`)}&status=${status}`,
+      data,
       headers: {
         Authorization: token,
       }
