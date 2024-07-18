@@ -6,16 +6,18 @@ import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
 
 export default function StoreProvider({ children }) {
-  let persistor = null
   const storeRef = useRef()
+  const persistorRef = useRef()
+
   if (!storeRef.current) {
     // Create the store instance the first time this renders
     storeRef.current = makeStore();
-    persistor = persistStore(storeRef.current);
+    persistorRef.current = persistStore(storeRef.current);
+
   }
 
   return <Provider store={storeRef.current}>
-            <PersistGate loading={null} persistor={persistor}>
+            <PersistGate loading={null} persistor={persistorRef.current}>
                 {children}
             </PersistGate>
         </Provider>
