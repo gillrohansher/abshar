@@ -1,5 +1,5 @@
 //let api_base_url = "http://admin.aabshar.net:9001/api/v1/";
-let api_base_url = "http://www.admin.aabshar.net/api/v1/";
+let api_base_url = "https://www.admin.aabshar.net/api/v1/";
 
 export const api_config = {
   baseUrl: api_base_url,
