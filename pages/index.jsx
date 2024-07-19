@@ -18,24 +18,21 @@ export default function HomePage() {
   const [mainVisibility, setMainVisibility] = useState(false);
   const {accountData, token, loader} = store.getState().general;
 
-  useEffect(() => {
-    setLoaderLocal(true);
-    if((Object.keys(accountData).length === 0 || accountData === null)){
-      router.push('/login');
-    }else{
-      setLoaderLocal(false);
-      setMainVisibility(true);
-      router.push('/dashboard');
-    }
-  });
+  // useEffect(() => {
+  //   setLoaderLocal(true);
+  //   if((Object.keys(accountData).length === 0 || accountData === null)){
+  //     router.push('/login');
+  //   }else{
+  //     setLoaderLocal(false);
+  //     setMainVisibility(true);
+  //     router.push('/dashboard');
+  //   }
+  // });
 
   console.log('getAuthToken(): ', store.getState().general);
   return (
     <Box pos="relative" style={{visibility: !mainVisibility && 'hidden'}}>
       <LoadingOverlay visible={loaderLocal || loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 10 }} />
-      {/* <Welcome />
-      <ColorSchemeToggle />
-      <Button onClick={()=> clearStorageRedirectLogin()}>Logout</Button> */}
     </Box>
   );
 }

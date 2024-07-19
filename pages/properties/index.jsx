@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, SimpleGrid, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, SimpleGrid, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize} from '../../lib/hooks';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff } from '@tabler/icons-react';
 import { PropertiesDelete, PropertiesGet, PropertiesPost, PropertyChangeStatusPut, PropertyUploadFeatureImagePost, PropertyUploadImagePost } from '../../api/fetchApis/Properties';
 import { AddPropertyModal } from '../../components/AddPropertyModal/AddPropertyModal';
 import { PropertyDetailsModal } from '../../components/PropertyDetailsModal/PropertyDetailsModal';
@@ -133,13 +133,24 @@ function PropertiesPage(props) {
                     checked={selectedProperties.find((selectedProperty)=> selectedProperty === property.id)}
                     onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
                     />
+                    {property.image.featuredImage ?
                     <Image
-                        src={property.image.featuredImage ? property.image.featuredImage : "/images/no_image_available.png"}
-                        height={160}
-                        alt="No image"
-                        onClick={()=> handleOpenSelectedProperty(property)}
+                    src={property.image.featuredImage.path}
+                    height={160}
+                    style={{objectFit: !property.image.featuredImage && 'fill'}}
+                    alt="No image"
+                    onClick={()=> handleOpenSelectedProperty(property)}
                     />
+                    :
+                    <Stack onClick={()=> handleOpenSelectedProperty(property)} style={{height: 160}} align='center' justify={'center'}>
+                        <IconPhotoOff
+                        style={{borderRadius: '2px'}}
+                        />
+                        <Text size={'xs'}>No image available</Text>
+                    </Stack>
+                    }
                 </Card.Section>
+                <Divider/>
                 <Stack onClick={()=> handleOpenSelectedProperty(property)}>
                     <Group justify="space-between" mt="md" mb="xs">
                         <Text fw={500}>{property.name}</Text>

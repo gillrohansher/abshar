@@ -40,7 +40,7 @@ function LoginPage(props) {
                 });
                 dispatch(setAccountData(res.data));
                 dispatch(setToken(res.data.token));
-                router.push('/');
+                router.push('/dashboard');
             }else{
                 if(res.code === 609){
                     setShowEmailVerificationMessage(true);

@@ -2,7 +2,9 @@ import {makeStore} from '../lib/store';
 
 export function clearStorageRedirectLogin(){
     localStorage.clear();
-    window.location.reload();
+    setTimeout(() => {
+        window.location.reload();    
+    }, 600);
 }
 
 export function getAuthToken() {

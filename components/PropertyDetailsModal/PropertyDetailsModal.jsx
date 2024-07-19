@@ -2,7 +2,7 @@ import { Anchor, Badge, Button, Group, Image, Modal, NumberFormatter, Select, Si
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { Slide } from 'react-slideshow-image';
-import { IconChevronRight, IconChevronLeft } from '@tabler/icons-react';
+import { IconChevronRight, IconChevronLeft, IconPhotoOff } from '@tabler/icons-react';
 import 'react-slideshow-image/dist/styles.css'
 
 const buttonStyle = {
@@ -41,7 +41,15 @@ useEffect(() => {
                 <Slide {...properties}>
                     {[selectedProperty.image.featuredImage, ...selectedProperty.image.otherImages].map((image)=>
                     <Group justify={'center'}>
-                        <img src={image ? image : "/images/no_image_available.png"} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                        {image ? <img src={image.path} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                        :
+                        <Stack style={{height: '237px', borderRadius: '2px'}} justify='center' align={'center'}>
+                            <IconPhotoOff
+                            color={'white'}
+                            />
+                            <Text size={'xs'} style={{color: 'white'}}>No image available</Text>
+                        </Stack>
+                        }
                     </Group>)}
                 </Slide>
             </Group>
@@ -80,7 +88,12 @@ useEffect(() => {
                 </Stack>
                 <Stack gap={0}>
                     <Text c={'dimmed'} size="xs">Location</Text>
-                    <Text size="sm"><Anchor href={`http://maps.google.com/maps?q=${selectedProperty?.latitude},${selectedProperty?.longitude}`} target={'_blank'}>{`http://maps.google.com/maps?q=${selectedProperty?.latitude},${selectedProperty?.longitude}`}</Anchor></Text>
+                    <Text size="sm">
+                        {(selectedProperty?.latitude === 0 && selectedProperty?.longitude === 0) ? 
+                        'Location not available' 
+                        : 
+                        <Anchor style={{wordBreak: 'break-all'}} href={`http://maps.google.com/maps?q=${selectedProperty?.latitude},${selectedProperty?.longitude}`} target={'_blank'}>{`http://maps.google.com/maps?q=${selectedProperty?.latitude},${selectedProperty?.longitude}`}</Anchor>}
+                    </Text>
                 </Stack>
                 <Stack gap={0}>
                     <Text c={'dimmed'} size="xs">Source of water</Text>
@@ -129,14 +142,14 @@ useEffect(() => {
             </SimpleGrid>
             <Stack gap={8}>
                 <Text size={'sm'} fw={600}>Products</Text>
-                <SimpleGrid>
+                <SimpleGrid cols={2}>
                     {selectedProperty?.products.length > 0 && selectedProperty?.products.map((product, index)=> 
                     <Stack gap={0}>
-                        <Text c={'dimmed'} size="xs">{`Product ${index+1}`}</Text>
-                        <Text size="sm">Category: {product.category}</Text>
-                        <Text size="sm">Type: {product.type}</Text>
-                        <Text size="sm">Making: {product.making}</Text>
-                        <Text size="sm">Quantity: {product.quantity}</Text>
+                        <Text c={'blue'} size="xs">{`Product ${index+1}`}</Text>
+                        <Group wrap='nowrap' gap={2}><Text c={'dimmed'} size="xs">Category:</Text><Text size={'xs'}>{product.category}</Text></Group>
+                        <Group wrap='nowrap' gap={2}><Text c={'dimmed'} size="xs">Type:</Text><Text size={'xs'}>{product.type}</Text></Group>
+                        <Group wrap='nowrap' gap={2}><Text c={'dimmed'} size="xs">Making:</Text><Text size={'xs'}>{product.making}</Text></Group>
+                        <Group wrap='nowrap' gap={2}><Text c={'dimmed'} size="xs">Quantity:</Text><Text size={'xs'}>{product.quantity}</Text></Group>
                     </Stack>
                     )}
                 </SimpleGrid>

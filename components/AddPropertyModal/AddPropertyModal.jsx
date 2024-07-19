@@ -16,6 +16,7 @@ const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
         positionOptions: {
             enableHighAccuracy: true,
         },
+        suppressLocationOnMount: true
         //userDecisionTimeout: 5000,
     });
 const [name, setName] = useState(null);
@@ -30,7 +31,7 @@ const [zipCode, setZipCode] = useState(null);
 const [city, setCity] = useState(null);
 const [country, setCountry] = useState('Pakistan');
 const [sourceOfWaterOptions, setSourceOfWaterOptions] = useState(['LINE', 'BORE', 'TANKER']);
-const [selectedSourceOfWater, setSelectedSourceOfWater] = useState(null);
+const [selectedSourceOfWater, setSelectedSourceOfWater] = useState([]);
 const [estimatedConsumption, setEstimatedConsumption] = useState(null);
 const [numberOfPeople, setNumberOfPeople] = useState(null);
 const [waterBill, setWaterBill] = useState(0);
@@ -70,9 +71,9 @@ const postProperty=()=>{
         zipCode,
         city,
         country,
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-        sourceOfWater: [selectedSourceOfWater],
+        latitude: coords?.latitude,
+        longitude: coords?.longitude,
+        sourceOfWater: selectedSourceOfWater,
         estimatedConsumption,
         noOfPeople: numberOfPeople,
         waterBill,
@@ -241,7 +242,7 @@ useEffect(() => {
                 </Stack>
 
                 {/* Source of Water */}
-                <Select
+                <MultiSelect
                 label="Source of water"
                 searchable
                 data={sourceOfWaterOptions}

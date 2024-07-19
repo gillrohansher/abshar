@@ -18,7 +18,7 @@ export async function ProductGet(data, token, res) {
       })
       .catch(e => {
           if(e?.response?.data?.code ===  401){
-            //clearStorageRedirectLogin();
+            clearStorageRedirectLogin();
           }else{
             res(e?.response?.data);
             console.log('response.result: ProductGet: ', e?.response?.data?.message);
