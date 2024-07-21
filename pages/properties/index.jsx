@@ -183,10 +183,56 @@ function PropertiesPage(props) {
         )
     }
 
+    const renderFilterBadges=()=>{
+        return (
+            <Group>
+                <Badge 
+                style={{cursor: 'pointer'}} 
+                color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'MOSQUE') === undefined && 'gray'}
+                onClick={()=> {
+                    if(filterPropertyType.find((filter)=> filter === 'MOSQUE') === undefined){
+                        setFilterPropertyType([...filterPropertyType, 'MOSQUE']);
+                    }else{
+                        setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'MOSQUE'));
+                    }
+                }}
+                >
+                    MOSQUE
+                </Badge>
+                <Badge 
+                style={{cursor: 'pointer'}} 
+                color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'RESIDENTIAL') === undefined && 'gray'}
+                onClick={()=> {
+                    if(filterPropertyType.find((filter)=> filter === 'RESIDENTIAL') === undefined){
+                        setFilterPropertyType([...filterPropertyType, 'RESIDENTIAL']);
+                    }else{
+                        setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'RESIDENTIAL'));
+                    }
+                }}
+                >
+                    RESIDENTIAL
+                </Badge>
+                <Badge 
+                style={{cursor: 'pointer'}} 
+                color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'COMMERCIAL') === undefined && 'gray'}
+                onClick={()=> {
+                    if(filterPropertyType.find((filter)=> filter === 'COMMERCIAL') === undefined){
+                        setFilterPropertyType([...filterPropertyType, 'COMMERCIAL']);
+                    }else{
+                        setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'COMMERCIAL'));
+                    }
+                }}
+                >
+                    COMMERCIAL
+                </Badge>
+            </Group>
+        );
+    }
+
     return (
         <Stack>
             <Group justify={'space-between'}>
-                <Group>
+                <Group style={{flex: size.width < 650 && 1}}>
                     <TextInput
                     value={search}
                     onChange={(event) => setSearch(event.currentTarget.value)}
@@ -196,46 +242,9 @@ function PropertiesPage(props) {
                             minWidth: '260px'
                         }
                     }}
+                    style={{flex: size.width < 650 && 1}}
                     />
-                    <Badge 
-                    style={{cursor: 'pointer'}} 
-                    color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'MOSQUE') === undefined && 'gray'}
-                    onClick={()=> {
-                        if(filterPropertyType.find((filter)=> filter === 'MOSQUE') === undefined){
-                            setFilterPropertyType([...filterPropertyType, 'MOSQUE']);
-                        }else{
-                            setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'MOSQUE'));
-                        }
-                    }}
-                    >
-                        MOSQUE
-                    </Badge>
-                    <Badge 
-                    style={{cursor: 'pointer'}} 
-                    color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'RESIDENTIAL') === undefined && 'gray'}
-                    onClick={()=> {
-                        if(filterPropertyType.find((filter)=> filter === 'RESIDENTIAL') === undefined){
-                            setFilterPropertyType([...filterPropertyType, 'RESIDENTIAL']);
-                        }else{
-                            setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'RESIDENTIAL'));
-                        }
-                    }}
-                    >
-                        RESIDENTIAL
-                    </Badge>
-                    <Badge 
-                    style={{cursor: 'pointer'}} 
-                    color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'COMMERCIAL') === undefined && 'gray'}
-                    onClick={()=> {
-                        if(filterPropertyType.find((filter)=> filter === 'COMMERCIAL') === undefined){
-                            setFilterPropertyType([...filterPropertyType, 'COMMERCIAL']);
-                        }else{
-                            setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'COMMERCIAL'));
-                        }
-                    }}
-                    >
-                        COMMERCIAL
-                    </Badge>
+                    {size.width > 650 && renderFilterBadges()}
                 </Group>
                 <Group>
                     <ActionIcon onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
@@ -246,6 +255,7 @@ function PropertiesPage(props) {
                     </ActionIcon>
                 </Group>
             </Group>
+            {size.width < 650 && renderFilterBadges()}
             <Group>
                 {loader ?
                 <Center h={'100vh'} w={'100%'}>

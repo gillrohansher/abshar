@@ -4,12 +4,13 @@ import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
-import { useAppStore, useAppDispatch } from '../../lib/hooks';
+import { useAppStore, useAppDispatch, useWindowSize } from '../../lib/hooks';
 import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal } from '@tabler/icons-react';
 import { ProductDelete, ProductGet, ProductPost, ProductPut } from '../../api/fetchApis/Products';
 import { AddProductModal } from '../../components/AddProductModal/AddProductModal';
 
 function ProductsPage(props) {
+    const size = useWindowSize();
     const store = useAppStore();
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -97,16 +98,17 @@ function ProductsPage(props) {
     return (
         <Stack>
             <Group justify={'space-between'}>
-                <Group>
+                <Group style={{flex: size.width < 650 && 1}}>
                     <TextInput
                     value={search}
                     onChange={(event) => setSearch(event.currentTarget.value)}
-                    placeholder={'Search Category, Type or Making'}
+                    placeholder={'Search category, type or making...'}
                     styles={{
                         input: {
                             minWidth: '250px'
                         }
                     }}
+                    style={{flex: size.width < 650 && 1}}
                     />
                 </Group>
                 <Group>

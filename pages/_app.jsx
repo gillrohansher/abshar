@@ -3,12 +3,14 @@ import '@mantine/core/styles.css';
 import Head from 'next/head';
 import { ActionIcon, AppShell, Box, Burger, Divider, Group, LoadingOverlay, MantineProvider, NavLink, ScrollArea, useMantineColorScheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import '@mantine/notifications/styles.css';
 
 import { theme } from '../theme';
 import StoreProvider from '../StoreProvider.jsx';
 import './styles.css'
-import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled, IconBrightnessFilled } from '@tabler/icons-react';
+import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled, IconBrightnessFilled, IconLogout } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
@@ -16,6 +18,7 @@ import { useState } from 'react';
 import { useAppStore, useWindowSize, useAppDispatch } from '../lib/hooks';
 import { usePathname, useRouter } from 'next/navigation';
 import { clearStorageRedirectLogin } from '../helpers/helpers';
+import { Paper } from '@mui/material';
 
 function AppContent({ Component, pageProps }) {
   const size = useWindowSize();
@@ -25,6 +28,7 @@ function AppContent({ Component, pageProps }) {
   const store = useAppStore();
   const { accountData, token } = store.getState().general;
   const [loader, setLoader] = useState(true);
+  const [value, setValue] = useState(0);
   const navList = [
     {
       name: 'Dashboard',
@@ -88,6 +92,7 @@ function AppContent({ Component, pageProps }) {
         }}
         padding="md"
       >
+          {size.width > 650 &&
           <AppShell.Header style={{padding: '0px 20px 0px 10px'}}>
             <Group style={{height: '100%'}} justify={'space-between'} align={"center"}>
               <Group style={{height: '100%'}} gap={5} align={"center"}>
@@ -103,8 +108,9 @@ function AppContent({ Component, pageProps }) {
               </ActionIcon> */}
               
             </Group>
-          </AppShell.Header>
+          </AppShell.Header>}
 
+          {size.width > 650 &&
           <AppShell.Navbar style={{padding: '0px'}}>
             <AppShell.Section>
               <Group justify={'center'}>
@@ -131,11 +137,28 @@ function AppContent({ Component, pageProps }) {
                 onClick={()=> clearStorageRedirectLogin()}
                 />
             </AppShell.Section>
-          </AppShell.Navbar>
-
-          <AppShell.Main style={{marginTop: size.width < 767 && '30px'}}>
+          </AppShell.Navbar>}
+          
+          <AppShell.Main style={{marginTop: size.width < 767 && size.width > 650 && '30px', marginBottom: size.width < 650 && '50px'}}>
             <Component {...pageProps} />
           </AppShell.Main>
+          {size.width < 650 &&
+          <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+            <BottomNavigation
+            showLabels
+            value={value}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+              router.push(newValue);
+            }}
+            className="bottom-mobile-navbar"
+            >
+              {navList.map((item)=>
+              <BottomNavigationAction label={item.name} value={item.path} icon={<item.icon size="1rem" stroke={1.5} />} /> //color={'#5185a6'}
+              )}
+              <BottomNavigationAction label={'Logout'} onClick={()=> clearStorageRedirectLogin()} value={'/'} icon={<IconSquareXFilled size="1rem" stroke={1.5} />} />
+            </BottomNavigation>
+          </Paper>}
       </AppShell>
       :
       <Component {...pageProps} />}

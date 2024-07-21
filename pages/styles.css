@@ -38,3 +38,16 @@
 .mantine-MultiSelect-pillsList{
     flex-wrap: nowrap !important;
 }
+
+/* .bottom-mobile-navbar{
+    position: absolute;
+    bottom: 0 !important;    
+} */
+
+.Mui-selected{
+    color: #5185a6 !important;
+}
+
+.MuiBottomNavigationAction-label{
+    color: var(--mantine-color-gray-6);
+}
