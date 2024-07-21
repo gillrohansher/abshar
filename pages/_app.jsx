@@ -57,6 +57,9 @@ function AppContent({ Component, pageProps }) {
         setLoader(false);  
       }, 600);
     } else {
+      if(window.location.href.includes(('/login'))){
+        router.push('/dashboard');
+      }
       setTimeout(() => {
         setLoader(false);  
       }, 600);
