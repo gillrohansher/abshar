@@ -10,6 +10,7 @@ import '@mantine/notifications/styles.css';
 import { theme } from '../theme';
 import StoreProvider from '../StoreProvider.jsx';
 import './styles.css'
+import '@mantine/charts/styles.css';
 import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled, IconBrightnessFilled, IconLogout } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useDisclosure } from '@mantine/hooks';
