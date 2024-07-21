@@ -6,6 +6,7 @@ import { IconChevronRight, IconChevronLeft, IconPhotoOff } from '@tabler/icons-r
 import 'react-slideshow-image/dist/styles.css'
 
 import {AddFeatureImageModal} from '../AddFeatureImageModal/AddFeatureImageModal';
+import {ExpandImageModal} from '../ExpandImageModal/ExpandImageModal';
 
 const buttonStyle = {
     width: "30px",
@@ -23,6 +24,8 @@ export function PropertyDetailsModal({opened, onClose, selectedProperty, publish
     const [openAddFeatureImageModal, setOpenAddFeatureImageModal] = useState(false);
     const [currentProperty, setCurrentProperty] = useState(selectedProperty);
     const [publishOnFollow, setPublishOnFollow] = useState(false);
+    const [openExpandImageModal, setOpenExpandImageModal] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
 
 const validate=()=>{
     return true;
@@ -47,7 +50,12 @@ useEffect(() => {
                 <Slide {...properties}>
                     {[currentProperty.image.featuredImage, ...currentProperty.image.otherImages].map((image, index)=>
                     <Group justify={'center'}>
-                        {image ? <img src={image.path} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                        {image ? <img src={image.path} 
+                        onClick={()=> {
+                            setOpenExpandImageModal(true);
+                            setSelectedImage(image.path);
+                        }} 
+                        style={{borderRadius: '2px', height: '237px', objectFit: 'cover', cursor: 'pointer'}} />
                         :
                         <Stack style={{height: '237px', borderRadius: '2px'}} justify='center' align={'center'}>
                             <IconPhotoOff
@@ -186,6 +194,15 @@ useEffect(() => {
         getProperties={()=> getProperties()}
         publishOnFollow={publishOnFollow}
         publishProperty={()=> publishButtonClick()}
+        />}
+        {openExpandImageModal &&
+        <ExpandImageModal
+        opened={openExpandImageModal}
+        onClose={()=> {
+            setOpenExpandImageModal(false);
+            setSelectedImage(null);
+        }}
+        image={selectedImage}
         />}
     </Modal>
   );
