@@ -1,4 +1,5 @@
 import {makeStore} from '../lib/store';
+import imageCompression from 'browser-image-compression';
 
 export function clearStorageRedirectLogin(){
     localStorage.clear();
@@ -15,4 +16,14 @@ export function getAuthToken() {
     console.log('getAuthToken()::', state.getState().general);
     // return the token 
     return authToken;
+}
+
+export const compressImage= async (file)=>{
+    const options = {
+        maxSizeMB: 0.1,
+        //maxWidthOrHeight: 400,
+        useWebWorker: true
+    }
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
 }

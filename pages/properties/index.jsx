@@ -1,6 +1,6 @@
 import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, SimpleGrid, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { showNotification } from '@mantine/notifications';
+import { hideNotification, showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
 
 
@@ -10,6 +10,7 @@ import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, Icon
 import { PropertiesDelete, PropertiesGet, PropertiesPost, PropertyChangeStatusPut, PropertyUploadFeatureImagePost, PropertyUploadImagePost } from '../../api/fetchApis/Properties';
 import { AddPropertyModal } from '../../components/AddPropertyModal/AddPropertyModal';
 import { PropertyDetailsModal } from '../../components/PropertyDetailsModal/PropertyDetailsModal';
+import { AddFeatureImageModal } from '@/components/AddFeatureImageModal/AddFeatureImageModal';
 
 
 
@@ -27,7 +28,10 @@ function PropertiesPage(props) {
     const [selectedProperties, setSelectedProperties] = useState([]);
     const [editProperty, setEditProperty] = useState(null);
     const [search, setSearch] = useState(null);
+    const [openAddFeatureImageModal, setOpenAddFeatureImageModal] = useState(false);
+    const [publishOnFollow, setPublishOnFollow] = useState(null);
     const {token} = store.getState().general;
+    const [filterPropertyType, setFilterPropertyType] = useState([]);
 
     useEffect(() => {
         setLoader(true);
@@ -42,6 +46,7 @@ function PropertiesPage(props) {
         PropertiesGet(null, token, res=>{
             if(res?.code === 200){
                 setProperties(res.data);
+                openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
             }
             setLoader(false);
         });
@@ -85,10 +90,12 @@ function PropertiesPage(props) {
         setLoader(true);
         PropertyChangeStatusPut(ids, 'PUBLISHED', token, res=>{
             if(res?.code === 200){
+                hideNotification('propertyPublised');
+                hideNotification('propertyUnpublised');
                 showNotification({
-                    message: 'Property updated successfully',
+                    message: 'Property publised.',
                     color: 'green',
-                    id: 'propertyUpdated'
+                    id: 'propertyPublised'
                 });
                 getProperties();
             }
@@ -100,10 +107,12 @@ function PropertiesPage(props) {
         setLoader(true);
         PropertyChangeStatusPut(ids, 'UNPUBLISHED', token, res=>{
             if(res?.code === 200){
+                hideNotification('propertyPublised');
+                hideNotification('propertyUnpublised');
                 showNotification({
-                    message: 'Property updated successfully.',
+                    message: 'Property unpublised.',
                     color: 'green',
-                    id: 'propertyUpdated'
+                    id: 'propertyUnpublised'
                 });
                 getProperties();
             }
@@ -126,7 +135,7 @@ function PropertiesPage(props) {
             withBorder 
             style={{cursor: 'pointer', minWidth: '100%'}}>
                 <Card.Section>
-                    <Badge style={{position: 'absolute', top: 10, right: 10}} color="blue">{property.propertyStatus}</Badge>
+                    <Badge style={{position: 'absolute', top: 10, right: 10}} color={property.propertyStatus === "PUBLISHED" ? "#5185a6" : "gray"}>{property.propertyStatus}</Badge>
                     <Checkbox
                     style={{position: 'absolute', top: 10, left: 10}}
                     styles={{input: {cursor: 'pointer'}}}
@@ -146,7 +155,7 @@ function PropertiesPage(props) {
                         <IconPhotoOff
                         style={{borderRadius: '2px'}}
                         />
-                        <Text size={'xs'}>No image available</Text>
+                        <Text size={'xs'}>No featured image available</Text>
                     </Stack>
                     }
                 </Card.Section>
@@ -160,7 +169,14 @@ function PropertiesPage(props) {
                     <Text size="sm" c="dimmed">{`${property.street+','} ${property.area+','} ${property.phase+','} ${property.zipCode+','} ${property.city}`}</Text>
                 </Stack>
 
-                <Button fullWidth mt="md" radius="md" onClick={()=> property.propertyStatus === 'UNPUBLISHED' ? publishProperty([property.id]) : unpublishProperty([property.id])}>
+                <Button fullWidth mt="md" radius="md" onClick={()=> {
+                    if(property.image.featuredImage){
+                        property.propertyStatus === 'UNPUBLISHED' ? publishProperty([property.id]) : unpublishProperty([property.id])
+                    }else{
+                        setPublishOnFollow(property.id);
+                        setOpenAddFeatureImageModal(true);
+                    }
+                }}>
                     {property.propertyStatus === 'UNPUBLISHED' ? 'Publish' : 'Unpublish'}
                 </Button>
             </Card>
@@ -181,6 +197,45 @@ function PropertiesPage(props) {
                         }
                     }}
                     />
+                    <Badge 
+                    style={{cursor: 'pointer'}} 
+                    color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'MOSQUE') === undefined && 'gray'}
+                    onClick={()=> {
+                        if(filterPropertyType.find((filter)=> filter === 'MOSQUE') === undefined){
+                            setFilterPropertyType([...filterPropertyType, 'MOSQUE']);
+                        }else{
+                            setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'MOSQUE'));
+                        }
+                    }}
+                    >
+                        MOSQUE
+                    </Badge>
+                    <Badge 
+                    style={{cursor: 'pointer'}} 
+                    color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'RESIDENTIAL') === undefined && 'gray'}
+                    onClick={()=> {
+                        if(filterPropertyType.find((filter)=> filter === 'RESIDENTIAL') === undefined){
+                            setFilterPropertyType([...filterPropertyType, 'RESIDENTIAL']);
+                        }else{
+                            setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'RESIDENTIAL'));
+                        }
+                    }}
+                    >
+                        RESIDENTIAL
+                    </Badge>
+                    <Badge 
+                    style={{cursor: 'pointer'}} 
+                    color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'COMMERCIAL') === undefined && 'gray'}
+                    onClick={()=> {
+                        if(filterPropertyType.find((filter)=> filter === 'COMMERCIAL') === undefined){
+                            setFilterPropertyType([...filterPropertyType, 'COMMERCIAL']);
+                        }else{
+                            setFilterPropertyType(filterPropertyType.filter((filter)=> filter !== 'COMMERCIAL'));
+                        }
+                    }}
+                    >
+                        COMMERCIAL
+                    </Badge>
                 </Group>
                 <Group>
                     <ActionIcon onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
@@ -201,6 +256,7 @@ function PropertiesPage(props) {
                 <Group w={'100%'}>
                     <SimpleGrid cols={size.width < 650 ? 1 : size.width < 1100 ? 2 : 3} style={{minWidth: '100%'}}>
                         {properties.filter((property)=> search ? (property.name.toLowerCase().includes(search.toLowerCase()) || property.street.toLowerCase().includes(search.toLowerCase()) || property.phase.toLowerCase().includes(search.toLowerCase()) || property.area.toLowerCase().includes(search.toLowerCase()) || property.zipCode.toLowerCase().includes(search.toLowerCase()) || property.city.toLowerCase().includes(search.toLowerCase()) || property.type.toLowerCase().includes(search.toLowerCase())) : property)
+                        .filter((property)=> filterPropertyType.length > 0 ? filterPropertyType.find((filter)=> property.type === filter) !== undefined : property)
                         .map((property)=> 
                         <Group key={property.id} style={{minWidth: '100%'}}>
                             {renderPropertyCard(property)}
@@ -249,6 +305,24 @@ function PropertiesPage(props) {
                     unpublishProperty([selectedPropertyForDetails.id]);
                 }
                 setOpenPropertyDetailsModal(false);
+            }}
+            getProperties={()=> getProperties()}
+            />}
+            {openAddFeatureImageModal &&
+            <AddFeatureImageModal
+            opened={openAddFeatureImageModal}
+            onClose={()=> {
+                setOpenAddFeatureImageModal(false);
+                setPublishOnFollow(null);
+            }}
+            propertyId={publishOnFollow}
+            getProperties={()=> getProperties()}
+            publishOnFollow={publishOnFollow}
+            publishProperty={()=> {
+                let publishOnFollowProperty = properties.find((property)=> property.id === publishOnFollow);
+                if(publishOnFollowProperty !== undefined){
+                    publishOnFollowProperty.propertyStatus === 'UNPUBLISHED' ? publishProperty([publishOnFollowProperty.id]) : unpublishProperty([publishOnFollowProperty.id])
+                }
             }}
             />}
         </Stack>

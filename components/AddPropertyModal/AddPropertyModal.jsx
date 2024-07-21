@@ -1,13 +1,27 @@
 import { useAppStore } from '@/lib/hooks';
 import { Anchor, Button, Center, Divider, FileInput, Group, InputLabel, Loader, Modal, MultiSelect, NumberInput, Select, SimpleGrid, Stack, Text, Textarea, TextInput, useMantineColorScheme } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconTrashFilled } from '@tabler/icons-react';
+import { IconTrashFilled, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useGeolocated } from "react-geolocated";
+import { Slide } from 'react-slideshow-image';
 
 import { ProductGet } from "../../api/fetchApis/Products";
-import { PropertiesPost } from "../../api/fetchApis/Properties";
+import { PropertiesPost, PropertyUploadImagePost } from "../../api/fetchApis/Properties";
+import { compressImage } from '@/helpers/helpers';
+import cities from '../../public/assets/cities.json';
+
+const buttonStyle = {
+    width: "30px",
+    background: 'none',
+    border: '0px'
+};
+
+const properties = {
+    prevArrow: <button style={{ ...buttonStyle }}><IconChevronLeft color='white'/></button>,
+    nextArrow: <button style={{ ...buttonStyle }}><IconChevronRight color='white'/></button>
+}
 
 export function AddPropertyModal({opened, onClose, getProperties}) {
 const store = useAppStore();
@@ -25,21 +39,31 @@ const [typeOptions, setTypeOptions] = useState(['COMMERCIAL', 'MOSQUE', 'RESIDEN
 const [selectedType, setSelectedType] = useState(null);
 const [typeError, setTypeError] = useState(false);
 const [street, setStreet] = useState(null);
+const [streetError, setStreetError] = useState(null);
 const [area, setArea] = useState(null);
+const [areaError, setAreaError] = useState(null);
 const [phase, setPhase] = useState(null);
+const [phaseError, setPhaseError] = useState(null);
 const [zipCode, setZipCode] = useState(null);
+const [zipCodeError, setZipCodeError] = useState(null);
 const [city, setCity] = useState(null);
+const [cityError, setCityError] = useState(null);
 const [country, setCountry] = useState('Pakistan');
 const [sourceOfWaterOptions, setSourceOfWaterOptions] = useState(['LINE', 'BORE', 'TANKER']);
 const [selectedSourceOfWater, setSelectedSourceOfWater] = useState([]);
+const [sourceOfWaterError, setSourceOfWaterError] = useState(false);
 const [estimatedConsumption, setEstimatedConsumption] = useState(null);
+const [estimatedConsumptionError, setEstimatedConsumptionError] = useState(null);
 const [numberOfPeople, setNumberOfPeople] = useState(null);
-const [waterBill, setWaterBill] = useState(0);
-const [electricityBill, setElectricityBill] = useState(0);
+const [numberOfPeopleError, setNumberOfPeopleError] = useState(null);
+const [waterBill, setWaterBill] = useState(null);
+const [electricityBill, setElectricityBill] = useState(null);
 const [pocName, setPocName] = useState(null);
 const [pocContact, setPocContact] = useState(null);
+const [pocContactError, setPocContactError] = useState(null);
 const [pocCommitteeName, setPocCommitteeName] = useState(null);
 const [pocCommitteeContact, setPocCommitteeContact] = useState(null);
+const [pocCommitteeContactError, setPocCommitteeContactError] = useState(null);
 const [pocDesignation, setPocDesignation] = useState(null);
 const [remarks, setRemarks] = useState(null);
 const [products, setProducts] = useState([]);
@@ -51,6 +75,7 @@ const [files, setFiles] = useState([]);
 
 
 console.log('files: ', files);
+console.log('cities: ', cities);
 
 const getProducts=()=>{
     ProductGet(null, token, res=>{
@@ -79,40 +104,94 @@ const postProperty=()=>{
         waterBill,
         electricityBill,
         pocName,
-        pocContact,
+        pocContact: pocContact.toString(),
         pocCommitteeName,
-        pocCommitteeContact,
+        pocCommitteeContact: pocCommitteeContact.toString(),
         pocContactCountryCode: '+92',
         pocCommitteeCountryCode: '+92',
         pocDesignation,
         products: selectedProducts.map((selectedProduct)=> ({productId: selectedProduct.id, quantity: selectedProduct.quantity})),
-        // .map((selectedProduct)=> {
-        //     return{
-        //         category: products.find((product)=> product.id === selectedProduct.id)?.category,
-        //         type: products.find((product)=> product.id === selectedProduct.id)?.type,
-        //         making: products.find((product)=> product.id === selectedProduct.id)?.making,
-        //         quantity: selectedProduct.quantity,
-        //     }
-        // }),
         remarks
     }, token, res=>{
         if(res?.code === 200){
             showNotification({
-                message: 'Property added successfully.',
+                message: 'Property created successfully.',
                 color: 'green'
             });
-            getProperties();
-            onClose();
+            if(files.length === 0){
+                getProperties();
+                onClose();
+            }else{
+                postPropertyImages(res?.data[0]?.id);
+            }
+        }else{
+            setLoader(false);
         }
-        setLoader(false);
+
+        if(files.length === 0){
+            setLoader(false);
+        }
     })
 }
 
+
+
+const postPropertyImages=(id)=>{
+    const callApi=(data)=>{
+        PropertyUploadImagePost(data, token, res=>{
+            if(res?.code === 200){
+                showNotification({
+                    message: 'Property images uploaded successfully.',
+                    color: 'green'
+                });
+                getProperties();
+                onClose();
+            }
+            setLoader(false);
+        })
+    }
+    let data = new FormData();
+    data.append('propertyId', id);
+    
+    files.map((file, index)=> {
+        if(file.size > 10000){
+            compressImage(file).then(value=> {
+                console.log('compressImage: ', value);
+                data.append('images', value);
+                if(files.length === (index+1)){
+                    callApi(data);
+                }
+            });
+        }else{
+            data.append('images', file);
+            if(files.length === (index+1)){
+                callApi(data);
+            }
+        }
+    });
+
+
+    
+
+}
+
 const validate=()=>{
+    // console.log('validate: ', '92'+pocContact.toString(), /^\\d{7,15}$/.test('92'+pocContact.toString()));
     setNameError(name ? false : 'required');
     setTypeError(selectedType ? false : 'required');
+    setStreetError(street ? false : 'required');
+    setAreaError(area ? false : 'required');
+    setPhaseError(phase ? false : 'required');
+    setZipCodeError(zipCode ? false : 'required');
+    setCityError(city ? false : 'required');
+    setSourceOfWaterError(selectedSourceOfWater.length > 0 ? false : 'required');
+    setEstimatedConsumptionError(estimatedConsumption ? false : 'required');
+    setNumberOfPeopleError(numberOfPeople ? false : 'required');
+    // setPocCommitteeContactError(pocCommitteeContact.toString().length > 0 ? (/^\\d{7,15}$/.test('+92'+pocCommitteeContact.toString()) ? false : 'phone number incorrect') : false);
+    // setPocContactError(pocContact.toString().length > 0 ? (/^\\d{7,15}$/.test('+92'+pocContact.toString()) ? false : 'phone number incorrect') : false);
 
-    if(name && selectedType){
+    if(name && selectedType && street && area && phase && zipCode && city && selectedSourceOfWater.length > 0 && estimatedConsumption && numberOfPeople //&& (pocCommitteeContact ? /^\\d{7,15}$/.test(pocCommitteeContact) : true) && (pocContact ? /^\\d{7,15}$/.test(pocContact) : true)
+    ){
         return true;
     }else{
         return false;
@@ -135,17 +214,15 @@ const renderSelectOption = ({ option }) => (
     </Group>
   );
 
-useEffect(() => {
-    if(selectedType){
-        setTypeError(false);
-    }
-}, [selectedType]);
+// useEffect(() => {
+//     validate();
+// }, [name, selectedType, street, area, phase, zipCode, city, selectedSourceOfWater, estimatedConsumption, numberOfPeople]);
 
 useEffect(() => {
     getProducts();
 }, []);
   return (
-    <Modal opened={opened} size='lg' onClose={onClose} title="Add Property" centered>
+    <Modal opened={opened} size='lg' onClose={onClose} title="Add property" centered>
         {loader ?
         <Center h={'100vh'} w={'100%'}>
             <Loader/>
@@ -154,9 +231,20 @@ useEffect(() => {
         <Stack>
             <Stack gap={8}>
                 <Text size={'sm'} fw={600}>Images</Text>
-                <FileInput clearable multiple value={files} onChange={setFiles} />
-                {files.map((file)=> <img src={file.name} style={{width: '100px', height: '100px', objectFit: 'cover'}}/>)}
-
+                <FileInput clearable multiple value={files} onChange={setFiles} accept="image/png,image/jpeg" />
+                {files.length > 0 &&
+                <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
+                    <Slide {...properties}>
+                        {files.map((file)=> {
+                            let url = URL.createObjectURL(file);
+                            return(
+                                <Group justify={'center'}>
+                                    <img src={url} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                                </Group>
+                            );
+                        })}
+                    </Slide>
+                </Group>}
                 
                 <Text size={'sm'} fw={600}>Details</Text>
                 <SimpleGrid cols={2}>
@@ -186,6 +274,8 @@ useEffect(() => {
                 {/* Street */}
                 <TextInput
                 label="Street"
+                required
+                error={streetError}
                 value={street}
                 onChange={(event) => setStreet(event.currentTarget.value)}
                 />
@@ -194,6 +284,8 @@ useEffect(() => {
                 <TextInput
                 label="Area"
                 value={area}
+                required
+                error={areaError}
                 onChange={(event) => setArea(event.currentTarget.value)}
                 />
 
@@ -201,6 +293,8 @@ useEffect(() => {
                 <TextInput
                 label="Phase"
                 value={phase}
+                required
+                error={phaseError}
                 onChange={(event) => setPhase(event.currentTarget.value)}
                 />
 
@@ -208,14 +302,20 @@ useEffect(() => {
                 <TextInput
                 label="Zip code"
                 value={zipCode}
+                required
+                error={zipCodeError}
                 onChange={(event) => setZipCode(event.currentTarget.value)}
                 />
 
                 {/* City */}
-                <TextInput
+                <Select
                 label="City"
                 value={city}
-                onChange={(event) => setCity(event.currentTarget.value)}
+                searchable
+                data={cities.map((city)=> ({label: city.name, value: city.name}))}
+                required
+                error={cityError}
+                onChange={setCity}
                 />
 
                 {/* Country */}
@@ -245,6 +345,8 @@ useEffect(() => {
                 <MultiSelect
                 label="Source of water"
                 searchable
+                required
+                error={sourceOfWaterError}
                 data={sourceOfWaterOptions}
                 value={selectedSourceOfWater}
                 onChange={setSelectedSourceOfWater}
@@ -255,6 +357,8 @@ useEffect(() => {
                 <NumberInput
                 label="Estimated comsumption"
                 value={estimatedConsumption}
+                required
+                error={estimatedConsumptionError}
                 onChange={setEstimatedConsumption}
                 hideControls
                 />
@@ -263,6 +367,8 @@ useEffect(() => {
                 <NumberInput
                 label="Number of people"
                 value={numberOfPeople}
+                required
+                error={numberOfPeopleError}
                 onChange={setNumberOfPeople}
                 />
 
@@ -272,6 +378,7 @@ useEffect(() => {
                 value={waterBill}
                 onChange={setWaterBill}
                 prefix={'Rs. '}
+                placeholder={'Rs. 0'}
                 allowDecimal
                 allowNegative={false}
                 hideControls
@@ -283,6 +390,7 @@ useEffect(() => {
                 value={electricityBill}
                 onChange={setElectricityBill}
                 prefix={'Rs. '}
+                placeholder={'Rs. 0'}
                 allowDecimal
                 allowNegative={false}
                 hideControls
@@ -296,10 +404,14 @@ useEffect(() => {
                 />
 
                 {/* Point of contact number */}
-                <TextInput
+                <NumberInput
                 label="Point of contact number"
                 value={pocContact}
-                onChange={(event) => setPocContact(event.currentTarget.value)}
+                prefix={'+92-'}
+                placeholder={'+92-XXXXXXXXXX'}
+                error={pocContactError}
+                onChange={setPocContact}
+                hideControls
                 />
 
                 {/* Point of contact designation */}
@@ -317,10 +429,14 @@ useEffect(() => {
                 />
 
                 {/* Point of committee number */}
-                <TextInput
+                <NumberInput
                 label="Committee number"
                 value={pocCommitteeContact}
-                onChange={(event) => setPocCommitteeContact(event.currentTarget.value)}
+                prefix={'+92-'}
+                placeholder={'+92-XXXXXXXXXX'}
+                error={pocCommitteeContactError}
+                onChange={setPocCommitteeContact}
+                hideControls
                 />
                 </SimpleGrid>
             </Stack>
