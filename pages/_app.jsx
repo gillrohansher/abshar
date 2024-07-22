@@ -57,10 +57,12 @@ function AppContent({ Component, pageProps }) {
     setLoader(true);
     console.log('token: ', token);
     if (!accountData || Object.keys(accountData).length === 0 ) {
-      router.push('/login');
+      if(!window.location.href.includes('/account-confirmation?token=')){
+        router.push('/login');
+      }
       setTimeout(() => {
         setLoader(false);  
-      }, 600);
+      }, !window.location.href.includes('/account-confirmation?token=') ? 600 : 0);
     } else {
       if(window.location.href.includes(('/login'))){
         router.push('/dashboard');

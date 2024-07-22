@@ -135,7 +135,7 @@ function SignUpPage(props) {
                       onChange={(e) => setPassword(e.currentTarget.value)}
                       required
                   />
-                  <Select
+                  {/* <Select
                       label="Type"
                       placeholder="Select type"
                       data={[
@@ -145,7 +145,7 @@ function SignUpPage(props) {
                       value={type}
                       onChange={(value) => setType(value)}
                       required
-                  />
+                  /> */}
                   <Button color={'#5185a6'} type="submit">Sign Up</Button>
                   </Stack>
               </form>
