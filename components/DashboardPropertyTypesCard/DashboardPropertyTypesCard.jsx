@@ -9,10 +9,9 @@ import { PropertiesGet } from '@/api/fetchApis/Properties';
 
 function DashboardPropertyTypesCard(props) {
     const store = useAppStore();
-    const {token} = store.getState().general;
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const [loader, setLoader] = useState(false);
+    // const [loader, setLoader] = useState(false);
     const [data, setData] = useState([
         { name: 'MOSQUE', value: 0, color: '#5185a6' },
         { name: 'COMMERCIAL', value: 0, color: '#10516f' },
@@ -20,38 +19,27 @@ function DashboardPropertyTypesCard(props) {
     ]);
 
     useEffect(() => {
-        getProperties();
-    }, []);
+        setData(data.map((propertyType)=> {
+            let propertyTypeArray= props.properties.filter((property)=> property.type === propertyType.name);
+            if(propertyTypeArray.length > 0){
+                propertyType.value= propertyTypeArray.length;
+            }
+            return propertyType;
+        }));
+    }, [props.properties]);
 
     console.log('data: ', data);
 
-    const getProperties=()=>{
-        setLoader(true);
-        PropertiesGet(null, token, res=>{
-            if(res?.code === 200){
-                setData(data.map((propertyType)=> {
-                    let propertyTypeArray= res?.data.filter((property)=> property.type === propertyType.name);
-                    if(propertyTypeArray.length > 0){
-                        propertyType.value= propertyTypeArray.length;
-                    }
-                    return propertyType;
-                }))
-            }
-            setLoader(false);
-        });
-    }
-
     return (
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
-            {loader ?
+        <Card shadow="sm" padding="lg" radius="md" withBorder style={{cursor: 'pointer'}} onClick={()=> router.push('/properties')}>
+            {props.loader ?
             <Center h={'200px'} w={'100%'}>
                 <Loader/>
             </Center>
             :
             <Stack>
                 <Group justify="space-between" mb="xs">
-                    <Text fw={500}>Properties by type</Text>
-                    {/* <Badge color="pink">Updated</Badge> */}
+                    <Text fw={500}>Properties</Text>
                 </Group>
                 <Grid>
                     <Grid.Col span={7}>
@@ -60,16 +48,13 @@ function DashboardPropertyTypesCard(props) {
                     <Grid.Col span={5}>
                         <Stack style={{height: '100%'}} justify={'center'}>
                             <Group wrap='nowrap'>
-                                <Text>{data.find((dt)=> dt.name === 'MOSQUE').value}</Text>
-                                <Badge color="#5185a6">MOSQUE</Badge>
+                                <Badge color="#5185a6">{`${data.find((dt)=> dt.name === 'MOSQUE')?.value} - MOSQUE`}</Badge>
                             </Group>
                             <Group wrap='nowrap'>
-                                <Text>{data.find((dt)=> dt.name === 'COMMERCIAL').value}</Text>
-                                <Badge color="#10516f">COMMERCIAL</Badge>
+                                <Badge color="#10516f">{`${data.find((dt)=> dt.name === 'COMMERCIAL')?.value} - COMMERCIAL`}</Badge>
                             </Group>
                             <Group wrap='nowrap'>
-                                <Text>{data.find((dt)=> dt.name === 'RESIDENTIAL').value}</Text>
-                                <Badge color="#9baebc">RESIDENTIAL</Badge>
+                                <Badge color="#9baebc">{`${data.find((dt)=> dt.name === 'RESIDENTIAL')?.value} - RESIDENTIAL`}</Badge>
                             </Group>
                         </Stack>
                     </Grid.Col>

@@ -126,7 +126,8 @@ function AppContent({ Component, pageProps }) {
                 leftSection={<item.icon size="1rem" stroke={1.5} color={'#5185a6'} />}
                 component={Link} 
                 href={item.path}
-                onClick={toggle}
+                //onClick={toggle}
+                onClick={()=> setValue(item.path)}
                 active={pathName === item.path}
                 />)}
             </AppShell.Section>
@@ -155,7 +156,7 @@ function AppContent({ Component, pageProps }) {
             className="bottom-mobile-navbar"
             >
               {navList.map((item)=>
-              <BottomNavigationAction label={item.name} value={item.path} icon={<item.icon size="1rem" stroke={1.5} />} /> //color={'#5185a6'}
+              <BottomNavigationAction label={item.name} value={item.path} icon={<item.icon size="1rem" stroke={1.5} />} />
               )}
               <BottomNavigationAction label={'Logout'} onClick={()=> clearStorageRedirectLogin()} value={'/'} icon={<IconSquareXFilled size="1rem" stroke={1.5} />} />
             </BottomNavigation>

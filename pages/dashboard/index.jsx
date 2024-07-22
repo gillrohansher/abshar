@@ -8,17 +8,35 @@ import { useAppStore, useAppDispatch, useWindowSize } from '../../lib/hooks';
 import { set_account_data, set_token } from '../../lib/generalActions/generalActions';
 import DashboardPropertyTypesCard from '../../components/DashboardPropertyTypesCard/DashboardPropertyTypesCard';
 import { IconMapPinFilled } from '@tabler/icons-react';
+import { PropertiesGet } from '@/api/fetchApis/Properties';
 
 function DashboardPage(props) {
     const size = useWindowSize();
     const store = useAppStore();
+    const {token} = store.getState().general;
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const [properties, setProperties] = useState([]);
+    const [propertiesLoader, setPropertiesLoader] = useState(false);
+
+    useEffect(() => {
+        getProperties();
+    }, []);
+
+    const getProperties=()=>{
+        setPropertiesLoader(true);
+        PropertiesGet(null, token, res=>{
+            if(res?.code === 200){
+                setProperties(res?.data);
+            }
+            setPropertiesLoader(false);
+        });
+    }
 
     return (
         <Stack>
             <SimpleGrid cols={size.width < 650 ? 1 : size.width < 767 ? 2 : size.width < 900 ? 1 : size.width < 1300 ? 2 : 3}>
-                <DashboardPropertyTypesCard/>
+                <DashboardPropertyTypesCard properties={properties} loader={propertiesLoader}/>
             </SimpleGrid>
         </Stack>
     );
