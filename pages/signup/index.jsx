@@ -55,7 +55,7 @@ function SignUpPage(props) {
       phone,
       password,
       countryCode: '+92',
-      type: Number(type), // Convert back to number when sending the data
+      type: 'CLIENT'//Number(type), // Convert back to number when sending the data
     };
 
     try {
