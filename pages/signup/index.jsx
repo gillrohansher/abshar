@@ -81,7 +81,7 @@ function SignUpPage(props) {
         <Group justify={'center'}>
             <img src={'/images/aabsar_logo.png'} style={{width: '150px'}}/>
         </Group>
-        <Box pos="relative">
+        <Box pos="relative" style={{minWidth: '320px'}}>
           <LoadingOverlay visible={loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
           {showEmailVerificationMessage ?
           <Alert variant="light" color="blue" title="Email verification">
