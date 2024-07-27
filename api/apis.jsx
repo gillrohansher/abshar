@@ -5,16 +5,16 @@ export const api_config = {
   baseUrl: api_base_url,
   authorization: {
     signin: {
-      signin_post: "user/login"
+      signin_post: "auth/login"
     },
     signup: {
-      signup_post: "user/register",
-      email_verification_put: "user/register-confirmation",
-      resend_email_verification_put: "user/register-token-refresh"
+      signup_post: "auth/register",
+      email_verification_put: "auth/register-confirmation",
+      resend_email_verification_put: "auth/register-token-refresh"
     },
     forget_password: {
-      reset_password: "user/reset-password",
-      reset_password_confirm: "user/reset-password-confirm"
+      reset_password: "auth/reset-password",
+      reset_password_confirm: "auth/reset-password-confirm"
     }
   },
   products:{
