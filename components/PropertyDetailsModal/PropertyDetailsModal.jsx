@@ -2,7 +2,7 @@ import { Anchor, Badge, Button, Group, Image, Modal, NumberFormatter, Select, Si
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { Slide } from 'react-slideshow-image';
-import { IconChevronRight, IconChevronLeft, IconPhotoOff } from '@tabler/icons-react';
+import { IconChevronRight, IconChevronLeft, IconPhotoOff, IconPencil, IconEdit } from '@tabler/icons-react';
 import 'react-slideshow-image/dist/styles.css'
 
 import {AddFeatureImageModal} from '../AddFeatureImageModal/AddFeatureImageModal';
@@ -20,7 +20,7 @@ const properties = {
 }
 
 
-export function PropertyDetailsModal({opened, onClose, selectedProperty, publishButtonClick, getProperties}) {
+export function PropertyDetailsModal({opened, onClose, selectedProperty, publishButtonClick, getProperties, editProperty}) {
     const [openAddFeatureImageModal, setOpenAddFeatureImageModal] = useState(false);
     const [currentProperty, setCurrentProperty] = useState(selectedProperty);
     const [publishOnFollow, setPublishOnFollow] = useState(false);
@@ -41,7 +41,10 @@ useEffect(() => {
     title={
     <Group>
         {currentProperty?.name}
-        <Badge color={currentProperty?.propertyStatus === "PUBLISHED" ? "#5185a6" : "gray"}>{currentProperty?.propertyStatus}</Badge>
+        <Group wrap='nowrap' gap='xs'>
+            <Badge color={currentProperty?.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{currentProperty?.propertyStatus}</Badge>
+            <IconEdit color='#5185a6' size={'18px'} style={{cursor: 'pointer'}} onClick={()=> editProperty(currentProperty)}/>
+        </Group>
     </Group>
     } 
     centered>
@@ -72,6 +75,14 @@ useEffect(() => {
                 <Stack gap={0}>
                     <Text c={'dimmed'} size="xs">Name</Text>
                     <Text size="sm">{currentProperty?.name}</Text>
+                </Stack>
+                <Stack gap={0}>
+                    <Text c={'dimmed'} size="xs">Request from:</Text>
+                    <Text size="sm">{currentProperty?.requestedUserInfo?.name}</Text>
+                </Stack>
+                <Stack gap={0}>
+                    <Text c={'dimmed'} size="xs">Assigned to:</Text>
+                    <Text size="sm">{currentProperty?.assignedUserInfo?.name}</Text>
                 </Stack>
                 <Stack gap={0}>
                     <Text c={'dimmed'} size="xs">Type</Text>
@@ -174,7 +185,7 @@ useEffect(() => {
                 <Text size="sm">{currentProperty?.remarks}</Text>
             </Stack>
             <Group grow>
-                <Button fullWidth mt="md" radius="md" onClick={()=> {
+                {/* <Button fullWidth mt="md" radius="md" onClick={()=> {
                     if(currentProperty.image.featuredImage){
                         publishButtonClick();
                     }else{
@@ -183,7 +194,7 @@ useEffect(() => {
                     }
                 }}>
                     {currentProperty?.propertyStatus === 'UNPUBLISHED' ? 'Publish' : 'Unpublish'}
-                </Button>
+                </Button> */}
             </Group>
         </Stack>
         {openAddFeatureImageModal &&
@@ -193,7 +204,7 @@ useEffect(() => {
         propertyId={currentProperty?.id}
         getProperties={()=> getProperties()}
         publishOnFollow={publishOnFollow}
-        publishProperty={()=> publishButtonClick()}
+        //publishProperty={()=> publishButtonClick()}
         />}
         {openExpandImageModal &&
         <ExpandImageModal

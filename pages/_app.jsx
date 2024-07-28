@@ -11,7 +11,7 @@ import { theme } from '../theme';
 import StoreProvider from '../StoreProvider.jsx';
 import './styles.css'
 import '@mantine/charts/styles.css';
-import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled, IconBrightnessFilled, IconLogout } from '@tabler/icons-react';
+import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled, IconBrightnessFilled, IconLogout, IconUserFilled, IconBuildingMosque } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
@@ -30,7 +30,35 @@ function AppContent({ Component, pageProps }) {
   const { accountData, token } = store.getState().general;
   const [loader, setLoader] = useState(true);
   const [value, setValue] = useState(0);
-  const navList = [
+  const navList = accountData.type === 'ADMIN' ? [ 
+    {
+      name: 'Dashboard',
+      path: '/dashboard',
+      icon: IconLayoutDashboardFilled
+    },
+    {
+      name: 'Products',
+      path: '/products',
+      icon: IconDropletFilled
+    },
+    {
+      name: 'Users',
+      path: '/users',
+      icon: IconUserFilled
+    },
+    {
+      name: 'Properties',
+      path: '/properties',
+      icon: IconHomeFilled
+    },
+    {
+      name: 'Mosques',
+      path: '/mosques',
+      icon: IconBuildingMosque
+    }
+  ]
+  :
+  [ 
     {
       name: 'Dashboard',
       path: '/dashboard',
@@ -40,22 +68,13 @@ function AppContent({ Component, pageProps }) {
       name: 'Properties',
       path: '/properties',
       icon: IconHomeFilled
-    },
-    {
-      name: 'Surveys',
-      path: '/surveys',
-      icon: IconFlaskFilled
-    },
-    {
-      name: 'Products',
-      path: '/products',
-      icon: IconDropletFilled
     }
   ];
 
   useEffect(() => {
     setLoader(true);
     console.log('token: ', token);
+    console.log('accountData: ', accountData);
     if (!accountData || Object.keys(accountData).length === 0 ) {
       if(!window.location.href.includes('/account-confirmation?token=')){
         router.push('/login');

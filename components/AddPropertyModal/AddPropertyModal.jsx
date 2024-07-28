@@ -8,7 +8,7 @@ import { useGeolocated } from "react-geolocated";
 import { Slide } from 'react-slideshow-image';
 
 import { ProductGet } from "../../api/fetchApis/Products";
-import { PropertiesPost, PropertyUploadImagePost } from "../../api/fetchApis/Properties";
+import { PropertiesPost, PropertiesPut, PropertyUploadImagePost } from "../../api/fetchApis/Properties";
 import { compressImage } from '@/helpers/helpers';
 import cities from '../../public/assets/cities.json';
 
@@ -23,7 +23,7 @@ const properties = {
     nextArrow: <button style={{ ...buttonStyle }}><IconChevronRight color='white'/></button>
 }
 
-export function AddPropertyModal({opened, onClose, getProperties}) {
+export function AddPropertyModal({opened, onClose, getProperties, users, edit, type}) {
 const store = useAppStore();
 const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
@@ -33,49 +33,56 @@ const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
         suppressLocationOnMount: true
         //userDecisionTimeout: 5000,
     });
-const [name, setName] = useState(null);
+const [name, setName] = useState(edit ? edit.name : null);
 const [nameError, setNameError] = useState(false);
-const [typeOptions, setTypeOptions] = useState(['COMMERCIAL', 'MOSQUE', 'RESIDENTIAL']);
-const [selectedType, setSelectedType] = useState(null);
+const [typeOptions, setTypeOptions] = useState(type ? ['COMMERCIAL', 'MOSQUE', 'RESIDENTIAL'] : ['COMMERCIAL', 'RESIDENTIAL']);
+const [selectedType, setSelectedType] = useState(type ? type : (edit ? edit.type : null));
 const [typeError, setTypeError] = useState(false);
-const [street, setStreet] = useState(null);
+const [street, setStreet] = useState(edit ? edit.street : null);
 const [streetError, setStreetError] = useState(null);
-const [area, setArea] = useState(null);
+const [area, setArea] = useState(edit ? edit.area : null);
 const [areaError, setAreaError] = useState(null);
-const [phase, setPhase] = useState(null);
+const [phase, setPhase] = useState(edit ? edit.phase : null);
 const [phaseError, setPhaseError] = useState(null);
-const [zipCode, setZipCode] = useState(null);
+const [zipCode, setZipCode] = useState(edit ? edit.zipCode : null);
 const [zipCodeError, setZipCodeError] = useState(null);
-const [city, setCity] = useState(null);
+const [city, setCity] = useState(edit ? edit.city : null);
 const [cityError, setCityError] = useState(null);
 const [country, setCountry] = useState('Pakistan');
 const [sourceOfWaterOptions, setSourceOfWaterOptions] = useState(['LINE', 'BORE', 'TANKER']);
-const [selectedSourceOfWater, setSelectedSourceOfWater] = useState([]);
+const [selectedSourceOfWater, setSelectedSourceOfWater] = useState(edit ? edit.sourceOfWater : []);
 const [sourceOfWaterError, setSourceOfWaterError] = useState(false);
-const [estimatedConsumption, setEstimatedConsumption] = useState(null);
+const [estimatedConsumption, setEstimatedConsumption] = useState(edit ? edit.estimatedConsumption : null);
 const [estimatedConsumptionError, setEstimatedConsumptionError] = useState(null);
-const [numberOfPeople, setNumberOfPeople] = useState(null);
+const [numberOfPeople, setNumberOfPeople] = useState(edit ? edit.noOfPeople : null);
 const [numberOfPeopleError, setNumberOfPeopleError] = useState(null);
-const [waterBill, setWaterBill] = useState(null);
-const [electricityBill, setElectricityBill] = useState(null);
-const [pocName, setPocName] = useState(null);
-const [pocContact, setPocContact] = useState(null);
+const [waterBill, setWaterBill] = useState(edit ? edit.waterBill : null);
+const [electricityBill, setElectricityBill] = useState(edit ? edit.electricityBill : null);
+const [pocName, setPocName] = useState(edit ? edit.pocName : null);
+const [pocContact, setPocContact] = useState(edit ? edit.pocContact : null);
 const [pocContactError, setPocContactError] = useState(null);
-const [pocCommitteeName, setPocCommitteeName] = useState(null);
-const [pocCommitteeContact, setPocCommitteeContact] = useState(null);
+const [pocCommitteeName, setPocCommitteeName] = useState(edit ? edit.pocCommitteeName : null);
+const [pocCommitteeContact, setPocCommitteeContact] = useState(edit ? edit.pocCommitteeContact : null);
 const [pocCommitteeContactError, setPocCommitteeContactError] = useState(null);
-const [pocDesignation, setPocDesignation] = useState(null);
-const [remarks, setRemarks] = useState(null);
+const [pocDesignation, setPocDesignation] = useState(edit ? edit.pocDesignation : null);
+const [remarks, setRemarks] = useState(edit ? edit.remarks : null);
 const [products, setProducts] = useState([]);
-const [selectedProducts, setSelectedProducts] = useState([]);
+const [selectedProducts, setSelectedProducts] = useState(edit ? edit.products : []);
 const [newProducts, setNewProducts] = useState(null);
 const {token} = store.getState().general;
 const [loader, setLoader] = useState(false);
 const [files, setFiles] = useState([]);
+const [firstLoadOfData, setFirstLoadOfData] = useState(true);
+const [selectedUser, setSelectedUser] = useState(edit ? edit.requestedUserInfo?.id : null);
+const [userError, setUserError] = useState(null);
+const [selectedSurveyor, setSelectedSurveyor] = useState(edit ? edit.assignedUserInfo?.id : null);
+const [surveyorError, setSurveyorError] = useState(null);
 
 
 console.log('files: ', files);
 console.log('cities: ', cities);
+
+console.log('users: ', users);
 
 const getProducts=()=>{
     ProductGet(null, token, res=>{
@@ -104,18 +111,72 @@ const postProperty=()=>{
         waterBill,
         electricityBill,
         pocName,
-        pocContact: pocContact.toString(),
+        pocContact: pocContact?.toString(),
         pocCommitteeName,
-        pocCommitteeContact: pocCommitteeContact.toString(),
+        pocCommitteeContact: pocCommitteeContact?.toString(),
         pocContactCountryCode: '+92',
         pocCommitteeCountryCode: '+92',
         pocDesignation,
         products: selectedProducts.map((selectedProduct)=> ({productId: selectedProduct.id, quantity: selectedProduct.quantity})),
+        requestedId: selectedUser,
+        assignedId: selectedSurveyor,
         remarks
     }, token, res=>{
         if(res?.code === 200){
             showNotification({
                 message: 'Property created successfully.',
+                color: 'green'
+            });
+            if(files.length === 0){
+                getProperties();
+                onClose();
+            }else{
+                postPropertyImages(res?.data[0]?.id);
+            }
+        }else{
+            setLoader(false);
+        }
+
+        if(files.length === 0){
+            setLoader(false);
+        }
+    })
+}
+
+const putProperty=()=>{
+    setLoader(true);
+    PropertiesPut({
+        propertyId: edit.id,
+        name,
+        type: selectedType,
+        street,
+        area,
+        phase,
+        zipCode,
+        city,
+        country,
+        latitude: coords?.latitude,
+        longitude: coords?.longitude,
+        sourceOfWater: selectedSourceOfWater,
+        estimatedConsumption,
+        noOfPeople: numberOfPeople,
+        waterBill,
+        electricityBill,
+        pocName,
+        pocContact: pocContact?.toString(),
+        pocCommitteeName,
+        pocCommitteeContact: pocCommitteeContact?.toString(),
+        pocContactCountryCode: '+92',
+        pocCommitteeCountryCode: '+92',
+        pocDesignation,
+        products: selectedProducts.map((selectedProduct)=> ({productId: selectedProduct.id, quantity: selectedProduct.quantity})),
+        requestedId: selectedUser,
+        assignedId: selectedSurveyor,
+        remarks
+    }, token, res=>{
+        if(res?.code === 200){
+            showNotification({
+                message: 'Property updated successfully.',
                 color: 'green'
             });
             if(files.length === 0){
@@ -184,18 +245,24 @@ const validate=()=>{
     setPhaseError(phase ? false : 'required');
     setZipCodeError(zipCode ? false : 'required');
     setCityError(city ? false : 'required');
-    setSourceOfWaterError(selectedSourceOfWater.length > 0 ? false : 'required');
-    setEstimatedConsumptionError(estimatedConsumption ? false : 'required');
-    setNumberOfPeopleError(numberOfPeople ? false : 'required');
+    setUserError(selectedUser ? false : 'required');
+    setSurveyorError(selectedSurveyor ? false : 'required');
+    // setSourceOfWaterError(selectedSourceOfWater.length > 0 ? false : 'required');
+    // setEstimatedConsumptionError(estimatedConsumption ? false : 'required');
+    // setNumberOfPeopleError(numberOfPeople ? false : 'required');
+
     // setPocCommitteeContactError(pocCommitteeContact.toString().length > 0 ? (/^\\d{7,15}$/.test('+92'+pocCommitteeContact.toString()) ? false : 'phone number incorrect') : false);
     // setPocContactError(pocContact.toString().length > 0 ? (/^\\d{7,15}$/.test('+92'+pocContact.toString()) ? false : 'phone number incorrect') : false);
-
-    if(name && selectedType && street && area && phase && zipCode && city && selectedSourceOfWater.length > 0 && estimatedConsumption && numberOfPeople //&& (pocCommitteeContact ? /^\\d{7,15}$/.test(pocCommitteeContact) : true) && (pocContact ? /^\\d{7,15}$/.test(pocContact) : true)
+    setFirstLoadOfData(false);
+    if(name && selectedType && street && area && phase && zipCode && city && selectedUser && selectedSurveyor
+        //&& selectedSourceOfWater.length > 0 && estimatedConsumption && numberOfPeople //&& (pocCommitteeContact ? /^\\d{7,15}$/.test(pocCommitteeContact) : true) && (pocContact ? /^\\d{7,15}$/.test(pocContact) : true)
     ){
         return true;
     }else{
         return false;
     }
+
+    
 }
 
 const renderSelectOption = ({ option }) => (
@@ -214,15 +281,17 @@ const renderSelectOption = ({ option }) => (
     </Group>
   );
 
-// useEffect(() => {
-//     validate();
-// }, [name, selectedType, street, area, phase, zipCode, city, selectedSourceOfWater, estimatedConsumption, numberOfPeople]);
+useEffect(() => {
+    if(firstLoadOfData === false){
+        validate();
+    }
+}, [name, selectedType, street, area, phase, zipCode, city, selectedUser, selectedSurveyor]);
 
 useEffect(() => {
     getProducts();
 }, []);
   return (
-    <Modal opened={opened} size='lg' onClose={onClose} title="Add property" centered>
+    <Modal opened={opened} size='lg' onClose={onClose} title={edit ? "Edit property" : "Add property"} centered>
         {loader ?
         <Center h={'100vh'} w={'100%'}>
             <Loader/>
@@ -260,6 +329,28 @@ useEffect(() => {
                 }}
                 />
 
+                {/* Requested from user */}
+                <Select
+                label="Requested from user"
+                searchable
+                data={users.filter((user)=> user.type === 'CLIENT')}
+                value={selectedUser}
+                required
+                error={userError}
+                onChange={setSelectedUser}
+                />
+
+                {/* Assigned to surveyor */}
+                <Select
+                label="Assigned to surveyor"
+                searchable
+                data={users.filter((user)=> user.type === 'SURVEYOR')}
+                value={selectedSurveyor}
+                required
+                error={surveyorError}
+                onChange={setSelectedSurveyor}
+                />
+
                 {/* Type */}
                 <Select
                 label="Type"
@@ -268,6 +359,7 @@ useEffect(() => {
                 value={selectedType}
                 required
                 error={typeError}
+                disabled={type}
                 onChange={setSelectedType}
                 />
 
@@ -345,7 +437,6 @@ useEffect(() => {
                 <MultiSelect
                 label="Source of water"
                 searchable
-                required
                 error={sourceOfWaterError}
                 data={sourceOfWaterOptions}
                 value={selectedSourceOfWater}
@@ -357,7 +448,6 @@ useEffect(() => {
                 <NumberInput
                 label="Estimated comsumption"
                 value={estimatedConsumption}
-                required
                 error={estimatedConsumptionError}
                 onChange={setEstimatedConsumption}
                 hideControls
@@ -367,7 +457,6 @@ useEffect(() => {
                 <NumberInput
                 label="Number of people"
                 value={numberOfPeople}
-                required
                 error={numberOfPeopleError}
                 onChange={setNumberOfPeople}
                 />
@@ -514,8 +603,8 @@ useEffect(() => {
                 <Button style={{background: 'rgba(0, 0, 0, 0.39)'}} className='general-buttons' onClick={()=> onClose()}>
                     Cancel
                 </Button>
-                <Button className='general-buttons' onClick={()=> validate() && postProperty()}>
-                    {'Add'}
+                <Button className='general-buttons' onClick={()=> validate() ? (edit ? putProperty() : postProperty()) : showNotification({message: 'Please first fill in required information to save.', color: 'red', id: 'informationMissing'})}>
+                    {edit ? 'Save' : 'Add'}
                 </Button>
             </Group>
             

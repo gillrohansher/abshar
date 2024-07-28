@@ -8,7 +8,7 @@ import { useAppStore, useAppDispatch } from '../../lib/hooks';
 import { set_account_data, set_token } from '../../lib/generalActions/generalActions';
 import { useDisclosure } from '@mantine/hooks';
 
-function AccountConfirmationPage(props) {
+function InviteUserAccountPage(props) {
     const router = useRouter();
     const [loader, setLoader] = useState(false);
     const [verificationToken, setVerificationToken] = useState(null);
@@ -65,7 +65,7 @@ function AccountConfirmationPage(props) {
                         {showPasswordVerificationMessage ?
                         <Alert variant="light" color="blue" title="Password reset">
                             <Stack>
-                                <span>Password reset was successful. Kindly click Next to login.</span>
+                                <span>Password was successfully set. Kindly click Next to login.</span>
                                 <Group justify={'flex-end'}>
                                     <Button 
                                     color={'#5185a6'}
@@ -92,7 +92,7 @@ function AccountConfirmationPage(props) {
                                 onChange={(e) => setConfirmPassword(e.currentTarget.value)}
                                 required
                                 />
-                                <Button color={'#5185a6'} onClick={()=> verifyPasswordReset()}>Reset password</Button>
+                                <Button color={'#5185a6'} onClick={()=> verifyPasswordReset()}>Set password</Button>
                             </Stack>
                         </Fieldset>}
                     </Box>
@@ -102,4 +102,4 @@ function AccountConfirmationPage(props) {
     );
 }
 
-export default AccountConfirmationPage;
+export default InviteUserAccountPage;

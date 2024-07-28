@@ -15,7 +15,7 @@ import { AddFeatureImageModal } from '@/components/AddFeatureImageModal/AddFeatu
 
 
 
-function PropertiesPage(props) {
+function MosquesPage(props) {
     const size = useWindowSize();
     const store = useAppStore();
     const dispatch = useAppDispatch();
@@ -58,7 +58,7 @@ function PropertiesPage(props) {
         setLoader(true);
         PropertiesGet(null, token, res=>{
             if(res?.code === 200){
-                setProperties(res.data.filter((property)=> property.type !== 'MOSQUE'));
+                setProperties(res.data.filter((property)=> property.type === 'MOSQUE'));
                 openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
             }
             setLoader(false);
@@ -203,7 +203,7 @@ function PropertiesPage(props) {
     const renderFilterBadges=()=>{
         return (
             <Group>
-                {/* <Badge 
+                <Badge 
                 style={{cursor: 'pointer'}} 
                 color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'MOSQUE') === undefined && 'gray'}
                 onClick={()=> {
@@ -215,7 +215,7 @@ function PropertiesPage(props) {
                 }}
                 >
                     MOSQUE
-                </Badge> */}
+                </Badge>
                 <Badge 
                 style={{cursor: 'pointer'}} 
                 color={filterPropertyType.length > 0 && filterPropertyType.find((filter)=> filter === 'RESIDENTIAL') === undefined && 'gray'}
@@ -253,7 +253,7 @@ function PropertiesPage(props) {
                     <TextInput
                     value={search}
                     onChange={(event) => setSearch(event.currentTarget.value)}
-                    placeholder={'Search property name or address...'}
+                    placeholder={'Search mosque name or address...'}
                     styles={{
                         input: {
                             minWidth: '260px'
@@ -261,7 +261,7 @@ function PropertiesPage(props) {
                     }}
                     style={{flex: size.width < 650 && 1}}
                     />
-                    {size.width > 650 && renderFilterBadges()}
+                    {/* {size.width > 650 && renderFilterBadges()} */}
                 </Group>
                 <Group>
                     <ActionIcon onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
@@ -272,7 +272,7 @@ function PropertiesPage(props) {
                     </ActionIcon>
                 </Group>
             </Group>
-            {size.width < 650 && renderFilterBadges()}
+            {/* {size.width < 650 && renderFilterBadges()} */}
             <Group>
                 {loader ?
                 <Center h={'100vh'} w={'100%'}>
@@ -317,6 +317,7 @@ function PropertiesPage(props) {
             <AddPropertyModal
             opened={openAddPropertyModal}
             edit={editProperty}
+            type={'MOSQUE'}
             users={users}
             onClose={()=> {
                 setOpenAddPropertyModal(false);
@@ -366,4 +367,4 @@ function PropertiesPage(props) {
     );
 }
 
-export default PropertiesPage;
+export default MosquesPage;

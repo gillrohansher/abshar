@@ -60,6 +60,34 @@ export async function PropertiesPost(data, token, res) {
       });
 }
 
+export async function PropertiesPut(data, token, res) {
+  await APIClientPUT({
+    url: api_config.properties.property_put,
+    data: data,
+    headers: {
+      Authorization: token,
+    }
+  })
+    .then(response => {
+        console.log('response.result: PropertiesPut: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        if(e.response.data.code ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e.response.data);
+          console.log('response.result: PropertiesPut: ', e.response.data.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e.response.data.message,
+            id: 'PropertiesPutError'
+          });
+        }
+    });
+}
+
 export async function PropertyUploadImagePost(data, token, res) {
   await APIClientPOST({
     url: api_config.properties.property_upload_image,

@@ -26,9 +26,17 @@ export const api_config = {
   properties:{
     property_get: "property/all",
     property_post: "property/add",
+    property_put: "property/update",
     property_delete: "property/delete/",
     property_change_status: "property/change-status",
     property_upload_image: "property/upload/images",
     property_upload_feature_image: "property/upload/feature-image"
+  },
+  users: {
+    user_post: "user/create",
+    user_get: "user/all",
+    user_delete: "user/delete",
+    user_change_role: "user/change/role",
+    user_change_account_status: "user/change/account-status"
   }
 };

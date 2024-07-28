@@ -18,7 +18,7 @@ function SignUpPage(props) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [type, setType] = useState('0'); // Default value as string
+  const [gender, setGender] = useState(null); // Default value as string
   const [showEmailVerificationMessage, setShowEmailVerificationMessage] = useState(false);
   const [loader, setLoader] = useState(false);
 
@@ -55,7 +55,8 @@ function SignUpPage(props) {
       phone,
       password,
       countryCode: '+92',
-      type: 'CLIENT'//Number(type), // Convert back to number when sending the data
+      gender
+      //type: 'ADMIN'//Number(type), // Convert back to number when sending the data
     };
 
     try {
@@ -114,6 +115,18 @@ function SignUpPage(props) {
                       onChange={(e) => setLastName(e.currentTarget.value)}
                       required
                   />
+                  <Select
+                      label="Gender"
+                      placeholder="Select gender"
+                      data={[
+                      { value: 'MALE', label: 'Male' },
+                      { value: 'FEMALE', label: 'Female' },
+                      { value: 'OTHER', label: 'Other' }
+                      ]}
+                      value={gender}
+                      onChange={(value) => setGender(value)}
+                      required
+                  />
                   <TextInput
                       label="Email"
                       placeholder="Enter your email"
@@ -135,17 +148,6 @@ function SignUpPage(props) {
                       onChange={(e) => setPassword(e.currentTarget.value)}
                       required
                   />
-                  {/* <Select
-                      label="Type"
-                      placeholder="Select type"
-                      data={[
-                      { value: '0', label: 'User' },
-                      { value: '1', label: 'Admin' },
-                      ]}
-                      value={type}
-                      onChange={(value) => setType(value)}
-                      required
-                  /> */}
                   <Button color={'#5185a6'} type="submit">Sign Up</Button>
                   </Stack>
               </form>

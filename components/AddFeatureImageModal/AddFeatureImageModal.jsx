@@ -23,12 +23,12 @@ export function AddFeatureImageModal({opened, onClose, propertyId, getProperties
                         color: 'green'
                     });
 
-                    if(publishOnFollow){
-                        publishProperty();
-                    }else{
+                    // if(publishOnFollow){
+                    //     publishProperty();
+                    // }else{
                         getProperties();
-                    }
-                    
+                    //}
+
                     onClose();
                 }
                 setLoader(false);
