@@ -76,12 +76,12 @@ function AppContent({ Component, pageProps }) {
     console.log('token: ', token);
     console.log('accountData: ', accountData);
     if (!accountData || Object.keys(accountData).length === 0 ) {
-      if(!window.location.href.includes('/account-confirmation?token=')){
+      if(!window.location.href.includes('/account-confirmation?token=') && !window.location.href.includes('/invite-user-account?token=') && !window.location.href.includes('/reset-password-confirmation?token=') && !window.location.href.includes('/forget-password')){
         router.push('/login');
       }
       setTimeout(() => {
         setLoader(false);  
-      }, !window.location.href.includes('/account-confirmation?token=') ? 600 : 0);
+      }, (!window.location.href.includes('/account-confirmation?token=') && !window.location.href.includes('/invite-user-account?token=') && !window.location.href.includes('/reset-password-confirmation?token=') && !window.location.href.includes('/forget-password')) ? 600 : 0);
     } else {
       if(window.location.href.includes(('/login'))){
         router.push('/dashboard');
@@ -103,7 +103,7 @@ function AppContent({ Component, pageProps }) {
         <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: "sm", blur: 10 }} />
       </Box>
       :
-      (pathName !== '/login' && pathName !== '/signup' && pathName !== '/forget-password' && !pathName?.includes('/reset-password-confirmation') && !pathName?.includes('/account-confirmation')) ?
+      (pathName !== '/login' && pathName !== '/signup' && pathName !== '/forget-password' && !pathName?.includes('/reset-password-confirmation') && !pathName?.includes('/account-confirmation') && !pathName?.includes('/invite-user-account')) ?
       <AppShell
         layout="alt"
         //header={{ height: '63px' }}
