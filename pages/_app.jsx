@@ -68,6 +68,11 @@ function AppContent({ Component, pageProps }) {
       name: 'Properties',
       path: '/properties',
       icon: IconHomeFilled
+    },
+    {
+      name: 'Mosques',
+      path: '/mosques',
+      icon: IconBuildingMosque
     }
   ];
 

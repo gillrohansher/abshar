@@ -63,7 +63,7 @@ function InviteUserAccountPage(props) {
                     <Box pos="relative" style={{minWidth: '320px'}}>
                         <LoadingOverlay visible={loader} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
                         {showPasswordVerificationMessage ?
-                        <Alert variant="light" color="blue" title="Password reset">
+                        <Alert variant="light" color="blue" title="Set password">
                             <Stack>
                                 <span>Password was successfully set. Kindly click Next to login.</span>
                                 <Group justify={'flex-end'}>
