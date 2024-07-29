@@ -88,7 +88,7 @@ function UsersPage(props) {
                     <TextInput
                     value={search}
                     onChange={(event) => setSearch(event.currentTarget.value)}
-                    placeholder={'Search category, type or making...'}
+                    placeholder={'Search first name, last name, email...'}
                     styles={{
                         input: {
                             minWidth: '250px'
