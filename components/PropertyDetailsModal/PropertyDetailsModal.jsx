@@ -7,6 +7,7 @@ import 'react-slideshow-image/dist/styles.css'
 
 import {AddFeatureImageModal} from '../AddFeatureImageModal/AddFeatureImageModal';
 import {ExpandImageModal} from '../ExpandImageModal/ExpandImageModal';
+import { useAppStore } from '@/lib/hooks';
 
 const buttonStyle = {
     width: "30px",
@@ -21,11 +22,13 @@ const properties = {
 
 
 export function PropertyDetailsModal({opened, onClose, selectedProperty, publishButtonClick, getProperties, editProperty}) {
+    const store = useAppStore();
     const [openAddFeatureImageModal, setOpenAddFeatureImageModal] = useState(false);
     const [currentProperty, setCurrentProperty] = useState(selectedProperty);
     const [publishOnFollow, setPublishOnFollow] = useState(false);
     const [openExpandImageModal, setOpenExpandImageModal] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const {accountData} = store.getState().general;
 
 const validate=()=>{
     return true;
@@ -43,7 +46,7 @@ useEffect(() => {
         {currentProperty?.name}
         <Group wrap='nowrap' gap='xs'>
             <Badge color={currentProperty?.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{currentProperty?.propertyStatus}</Badge>
-            <IconEdit color='#5185a6' size={'18px'} style={{cursor: 'pointer'}} onClick={()=> editProperty(currentProperty)}/>
+            {accountData.type !== 'CLIENT' && <IconEdit color='#5185a6' size={'18px'} style={{cursor: 'pointer'}} onClick={()=> editProperty(currentProperty)}/>}
         </Group>
     </Group>
     } 
@@ -65,7 +68,7 @@ useEffect(() => {
                             color={'white'}
                             />
                             <Text size={'xs'} style={{color: 'white'}}>{index === 0 ? "No featured image available" : "No image available"}</Text>
-                            {index === 0 && <Button onClick={()=> setOpenAddFeatureImageModal(true)}>Add image</Button>}
+                            {index === 0 && accountData.type !== 'CLIENT' && <Button onClick={()=> setOpenAddFeatureImageModal(true)}>Add image</Button>}
                         </Stack>
                         }
                     </Group>)}

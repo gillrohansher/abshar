@@ -180,8 +180,12 @@ function PropertiesPage(props) {
                     </Group>
                     <Stack gap={2}>
                         <Text size="sm" c="dimmed">{`${property.street && 'Street '+property.street+','} ${property.area && property.area+','} ${property.phase && 'phase '+property.phase+','} ${property.zipCode && property.zipCode+','} ${property.city && property.city+','} ${property.country && property.country}`}</Text>
-                        {property.requestedUserInfo && <Group wrap='nowrap' align={'flex-start'} gap='xs'><Text size="sm" c="#5185a6">Requested from:</Text><Text size="sm" c="dimmed">{`${property.requestedUserInfo.name}`}</Text></Group>}
-                        {property.assignedUserInfo && <Group wrap='nowrap' align={'flex-start'} gap='xs'><Text size="sm" c="#5185a6">Assigned to:</Text><Text size="sm" c="dimmed">{`${property.assignedUserInfo.name}`}</Text></Group>}
+                        <Group wrap='nowrap' align={'flex-start'} gap='xs'>
+                            <Text size="sm" c="#5185a6">Requested from:</Text>{property.requestedUserInfo && <Text size="sm" c="dimmed">{`${property.requestedUserInfo.name}`}</Text>}
+                        </Group>
+                        <Group wrap='nowrap' align={'flex-start'} gap='xs'>
+                            <Text size="sm" c="#5185a6">Assigned to:</Text>{property.assignedUserInfo && <Text size="sm" c="dimmed">{`${property.assignedUserInfo.name}`}</Text>}
+                        </Group>
                     </Stack>
                     
                 </Stack>

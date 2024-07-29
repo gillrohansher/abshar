@@ -69,7 +69,7 @@ const [remarks, setRemarks] = useState(edit ? edit.remarks : null);
 const [products, setProducts] = useState([]);
 const [selectedProducts, setSelectedProducts] = useState(edit ? edit.products : []);
 const [newProducts, setNewProducts] = useState(null);
-const {token} = store.getState().general;
+const {token, accountData} = store.getState().general;
 const [loader, setLoader] = useState(false);
 const [files, setFiles] = useState([]);
 const [firstLoadOfData, setFirstLoadOfData] = useState(true);
@@ -118,8 +118,8 @@ const postProperty=()=>{
         pocCommitteeCountryCode: '+92',
         pocDesignation,
         products: selectedProducts.map((selectedProduct)=> ({productId: selectedProduct.id, quantity: selectedProduct.quantity})),
-        requestedId: selectedUser,
-        assignedId: selectedSurveyor,
+        requestedId: accountData.type === 'CLIENT' ? accountData.id : selectedUser,
+        assignedId: accountData.type === 'CLIENT' ? null : selectedSurveyor,
         remarks
     }, token, res=>{
         if(res?.code === 200){
@@ -245,8 +245,8 @@ const validate=()=>{
     setPhaseError(phase ? false : 'required');
     setZipCodeError(zipCode ? false : 'required');
     setCityError(city ? false : 'required');
-    setUserError(selectedUser ? false : 'required');
-    setSurveyorError(selectedSurveyor ? false : 'required');
+    accountData.type !== 'CLIENT' && setUserError(selectedUser ? false : 'required');
+    accountData.type !== 'CLIENT' && setSurveyorError(selectedSurveyor ? false : 'required');
     // setSourceOfWaterError(selectedSourceOfWater.length > 0 ? false : 'required');
     // setEstimatedConsumptionError(estimatedConsumption ? false : 'required');
     // setNumberOfPeopleError(numberOfPeople ? false : 'required');
@@ -254,7 +254,7 @@ const validate=()=>{
     // setPocCommitteeContactError(pocCommitteeContact.toString().length > 0 ? (/^\\d{7,15}$/.test('+92'+pocCommitteeContact.toString()) ? false : 'phone number incorrect') : false);
     // setPocContactError(pocContact.toString().length > 0 ? (/^\\d{7,15}$/.test('+92'+pocContact.toString()) ? false : 'phone number incorrect') : false);
     setFirstLoadOfData(false);
-    if(name && selectedType && street && area && phase && zipCode && city && selectedUser && selectedSurveyor
+    if(name && selectedType && street && area && phase && zipCode && city && (accountData.type !== 'CLIENT' ? selectedUser : true) && (accountData.type !== 'CLIENT' ? selectedSurveyor : true)
         //&& selectedSourceOfWater.length > 0 && estimatedConsumption && numberOfPeople //&& (pocCommitteeContact ? /^\\d{7,15}$/.test(pocCommitteeContact) : true) && (pocContact ? /^\\d{7,15}$/.test(pocContact) : true)
     ){
         return true;
@@ -291,7 +291,7 @@ useEffect(() => {
     getProducts();
 }, []);
   return (
-    <Modal opened={opened} size='lg' onClose={onClose} title={edit ? "Edit property" : "Add property"} centered>
+    <Modal opened={opened} size='lg' onClose={onClose} title={accountData.type === 'CLIENT' ? (type ? "Request mosque survey" : "Request property survey") : (edit ? "Edit property" : "Add property")} centered>
         {loader ?
         <Center h={'100vh'} w={'100%'}>
             <Loader/>
@@ -299,21 +299,25 @@ useEffect(() => {
         :
         <Stack>
             <Stack gap={8}>
-                <Text size={'sm'} fw={600}>Images</Text>
-                <FileInput clearable multiple value={files} onChange={setFiles} accept="image/png,image/jpeg" />
-                {files.length > 0 &&
-                <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
-                    <Slide {...properties}>
-                        {files.map((file)=> {
-                            let url = URL.createObjectURL(file);
-                            return(
-                                <Group justify={'center'}>
-                                    <img src={url} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
-                                </Group>
-                            );
-                        })}
-                    </Slide>
-                </Group>}
+                {accountData.type !== 'CLIENT' &&
+                <>
+                    <Text size={'sm'} fw={600}>Images</Text>
+                    <FileInput clearable multiple value={files} onChange={setFiles} accept="image/png,image/jpeg" />
+                    {files.length > 0 &&
+                    <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
+                        <Slide {...properties}>
+                            {files.map((file)=> {
+                                let url = URL.createObjectURL(file);
+                                return(
+                                    <Group justify={'center'}>
+                                        <img src={url} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                                    </Group>
+                                );
+                            })}
+                        </Slide>
+                    </Group>}
+                </>}
+                
                 
                 <Text size={'sm'} fw={600}>Details</Text>
                 <SimpleGrid cols={2}>
@@ -330,6 +334,7 @@ useEffect(() => {
                 />
 
                 {/* Requested from user */}
+                {accountData.type !== 'CLIENT' &&
                 <Select
                 label="Requested from user"
                 searchable
@@ -338,9 +343,10 @@ useEffect(() => {
                 required
                 error={userError}
                 onChange={setSelectedUser}
-                />
+                />}
 
                 {/* Assigned to surveyor */}
+                {accountData.type !== 'CLIENT' &&
                 <Select
                 label="Assigned to surveyor"
                 searchable
@@ -349,7 +355,7 @@ useEffect(() => {
                 required
                 error={surveyorError}
                 onChange={setSelectedSurveyor}
-                />
+                />}
 
                 {/* Type */}
                 <Select
@@ -432,172 +438,177 @@ useEffect(() => {
                         </Text>
                     </Group>
                 </Stack>
+                {accountData.type !== 'CLIENT' &&
+                <>
+                    {/* Source of Water */}
+                    <MultiSelect
+                    label="Source of water"
+                    searchable
+                    error={sourceOfWaterError}
+                    data={sourceOfWaterOptions}
+                    value={selectedSourceOfWater}
+                    onChange={setSelectedSourceOfWater}
+                    />
+                    
 
-                {/* Source of Water */}
-                <MultiSelect
-                label="Source of water"
-                searchable
-                error={sourceOfWaterError}
-                data={sourceOfWaterOptions}
-                value={selectedSourceOfWater}
-                onChange={setSelectedSourceOfWater}
-                />
-                
+                    {/* Estimated comsumption */}
+                    <NumberInput
+                    label="Estimated comsumption"
+                    value={estimatedConsumption}
+                    error={estimatedConsumptionError}
+                    onChange={setEstimatedConsumption}
+                    hideControls
+                    />
 
-                {/* Estimated comsumption */}
-                <NumberInput
-                label="Estimated comsumption"
-                value={estimatedConsumption}
-                error={estimatedConsumptionError}
-                onChange={setEstimatedConsumption}
-                hideControls
-                />
+                    {/* Number of people */}
+                    <NumberInput
+                    label="Number of people"
+                    value={numberOfPeople}
+                    error={numberOfPeopleError}
+                    onChange={setNumberOfPeople}
+                    />
 
-                {/* Number of people */}
-                <NumberInput
-                label="Number of people"
-                value={numberOfPeople}
-                error={numberOfPeopleError}
-                onChange={setNumberOfPeople}
-                />
+                    {/* Water bill */}
+                    <NumberInput
+                    label="Water bill"
+                    value={waterBill}
+                    onChange={setWaterBill}
+                    prefix={'Rs. '}
+                    placeholder={'Rs. 0'}
+                    allowDecimal
+                    allowNegative={false}
+                    hideControls
+                    />
 
-                {/* Water bill */}
-                <NumberInput
-                label="Water bill"
-                value={waterBill}
-                onChange={setWaterBill}
-                prefix={'Rs. '}
-                placeholder={'Rs. 0'}
-                allowDecimal
-                allowNegative={false}
-                hideControls
-                />
+                    {/* Electricity bill */}
+                    <NumberInput
+                    label="Electricity bill"
+                    value={electricityBill}
+                    onChange={setElectricityBill}
+                    prefix={'Rs. '}
+                    placeholder={'Rs. 0'}
+                    allowDecimal
+                    allowNegative={false}
+                    hideControls
+                    />
 
-                {/* Electricity bill */}
-                <NumberInput
-                label="Electricity bill"
-                value={electricityBill}
-                onChange={setElectricityBill}
-                prefix={'Rs. '}
-                placeholder={'Rs. 0'}
-                allowDecimal
-                allowNegative={false}
-                hideControls
-                />
+                    {/* Point of contact name */}
+                    <TextInput
+                    label="Point of contact name"
+                    value={pocName}
+                    onChange={(event) => setPocName(event.currentTarget.value)}
+                    />
 
-                {/* Point of contact name */}
-                <TextInput
-                label="Point of contact name"
-                value={pocName}
-                onChange={(event) => setPocName(event.currentTarget.value)}
-                />
+                    {/* Point of contact number */}
+                    <NumberInput
+                    label="Point of contact number"
+                    value={pocContact}
+                    prefix={'+92-'}
+                    placeholder={'+92-XXXXXXXXXX'}
+                    error={pocContactError}
+                    onChange={setPocContact}
+                    hideControls
+                    />
 
-                {/* Point of contact number */}
-                <NumberInput
-                label="Point of contact number"
-                value={pocContact}
-                prefix={'+92-'}
-                placeholder={'+92-XXXXXXXXXX'}
-                error={pocContactError}
-                onChange={setPocContact}
-                hideControls
-                />
+                    {/* Point of contact designation */}
+                    <TextInput
+                    label="Point of contact designation"
+                    value={pocDesignation}
+                    onChange={(event) => setPocDesignation(event.currentTarget.value)}
+                    />
 
-                {/* Point of contact designation */}
-                <TextInput
-                label="Point of contact designation"
-                value={pocDesignation}
-                onChange={(event) => setPocDesignation(event.currentTarget.value)}
-                />
+                    {/* Point of committee name */}
+                    <TextInput
+                    label="Committee name"
+                    value={pocCommitteeName}
+                    onChange={(event) => setPocCommitteeName(event.currentTarget.value)}
+                    />
 
-                {/* Point of committee name */}
-                <TextInput
-                label="Committee name"
-                value={pocCommitteeName}
-                onChange={(event) => setPocCommitteeName(event.currentTarget.value)}
-                />
-
-                {/* Point of committee number */}
-                <NumberInput
-                label="Committee number"
-                value={pocCommitteeContact}
-                prefix={'+92-'}
-                placeholder={'+92-XXXXXXXXXX'}
-                error={pocCommitteeContactError}
-                onChange={setPocCommitteeContact}
-                hideControls
-                />
+                    {/* Point of committee number */}
+                    <NumberInput
+                    label="Committee number"
+                    value={pocCommitteeContact}
+                    prefix={'+92-'}
+                    placeholder={'+92-XXXXXXXXXX'}
+                    error={pocCommitteeContactError}
+                    onChange={setPocCommitteeContact}
+                    hideControls
+                    />
+                </>}
                 </SimpleGrid>
             </Stack>
-            {/* <Divider/> */}
-            <Stack gap={8}>
-                <Text size={'sm'} fw={600}>Products</Text>
-                <SimpleGrid cols={2}>
-                    {newProducts > 0 &&
-                    [...Array(newProducts)].map((_, index)=>
-                    <>
-                        <Select
-                        label={`Product ${index + 1}`}
-                        searchable
-                        data={products}
-                        value={selectedProducts[index].id}
-                        onChange={(value)=> setSelectedProducts(selectedProducts.map((selectedProduct, index_s_product)=> {
-                            if(index === index_s_product){
-                                return {
-                                    ...selectedProduct,
-                                    id: value
-                                }
-                            }else{
-                                return selectedProduct;
-                            }
-                        }))}
-                        renderOption={renderSelectOption}
-                        />
-                        <Group align={'flex-end'}>
-                            <NumberInput
-                            label="quantity"
-                            value={selectedProducts[index].quantity}
+            {accountData.type !== 'CLIENT' &&
+            <>
+                {/* <Divider/> */}
+                <Stack gap={8}>
+                    <Text size={'sm'} fw={600}>Products</Text>
+                    <SimpleGrid cols={2}>
+                        {newProducts > 0 &&
+                        [...Array(newProducts)].map((_, index)=>
+                        <>
+                            <Select
+                            label={`Product ${index + 1}`}
+                            searchable
+                            data={products}
+                            value={selectedProducts[index].id}
                             onChange={(value)=> setSelectedProducts(selectedProducts.map((selectedProduct, index_s_product)=> {
                                 if(index === index_s_product){
                                     return {
                                         ...selectedProduct,
-                                        quantity: value,
+                                        id: value
                                     }
                                 }else{
                                     return selectedProduct;
                                 }
                             }))}
+                            renderOption={renderSelectOption}
                             />
-                            <Group 
-                            onClick={()=> {
-                                setNewProducts(newProducts - 1);
-                                setSelectedProducts(selectedProducts.filter((selectedProduct, index_s_product)=> index !== index_s_product));
-                            }} style={{marginBottom: '10px', cursor: 'pointer'}}>
-                                <IconTrashFilled color='grey' size={'18px'}/>
+                            <Group align={'flex-end'}>
+                                <NumberInput
+                                label="quantity"
+                                value={selectedProducts[index].quantity}
+                                onChange={(value)=> setSelectedProducts(selectedProducts.map((selectedProduct, index_s_product)=> {
+                                    if(index === index_s_product){
+                                        return {
+                                            ...selectedProduct,
+                                            quantity: value,
+                                        }
+                                    }else{
+                                        return selectedProduct;
+                                    }
+                                }))}
+                                />
+                                <Group 
+                                onClick={()=> {
+                                    setNewProducts(newProducts - 1);
+                                    setSelectedProducts(selectedProducts.filter((selectedProduct, index_s_product)=> index !== index_s_product));
+                                }} style={{marginBottom: '10px', cursor: 'pointer'}}>
+                                    <IconTrashFilled color='grey' size={'18px'}/>
+                                </Group>
                             </Group>
-                        </Group>
-                        
-                    </>)}
-                </SimpleGrid>
-            </Stack>
-            <Stack>
-                <Group>
-                    <Button 
-                    onClick={()=> {
-                        setNewProducts(newProducts + 1);
-                        setSelectedProducts([...selectedProducts, {quantity: 0, id: null}])
-                    }}>Add product</Button>
-                </Group>
-            </Stack>
-            {/* <Divider/> */}
-                
-            <Stack>
-                <Textarea
-                label="Remarks"
-                value={remarks}
-                onChange={(event) => setRemarks(event.currentTarget.value)}
-                />
-            </Stack>
+                            
+                        </>)}
+                    </SimpleGrid>
+                </Stack>
+                <Stack>
+                    <Group>
+                        <Button 
+                        onClick={()=> {
+                            setNewProducts(newProducts + 1);
+                            setSelectedProducts([...selectedProducts, {quantity: 0, id: null}])
+                        }}>Add product</Button>
+                    </Group>
+                </Stack>
+                {/* <Divider/> */}
+                    
+                <Stack>
+                    <Textarea
+                    label="Remarks"
+                    value={remarks}
+                    onChange={(event) => setRemarks(event.currentTarget.value)}
+                    />
+                </Stack>
+            </>}
             
             <Group justify={'space-between'}>
                 <Button style={{background: 'rgba(0, 0, 0, 0.39)'}} className='general-buttons' onClick={()=> onClose()}>
