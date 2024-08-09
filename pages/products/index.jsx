@@ -41,12 +41,13 @@ function ProductsPage(props) {
         });
     }
     
-    const postProduct=(category, type, making)=>{
+    const postProduct=(category, type, making, isOptimizer)=>{
         setLoader(true);
         ProductPost({
             category, 
             type, 
-            making
+            making,
+            isOptimizer
         }, token, res=>{
             if(res?.code === 200){
                 showNotification({
@@ -75,13 +76,14 @@ function ProductsPage(props) {
         });
     }
 
-    const putProduct=(category, type, making, id)=>{
+    const putProduct=(category, type, making, isOptimizer, id)=>{
         setLoader(true);
         ProductPut({
             id,
             category, 
             type, 
-            making
+            making,
+            isOptimizer
         }, token, res=>{
             if(res?.code === 200){
                 showNotification({
@@ -221,13 +223,13 @@ function ProductsPage(props) {
             edit={editProduct}
             products={products}
             onClose={()=> {setOpenAddProductModal(false); setEditProduct(null);}}
-            addProduct={(category, type, making)=> {
-                postProduct(category, type, making);
+            addProduct={(category, type, making, isOptimizer)=> {
+                postProduct(category, type, making, isOptimizer);
                 setOpenAddProductModal(false);
                 setEditProduct(null);
             }}
-            editProduct={(category, type, making, id)=> {
-                putProduct(category, type, making, id);
+            editProduct={(category, type, making, isOptimizer, id)=> {
+                putProduct(category, type, making, isOptimizer, id);
                 setOpenAddProductModal(false);
                 setEditProduct(null);
             }}

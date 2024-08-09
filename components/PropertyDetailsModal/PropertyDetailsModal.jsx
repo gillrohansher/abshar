@@ -39,13 +39,33 @@ useEffect(() => {
     console.log('selectedProperty: ', selectedProperty);
     console.log('selectedProperty: currentProperty: ', currentProperty);
 }, [selectedProperty]);
+
+const mapPropertyStatusValues=(propertyStatus)=>{
+    switch (propertyStatus) {
+        case 'UNASSIGNED':
+            return 'Unassigned';
+
+        case 'ASSIGNED':
+            return 'Assigned';
+
+        case 'IN_REVIEW':
+            return 'In review';
+    
+        case 'COMPLETED':
+            return 'Completed';
+            
+        default:
+            return 'Unassigned';
+    }
+}
+
   return (
     <Modal size={'lg'} opened={opened} lockScroll={true} onClose={onClose} 
     title={
     <Group>
         {currentProperty?.name}
         <Group wrap='nowrap' gap='xs'>
-            <Badge color={currentProperty?.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{currentProperty?.propertyStatus}</Badge>
+            <Badge color={currentProperty?.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{mapPropertyStatusValues(currentProperty?.propertyStatus)}</Badge>
             {accountData.type !== 'CLIENT' && <IconEdit color='#5185a6' size={'18px'} style={{cursor: 'pointer'}} onClick={()=> editProperty(currentProperty)}/>}
         </Group>
     </Group>

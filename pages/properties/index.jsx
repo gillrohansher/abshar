@@ -1,12 +1,12 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, SimpleGrid, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, SimpleGrid, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { hideNotification, showNotification } from '@mantine/notifications';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize} from '../../lib/hooks';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff, IconDots } from '@tabler/icons-react';
 import { PropertiesDelete, PropertiesGet, PropertiesPost, PropertyChangeStatusPut, PropertyUploadFeatureImagePost, PropertyUploadImagePost } from '../../api/fetchApis/Properties';
 import { UsersGet } from '../../api/fetchApis/Users';
 import { AddPropertyModal } from '../../components/AddPropertyModal/AddPropertyModal';
@@ -99,22 +99,21 @@ function PropertiesPage(props) {
             setLoader(false);
         });
     }
-    // const publishProperty=(ids)=>{
-    //     setLoader(true);
-    //     PropertyChangeStatusPut(ids, 'PUBLISHED', token, res=>{
-    //         if(res?.code === 200){
-    //             hideNotification('propertyPublised');
-    //             hideNotification('propertyUnpublised');
-    //             showNotification({
-    //                 message: 'Property publised.',
-    //                 color: 'green',
-    //                 id: 'propertyPublised'
-    //             });
-    //             getProperties();
-    //         }
-    //         setLoader(false);
-    //     });
-    // }
+    const changeStatusProperty=(id, status)=>{
+        setLoader(true);
+        PropertyChangeStatusPut(id, status, token, res=>{
+            if(res?.code === 200){
+                hideNotification('propertyStatusUpdated');
+                showNotification({
+                    message: 'Property status updated.',
+                    color: 'green',
+                    id: 'propertyStatusUpdated'
+                });
+                getProperties();
+            }
+            setLoader(false);
+        });
+    }
 
     // const unpublishProperty=(ids)=>{
     //     setLoader(true);
@@ -138,6 +137,25 @@ function PropertiesPage(props) {
         setOpenPropertyDetailsModal(true);    
     }
 
+    const mapPropertyStatusValues=(propertyStatus)=>{
+        switch (propertyStatus) {
+            case 'UNASSIGNED':
+                return 'Unassigned';
+
+            case 'ASSIGNED':
+                return 'Assigned';
+
+            case 'IN_REVIEW':
+                return 'In review';
+        
+            case 'COMPLETED':
+                return 'Completed';
+                
+            default:
+                return 'Unassigned';
+        }
+    }
+
 
     const renderPropertyCard=(property)=>{
         return(
@@ -148,13 +166,39 @@ function PropertiesPage(props) {
             withBorder 
             style={{cursor: 'pointer', minWidth: '100%'}}>
                 <Card.Section>
-                    <Badge style={{position: 'absolute', top: 10, right: 10}} color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{property.propertyStatus}</Badge>
-                    <Checkbox
-                    style={{position: 'absolute', top: 10, left: 10}}
-                    styles={{input: {cursor: 'pointer'}}}
-                    checked={selectedProperties.find((selectedProperty)=> selectedProperty === property.id)}
-                    onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
-                    />
+                    <Group style={{position: 'absolute', top: 10, left: 10, right: 10, width: '95%'}} justify='space-between'>
+                        <Checkbox
+                        styles={{input: {cursor: 'pointer'}}}
+                        checked={selectedProperties.find((selectedProperty)=> selectedProperty === property.id)}
+                        onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
+                        />
+                        <Group justify={'space-between'}>
+                            <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>
+                            <Menu>
+                                <MenuTarget>
+                                    <ActionIcon onClick={()=> null} variant="filled" aria-label="Change property status">
+                                        <IconDots style={{width: '70%', height: '70%'}}/>
+                                    </ActionIcon>
+                                </MenuTarget>
+                                <MenuDropdown>
+                                    <MenuItem onClick={()=> changeStatusProperty(property.id, 'ASSIGNED')}>
+                                        Assigned
+                                    </MenuItem>
+                                    <MenuItem onClick={()=> changeStatusProperty(property.id, 'UNASSIGNED')}>
+                                        Unassigned
+                                    </MenuItem>
+                                    <MenuItem onClick={()=> changeStatusProperty(property.id, 'IN_REVIEW')}>
+                                        In review
+                                    </MenuItem>
+                                    <MenuItem onClick={()=> changeStatusProperty(property.id, 'COMPLETED')}>
+                                        Completed
+                                    </MenuItem>
+                                </MenuDropdown>
+                            </Menu>
+                            
+                        </Group>
+                    </Group>
+                    
                     {property.image.featuredImage ?
                     <Image
                     src={property.image.featuredImage.path}
@@ -327,6 +371,7 @@ function PropertiesPage(props) {
                 setEditProperty(null);
             }}
             getProperties={()=> getProperties()}
+            isProperties={true}
             />}
 
             {openPropertyDetailsModal &&

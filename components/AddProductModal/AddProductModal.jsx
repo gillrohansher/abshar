@@ -1,4 +1,4 @@
-import { Button, Group, Modal, Select, Stack, TextInput, useMantineColorScheme } from '@mantine/core';
+import { Button, Group, Modal, Select, Stack, Switch, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
@@ -8,7 +8,7 @@ const [categoriesData, setCategoriesData] = useState([...products.reduce((acc, c
       acc.push(current);
     }
     return acc;
-  }, []).map((product)=> ({value: product.category, label: product.category})), {value: 'other', label: 'Other'}]);
+  }, []).map((product)=> ({value: product.category, label: product.category}))]);
 const [othercategory, setOtherCategory] = useState(edit?.category);
 const [selectedCategory, setSelectedCategory] = useState(edit?.category);
 
@@ -25,6 +25,7 @@ const [making, setMaking] = useState(edit?.making);
 const [categoryError, setCategoryError] = useState(false);
 const [typeError, setTypeError] = useState(false);
 const [makingError, setMakingError] = useState(false);
+const [isOptimizer, setIsOptimizer] = useState(edit?.isOptimizer);
 
 const validate=()=>{
     setCategoryError((selectedCategory === 'other' ? othercategory : selectedCategory) ? false : 'required');
@@ -106,11 +107,18 @@ useEffect(() => {
             error={makingError}
             onChange={setMaking}
             />
+
+            {/* isOptimizer */}
+            <Switch
+            checked={isOptimizer}
+            onChange={(event) => setIsOptimizer(event.currentTarget.checked)}
+            label={'Optimizer'}
+            />
             <Group justify={'space-between'}>
                 <Button style={{background: 'rgba(0, 0, 0, 0.39)'}} className='general-buttons' onClick={()=> onClose()}>
                     Cancel
                 </Button>
-                <Button className='general-buttons' onClick={()=> validate() && (edit ? editProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making, edit?.id) : addProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making))}>
+                <Button className='general-buttons' onClick={()=> validate() && (edit ? editProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making, isOptimizer, edit?.id) : addProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making, isOptimizer))}>
                     {edit ? 'Save' : 'Add'}
                 </Button>
             </Group>

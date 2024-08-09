@@ -23,7 +23,7 @@ const properties = {
     nextArrow: <button style={{ ...buttonStyle }}><IconChevronRight color='white'/></button>
 }
 
-export function AddPropertyModal({opened, onClose, getProperties, users, edit, type}) {
+export function AddPropertyModal({opened, onClose, getProperties, users, edit, type, isProperties}) {
 const store = useAppStore();
 const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
@@ -518,14 +518,14 @@ useEffect(() => {
                     />
 
                     {/* Point of committee name */}
-                    <TextInput
+                    {!isProperties && <TextInput
                     label="Committee name"
                     value={pocCommitteeName}
                     onChange={(event) => setPocCommitteeName(event.currentTarget.value)}
-                    />
+                    />}
 
                     {/* Point of committee number */}
-                    <NumberInput
+                    {!isProperties && <NumberInput
                     label="Committee number"
                     value={pocCommitteeContact}
                     prefix={'+92-'}
@@ -533,7 +533,7 @@ useEffect(() => {
                     error={pocCommitteeContactError}
                     onChange={setPocCommitteeContact}
                     hideControls
-                    />
+                    />}
                 </>}
                 </SimpleGrid>
             </Stack>
