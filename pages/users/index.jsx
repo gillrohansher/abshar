@@ -172,9 +172,7 @@ function UsersPage(props) {
                             </Table.Td>
                             <Table.Td style={{textAlign: 'center'}}>
                                 <Group justify={'center'} align='center'>
-                                    {user.gender === 'OTHER' ? 'other' //<Image src={PrideIcon} priority/> 
-                                    : 
-                                    user.gender === 'FEMALE' ? <IconGenderFemale style={{color: 'lightpink'}}/> : user.gender === 'MALE' && <IconMars style={{color: 'lightblue'}}/>}
+                                    {user.gender === 'OTHER' ? <IconGenderTransgender style={{color: 'mediumpurple'}}/> : user.gender === 'FEMALE' ? <IconGenderFemale style={{color: 'lightpink'}}/> : user.gender === 'MALE' && <IconMars style={{color: 'lightblue'}}/>}
                                 </Group>
                             </Table.Td>
                             <Table.Td>
