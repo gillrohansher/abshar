@@ -11,7 +11,7 @@ import { AddProductModal } from '../../components/AddProductModal/AddProductModa
 import { UserDelete, UserPut, UsersGet } from '../../api/fetchApis/Users';
 import { AddUserModal } from '../../components/AddUserModal/AddUserModal';
 import PrideIcon from '../../helpers/svgs/pride.svg';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { EditUserModal } from '../../components/EditUserModal/EditUserModal';
 
 function UsersPage(props) {
@@ -172,7 +172,9 @@ function UsersPage(props) {
                             </Table.Td>
                             <Table.Td style={{textAlign: 'center'}}>
                                 <Group justify={'center'} align='center'>
-                                    {user.gender === 'OTHER' ? <Image src={PrideIcon} priority/> : user.gender === 'FEMALE' ? <IconGenderFemale style={{color: 'lightpink'}}/> : user.gender === 'MALE' && <IconMars style={{color: 'lightblue'}}/>}
+                                    {user.gender === 'OTHER' ? 'other' //<Image src={PrideIcon} priority/> 
+                                    : 
+                                    user.gender === 'FEMALE' ? <IconGenderFemale style={{color: 'lightpink'}}/> : user.gender === 'MALE' && <IconMars style={{color: 'lightblue'}}/>}
                                 </Group>
                             </Table.Td>
                             <Table.Td>
