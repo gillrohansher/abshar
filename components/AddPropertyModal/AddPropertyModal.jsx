@@ -1,16 +1,17 @@
 import { useAppStore } from '@/lib/hooks';
-import { Anchor, Button, Center, Divider, FileInput, Group, InputLabel, Loader, Modal, MultiSelect, NumberInput, Select, SimpleGrid, Stack, Text, Textarea, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AspectRatio, Badge, Button, Center, Divider, FileInput, Grid, Group, InputLabel, Loader, Modal, MultiSelect, NumberInput, Overlay, Select, SimpleGrid, Stack, Text, Textarea, TextInput, useMantineColorScheme } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconTrashFilled, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { IconTrashFilled, IconChevronLeft, IconChevronRight, IconReplace } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useGeolocated } from "react-geolocated";
 import { Slide } from 'react-slideshow-image';
 
 import { ProductGet } from "../../api/fetchApis/Products";
-import { PropertiesPost, PropertiesPut, PropertyUploadImagePost } from "../../api/fetchApis/Properties";
+import { PropertiesPost, PropertiesPut, PropertyDeleteImages, PropertyUploadImagePost } from "../../api/fetchApis/Properties";
 import { compressImage } from '@/helpers/helpers';
 import cities from '../../public/assets/cities.json';
+import { AddFeatureImageModal } from '../AddFeatureImageModal/AddFeatureImageModal';
 
 const buttonStyle = {
     width: "30px",
@@ -71,12 +72,13 @@ const [selectedProducts, setSelectedProducts] = useState(edit ? edit.products : 
 const [newProducts, setNewProducts] = useState(null);
 const {token, accountData} = store.getState().general;
 const [loader, setLoader] = useState(false);
-const [files, setFiles] = useState([]);
+const [files, setFiles] = useState(edit ? edit?.image?.otherImages : []);
 const [firstLoadOfData, setFirstLoadOfData] = useState(true);
 const [selectedUser, setSelectedUser] = useState(edit ? edit.requestedUserInfo?.id : null);
 const [userError, setUserError] = useState(null);
 const [selectedSurveyor, setSelectedSurveyor] = useState(edit ? edit.assignedUserInfo?.id : null);
 const [surveyorError, setSurveyorError] = useState(null);
+const [openAddFeatureImageModal, setOpenAddFeatureImageModal] = useState(false);
 
 
 console.log('files: ', files);
@@ -127,10 +129,10 @@ const postProperty=()=>{
                 message: 'Property created successfully.',
                 color: 'green'
             });
-            if(files.length === 0){
+            if(files.length === 0 || files.find((file)=> file.id === undefined) === undefined){
                 getProperties();
                 onClose();
-            }else{
+            }else {
                 postPropertyImages(res?.data[0]?.id);
             }
         }else{
@@ -179,10 +181,10 @@ const putProperty=()=>{
                 message: 'Property updated successfully.',
                 color: 'green'
             });
-            if(files.length === 0){
+            if(files.length === 0 || files.find((file)=> file.id === undefined) === undefined){
                 getProperties();
                 onClose();
-            }else{
+            }else {
                 postPropertyImages(res?.data[0]?.id);
             }
         }else{
@@ -215,18 +217,20 @@ const postPropertyImages=(id)=>{
     data.append('propertyId', id);
     
     files.map((file, index)=> {
-        if(file.size > 10000){
-            compressImage(file).then(value=> {
-                console.log('compressImage: ', value);
-                data.append('images', value);
+        if(file.id === undefined){
+            if(file.size > 10000){
+                compressImage(file).then(value=> {
+                    console.log('compressImage: ', value);
+                    data.append('images', value);
+                    if(files.length === (index+1)){
+                        callApi(data);
+                    }
+                });
+            }else{
+                data.append('images', file);
                 if(files.length === (index+1)){
                     callApi(data);
                 }
-            });
-        }else{
-            data.append('images', file);
-            if(files.length === (index+1)){
-                callApi(data);
             }
         }
     });
@@ -234,6 +238,18 @@ const postPropertyImages=(id)=>{
 
     
 
+}
+
+const deletePropertyImage=(propertyId, imageId)=>{
+    PropertyDeleteImages(propertyId, imageId, token, res=>{
+        if(res?.code === 200){
+            showNotification({
+                message: 'Property image deleted successfully.',
+                color: 'green'
+            });
+            getProperties();
+        }
+    })
 }
 
 const validate=()=>{
@@ -288,6 +304,10 @@ useEffect(() => {
 }, [name, selectedType, street, area, phase, zipCode, city, selectedUser, selectedSurveyor]);
 
 useEffect(() => {
+    setFiles(edit ? edit?.image?.otherImages : []);
+}, [edit]);
+
+useEffect(() => {
     getProducts();
 }, []);
   return (
@@ -299,22 +319,87 @@ useEffect(() => {
         :
         <Stack>
             <Stack gap={8}>
+                {/* {(accountData.type === 'ADMIN' && edit && edit?.image?.featuredImage) &&
+                <>
+                    <Text size={'sm'} fw={600}>Featured image</Text>
+                    <FileInput clearable={!edit} multiple value={edit?.image?.featuredImage} //onChange={setFiles} 
+                    accept="image/png,image/jpeg" />
+                    {edit?.image?.featuredImage?.path &&
+                    <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>    
+                        <Group justify={'center'}>
+                            <div style={{position: 'relative'}}>
+                                <img src={edit?.image?.featuredImage?.path} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                            </div>
+                        </Group>
+                    </Group>}
+                </>} */}
                 {accountData.type !== 'CLIENT' &&
                 <>
                     <Text size={'sm'} fw={600}>Images</Text>
-                    <FileInput clearable multiple value={files} onChange={setFiles} accept="image/png,image/jpeg" />
-                    {files.length > 0 &&
+                    <FileInput clearable={!edit} multiple value={files} onChange={(newFiles)=> files.length === 0 ? setFiles(newFiles) : setFiles([...files, ...newFiles])} accept="image/png,image/jpeg" />
+                    {/* {files.length > 0 &&
                     <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
                         <Slide {...properties}>
                             {files.map((file)=> {
-                                let url = URL.createObjectURL(file);
+                                let url = file?.id !== undefined ? file.path : URL.createObjectURL(file);
                                 return(
                                     <Group justify={'center'}>
+                                        {file?.id !== undefined ?
+                                        <div style={{position: 'relative'}}>
+                                            <img src={url} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                                            {edit && file?.id &&
+                                            <div style={{position: 'absolute', top: 5, right: 5}}>
+                                                <ActionIcon color={'red'} onClick={()=> deletePropertyImage(edit?.id, file?.id)}>
+                                                    <IconTrashFilled style={{width: '70%'}}/>
+                                                </ActionIcon>
+                                            </div>}
+                                        </div>
+                                        :
                                         <img src={url} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                                        }
                                     </Group>
                                 );
                             })}
                         </Slide>
+                    </Group>} */}
+                    {(files.length > 0 || edit?.image?.featuredImage) &&
+                    <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
+                        <SimpleGrid cols={3}>
+                            {edit?.image?.featuredImage &&
+                                <Group justify={'center'}>
+                                    <div style={{position: 'relative'}}>
+                                        <Group style={{borderRadius: '2px', height: '200px', backgroundColor: 'black'}} align='center' justify={'center'}>
+                                            <img src={edit?.image?.featuredImage.path} style={{maxHeight: '200px', minWidth: '100px', maxWidth: '150px', objectFit: 'cover'}} />
+                                        </Group>
+                                        {<div style={{position: 'absolute', top: 5, right: 5}}>
+                                            <ActionIcon  onClick={()=> setOpenAddFeatureImageModal(true)}>
+                                                <IconReplace style={{width: '70%'}}/>
+                                            </ActionIcon>
+                                        </div>}
+                                        {<div style={{position: 'absolute', top: 5, left: 5}}>
+                                            <Badge>Featured</Badge>
+                                        </div>}
+                                    </div>
+                                </Group>
+                            }
+                            { files.map((file)=> {
+                                let url = file?.id !== undefined ? file.path : URL.createObjectURL(file);
+                                return(
+                                    <Group justify={'center'}>
+                                        <div style={{position: 'relative'}}>
+                                            <Group style={{borderRadius: '2px', height: '200px', backgroundColor: 'black'}} align='center' justify={'center'}>
+                                                <img src={url} style={{borderRadius: '2px', maxHeight: '200px', minWidth: '100px', maxWidth: '150px', objectFit: 'cover'}} />
+                                            </Group>
+                                            {<div style={{position: 'absolute', top: 5, right: 5}}>
+                                                <ActionIcon color={'red'} onClick={()=> file.id !== undefined ? deletePropertyImage(edit?.id, file?.id) : setFiles(files.filter((filterFile)=> filterFile.name !== file.name))}>
+                                                    <IconTrashFilled style={{width: '70%'}}/>
+                                                </ActionIcon>
+                                            </div>}
+                                        </div>
+                                    </Group>
+                                );
+                            })}
+                        </SimpleGrid>
                     </Group>}
                 </>}
                 
@@ -622,6 +707,14 @@ useEffect(() => {
             </Group>
             
         </Stack>}
+        {openAddFeatureImageModal &&
+        <AddFeatureImageModal
+        opened={openAddFeatureImageModal}
+        onClose={()=> setOpenAddFeatureImageModal(false)}
+        propertyId={edit?.id}
+        editFeatureImage={edit?.image?.featuredImage}
+        getProperties={()=> getProperties()}
+        />}
     </Modal>
   );
 }

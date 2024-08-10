@@ -25,6 +25,7 @@ export const api_config = {
   },
   properties:{
     property_get: "property/all",
+    property_count_get: "property/count",
     property_post: "property/add",
     property_put: "property/update",
     property_delete: "property/delete/",

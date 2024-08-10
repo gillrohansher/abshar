@@ -61,6 +61,7 @@ function PropertiesPage(props) {
             if(res?.code === 200){
                 setProperties(res.data.filter((property)=> property.type !== 'MOSQUE'));
                 openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
+                editProperty && setEditProperty(res.data.find((property)=> property.id === editProperty?.id));
             }
             setLoader(false);
         });

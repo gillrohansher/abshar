@@ -2,7 +2,7 @@ import { Anchor, Badge, Button, Group, Image, Modal, NumberFormatter, Select, Si
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { Slide } from 'react-slideshow-image';
-import { IconChevronRight, IconChevronLeft, IconPhotoOff, IconPencil, IconEdit } from '@tabler/icons-react';
+import { IconChevronRight, IconChevronLeft, IconPhotoOff, IconPencil, IconEdit, IconTrashFilled } from '@tabler/icons-react';
 import 'react-slideshow-image/dist/styles.css'
 
 import {AddFeatureImageModal} from '../AddFeatureImageModal/AddFeatureImageModal';
@@ -76,12 +76,18 @@ const mapPropertyStatusValues=(propertyStatus)=>{
                 <Slide {...properties}>
                     {[currentProperty.image.featuredImage, ...currentProperty.image.otherImages].map((image, index)=>
                     <Group justify={'center'}>
-                        {image ? <img src={image.path} 
-                        onClick={()=> {
-                            setOpenExpandImageModal(true);
-                            setSelectedImage(image.path);
-                        }} 
-                        style={{borderRadius: '2px', height: '237px', objectFit: 'cover', cursor: 'pointer'}} />
+                        {image ? 
+                        <div style={{position: 'relative'}}>
+                            <img src={image.path} 
+                            onClick={()=> {
+                                setOpenExpandImageModal(true);
+                                setSelectedImage(image.path);
+                            }} 
+                            style={{borderRadius: '2px', height: '237px', objectFit: 'cover', cursor: 'pointer'}}/>
+                            {index === 0 && <Badge style={{position: 'absolute', top: 10, right: 10}}>Featured</Badge>}
+                            {/* {index === 0 && accountData.type !== 'CLIENT' && <Button style={{position: 'absolute', left: 0, right: 0, marginLeft: 'auto', marginRight: 'auto', maxWidth: '150px'}} onClick={()=> setOpenAddFeatureImageModal(true)}>Replace image</Button>} */}
+                        </div>
+                        
                         :
                         <Stack style={{height: '237px', borderRadius: '2px'}} justify='center' align={'center'}>
                             <IconPhotoOff
@@ -180,14 +186,17 @@ const mapPropertyStatusValues=(propertyStatus)=>{
                     <Text c={'dimmed'} size="xs">Point of contact designation</Text>
                     <Text size="sm">{currentProperty?.pocDesignation}</Text>
                 </Stack>
-                <Stack gap={0}>
-                    <Text c={'dimmed'} size="xs">Committee name</Text>
-                    <Text size="sm">{currentProperty?.pocCommitteeName}</Text>
-                </Stack>
-                <Stack gap={0}>
-                    <Text c={'dimmed'} size="xs">Committee number</Text>
-                    <Text size="sm">{currentProperty?.pocCommitteeCountryCode + currentProperty?.pocCommitteeContact}</Text>
-                </Stack>
+                {selectedProperty?.type === 'MOSQUE' &&
+                <>
+                    <Stack gap={0}>
+                        <Text c={'dimmed'} size="xs">Committee name</Text>
+                        <Text size="sm">{currentProperty?.pocCommitteeName}</Text>
+                    </Stack>
+                    <Stack gap={0}>
+                        <Text c={'dimmed'} size="xs">Committee number</Text>
+                        <Text size="sm">{currentProperty?.pocCommitteeCountryCode + currentProperty?.pocCommitteeContact}</Text>
+                    </Stack>
+                </>}
             </SimpleGrid>
             <Stack gap={8}>
                 <Text size={'sm'} fw={600}>Products</Text>

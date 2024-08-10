@@ -8,24 +8,24 @@ import { useAppStore, useAppDispatch, useWindowSize } from '../../lib/hooks';
 import { set_account_data, set_token } from '../../lib/generalActions/generalActions';
 import DashboardPropertyTypesCard from '../../components/DashboardPropertyTypesCard/DashboardPropertyTypesCard';
 import { IconMapPinFilled } from '@tabler/icons-react';
-import { PropertiesGet } from '@/api/fetchApis/Properties';
+import { PropertiesCountGet, PropertiesGet } from '@/api/fetchApis/Properties';
 
 function DashboardPage(props) {
     const size = useWindowSize();
     const store = useAppStore();
-    const {token} = store.getState().general;
+    const {token, accountData} = store.getState().general;
     const dispatch = useAppDispatch();
     const router = useRouter();
     const [properties, setProperties] = useState([]);
     const [propertiesLoader, setPropertiesLoader] = useState(false);
 
     useEffect(() => {
-        getProperties();
+        getPropertiesCount();
     }, []);
 
-    const getProperties=()=>{
+    const getPropertiesCount=()=>{
         setPropertiesLoader(true);
-        PropertiesGet(null, token, res=>{
+        PropertiesCountGet(accountData.type === 'ADMIN' ? null : accountData?.id, token, res=>{
             if(res?.code === 200){
                 setProperties(res?.data);
             }

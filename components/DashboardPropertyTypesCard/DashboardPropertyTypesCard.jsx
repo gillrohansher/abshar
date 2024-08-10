@@ -20,9 +20,9 @@ function DashboardPropertyTypesCard(props) {
 
     useEffect(() => {
         setData(data.map((propertyType)=> {
-            let propertyTypeArray= props.properties.filter((property)=> property.type === propertyType.name);
-            if(propertyTypeArray.length > 0){
-                propertyType.value= propertyTypeArray.length;
+            let selectedProperty= props.properties.find((property)=> property.propertyType === propertyType.name);
+            if(selectedProperty !== undefined){
+                propertyType.value= selectedProperty.count;
             }
             return propertyType;
         }));

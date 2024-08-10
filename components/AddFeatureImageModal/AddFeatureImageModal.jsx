@@ -6,8 +6,8 @@ import { compressImage } from '@/helpers/helpers';
 import { useAppStore } from '@/lib/hooks';
 import { showNotification } from '@mantine/notifications';
 
-export function AddFeatureImageModal({opened, onClose, propertyId, getProperties, publishOnFollow, publishProperty}) {
-    const [file, setFile] = useState(null);
+export function AddFeatureImageModal({opened, onClose, propertyId, getProperties, publishOnFollow, publishProperty, editFeatureImage}) {
+    const [file, setFile] = useState(editFeatureImage ? editFeatureImage : null);
     const [loader, setLoader] = useState(false);
     const store = useAppStore();
     const {token} = store.getState().general;
@@ -49,7 +49,7 @@ export function AddFeatureImageModal({opened, onClose, propertyId, getProperties
     }
 
     return (
-    <Modal opened={opened} onClose={onClose} title="Add feature image" centered>
+    <Modal opened={opened} onClose={onClose} title={editFeatureImage ? "Replace feature image" : "Add feature image"} centered>
         <Stack>
             {loader ?
             <Center h={'350px'} w={'100%'}>
@@ -57,11 +57,11 @@ export function AddFeatureImageModal({opened, onClose, propertyId, getProperties
             </Center>
             :
             <>
-                <FileInput clearable value={file} onChange={setFile} accept="image/png,image/jpeg" />
+                <FileInput clearable={file?.id === undefined} value={file} onChange={(newFile)=> newFile ? setFile(newFile) : editFeatureImage ? setFile(editFeatureImage) : setFile(null)} accept="image/png,image/jpeg" />
                 <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
                     <Group justify={'center'}>
                         {file ?
-                            <img src={URL.createObjectURL(file)} style={{borderRadius: '2px', height: '237px', objectFit: 'cover'}} />
+                            <img src={file.id !== undefined ? file.path : URL.createObjectURL(file)} style={{height: '237px', maxWidth: '380px', objectFit: 'cover'}} />
                             :
                             <Stack style={{height: '237px', borderRadius: '2px'}} justify='center' align={'center'}>
                                 <IconPhotoOff
@@ -76,7 +76,7 @@ export function AddFeatureImageModal({opened, onClose, propertyId, getProperties
             
             <Group justify={'space-between'} style={{width: '100%'}}>
                 <Button color={'gray'} onClick={()=> onClose()}>Cancel</Button>
-                <Button onClick={()=> uploadFeatureImage()} disabled={file === null}>Upload</Button>
+                <Button onClick={()=> uploadFeatureImage()} disabled={file === null}>{editFeatureImage ? 'Save' : 'Upload'}</Button>
             </Group>
         </Stack>
     </Modal>

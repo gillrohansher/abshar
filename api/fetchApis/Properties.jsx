@@ -34,6 +34,34 @@ export async function PropertiesGet(data, token, res) {
       });
 }
 
+export async function PropertiesCountGet(data, token, res) {
+  await APIClientGET({
+    url: api_config.properties.property_count_get+'?userId='+data,
+    headers: {
+      Authorization: token,
+      Accept: 'application/json, text/plain, */*'
+    }
+  })
+    .then(response => {
+        console.log('response.result: PropertiesGet: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        if(e?.response?.data?.code ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e?.response?.data);
+          console.log('response.result: PropertiesGet: ', e?.response?.data?.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e?.response?.data?.message,
+            id: 'PropertiesGetError'
+          });
+        }
+    });
+}
+
 export async function PropertiesPost(data, token, res) {
     await APIClientPOST({
       url: api_config.properties.property_post,
@@ -202,4 +230,35 @@ export async function PropertiesDelete(data, token, res) {
             });
           }
       });
+}
+
+export async function PropertyDeleteImages(propertyId, imageId, token, res) {
+  let data = new FormData();
+  data.append('propertyId', propertyId);
+  data.append('imageIds', imageId);
+  await APIClientDELETE({
+    url: api_config.properties.property_delete+'images',
+    data,
+    headers: {
+      Authorization: token,
+    }
+  })
+    .then(response => {
+        console.log('response.result: PropertyDeleteImages: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        if(e.response.data.code ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e.response.data);
+          console.log('response.result: PropertyDeleteImages: ', e.response.data.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e.response.data.message,
+            id: 'PropertyDeleteImagesError'
+          });
+        }
+    });
 }
