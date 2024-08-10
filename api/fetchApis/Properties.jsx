@@ -5,8 +5,10 @@ import { clearStorageRedirectLogin, getAuthToken } from "../../helpers/helpers";
 
 
 export async function PropertiesGet(data, token, res) {
+    let url = data ? data.requestedId !== undefined ? `${api_config.properties.property_get}?requestedId=${data.requestedId}` : data.assigneeId ? `${api_config.properties.property_get}?assigneeId=${data.assigneeId}` : api_config.properties.property_get : api_config.properties.property_get;
+
     await APIClientGET({
-      url: api_config.properties.property_get,
+      url,
       headers: {
         Authorization: token,
         Accept: 'application/json, text/plain, */*'

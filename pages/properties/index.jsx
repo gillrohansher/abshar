@@ -55,8 +55,9 @@ function PropertiesPage(props) {
 
     console.log('selectedProperties: ', selectedProperties);
     const getProperties=()=>{
+        console.log('accountData: ', accountData);
         setLoader(true);
-        PropertiesGet(null, token, res=>{
+        PropertiesGet(accountData?.type === 'ADMIN' ? null : accountData?.type === 'CLIENT' ? {requestedId: accountData?.id} : accountData?.type === 'SURVEYOR' ? {assigneeId: accountData?.id} : null, token, res=>{
             if(res?.code === 200){
                 setProperties(res.data.filter((property)=> property.type !== 'MOSQUE'));
                 openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
