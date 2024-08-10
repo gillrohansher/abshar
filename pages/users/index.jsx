@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Fieldset, Group, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Fieldset, Group, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, Select, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
 import { use, useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -8,7 +8,7 @@ import { useAppStore, useAppDispatch, useWindowSize } from '../../lib/hooks';
 import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconSortAscending, IconSortDescending, IconGenderTransgender, IconMars, IconGenderFemale } from '@tabler/icons-react';
 import { ProductDelete, ProductGet, ProductPost, ProductPut } from '../../api/fetchApis/Products';
 import { AddProductModal } from '../../components/AddProductModal/AddProductModal';
-import { UserDelete, UserPut, UsersGet } from '../../api/fetchApis/Users';
+import { UserChangeAccountStatusPut, UserDelete, UserPut, UsersGet } from '../../api/fetchApis/Users';
 import { AddUserModal } from '../../components/AddUserModal/AddUserModal';
 import PrideIcon from '../../helpers/svgs/pride.svg';
 // import Image from 'next/image';
@@ -30,6 +30,13 @@ function UsersPage(props) {
     const [activeSorting, setActiveSorting] = useState(null);
     const [onHoverSort, setOnHoverSort] = useState(false);
     const {token, accountData} = store.getState().general;
+    const [userStatusOptions, setUserStatusOptions] = useState([
+        {label: 'Activated', value: 'ACTIVATED'},
+        {label: 'Pending', value: 'PENDING'},
+        {label: 'Suspend', value: 'SUSPEND'},
+        {label: 'Blocked', value: 'BLOCKED'}
+    ]);
+    const [changeStatusUserLoader, setChangeStatusUserLoader] = useState(false);
 
     useEffect(() => {
         setLoader(true);
@@ -40,13 +47,14 @@ function UsersPage(props) {
 
     console.log('selectedUsers: ', selectedUsers);
     console.log('openAddUserModal: ', openAddUserModal);
-    const getUsers=()=>{
-        setLoader(true);
+    const getUsers=(stopLoader=true)=>{
+        setLoader(stopLoader);
         UsersGet(null, token, res=>{
             if(res?.code === 200){
                 setUsers(res.data);
             }
             setLoader(false);
+            setChangeStatusUserLoader(false);
         });
     }
 
@@ -65,20 +73,18 @@ function UsersPage(props) {
         });
     }
 
-    const putUser=(data)=>{
-        setLoader(true);
-        UserPut({
-            data
-        }, token, res=>{
+    const putChangeUserStatus=(id, status)=>{
+        // setLoader(true);
+        setChangeStatusUserLoader(id);
+        UserChangeAccountStatusPut(id, status, token, res=>{
             if(res?.code === 200){
                 showNotification({
-                    message: 'User updated successfully.',
+                    message: 'User status updated successfully.',
                     color: 'green',
-                    id: 'userUpdated'
+                    id: 'userStatusUpdated'
                 });
-                getUsers();
             }
-            setLoader(false);
+            getUsers(false);
         });
     }
 
@@ -185,7 +191,14 @@ function UsersPage(props) {
                                 <Badge>{user.type}</Badge>
                             </Table.Td>
                             <Table.Td>
-                                {user.status}
+                                {changeStatusUserLoader === user.id ?
+                                <Loader size={'xs'}/>
+                                :
+                                <Select
+                                data={userStatusOptions}
+                                value={user.status}
+                                onChange={(value)=> putChangeUserStatus(user.id, value)}
+                                />}
                             </Table.Td>
                             <Table.Td style={{textAlign: 'right'}}>
                                 {accountData.id !== user.id && <Menu>
