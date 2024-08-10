@@ -1,4 +1,4 @@
-import { Button, Group, Modal, Select, Stack, Switch, TextInput, useMantineColorScheme } from '@mantine/core';
+import { Button, Group, Modal, NumberInput, Select, Stack, Switch, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
@@ -22,6 +22,8 @@ const [otherType, setOtherType] = useState(edit?.type);
 const [selectedType, setSelectedType] = useState(edit?.type);
 
 const [making, setMaking] = useState(edit?.making);
+
+const [price, setPrice] = useState(edit?.price);
 const [categoryError, setCategoryError] = useState(false);
 const [typeError, setTypeError] = useState(false);
 const [makingError, setMakingError] = useState(false);
@@ -98,6 +100,15 @@ useEffect(() => {
             }}
             />}
 
+            <NumberInput
+            label="Price"
+            prefix='Rs. '
+            placeholder='Rs. 0'
+            value={price}
+            onChange={setPrice}
+            hideControls
+            />
+
             {/* Making */}
             <Select
             label="Making"
@@ -118,7 +129,7 @@ useEffect(() => {
                 <Button style={{background: 'rgba(0, 0, 0, 0.39)'}} className='general-buttons' onClick={()=> onClose()}>
                     Cancel
                 </Button>
-                <Button className='general-buttons' onClick={()=> validate() && (edit ? editProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making, isOptimizer, edit?.id) : addProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making, isOptimizer))}>
+                <Button className='general-buttons' onClick={()=> validate() && (edit ? editProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making, price, isOptimizer, edit?.id) : addProduct(selectedCategory !== 'other' ? selectedCategory : othercategory, selectedType !== 'other' ? selectedType : otherType, making, price, isOptimizer))}>
                     {edit ? 'Save' : 'Add'}
                 </Button>
             </Group>

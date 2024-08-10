@@ -41,13 +41,14 @@ function ProductsPage(props) {
         });
     }
     
-    const postProduct=(category, type, making, isOptimizer)=>{
+    const postProduct=(category, type, making, price, isOptimizer)=>{
         setLoader(true);
         ProductPost({
             category, 
             type, 
             making,
-            isOptimizer
+            isOptimizer,
+            price
         }, token, res=>{
             if(res?.code === 200){
                 showNotification({
@@ -55,8 +56,15 @@ function ProductsPage(props) {
                     color: 'green',
                     id: 'productAdded'
                 });
-                getProducts();
+            }else{
+                console.log('error: ', res);
+                showNotification({
+                    message: res?.data,
+                    color: 'red',
+                    id: 'productAddedError'
+                });
             }
+            getProducts();
             setLoader(false);
         });
     }
@@ -76,14 +84,15 @@ function ProductsPage(props) {
         });
     }
 
-    const putProduct=(category, type, making, isOptimizer, id)=>{
+    const putProduct=(category, type, making, price, isOptimizer, id)=>{
         setLoader(true);
         ProductPut({
             id,
             category, 
             type, 
             making,
-            isOptimizer
+            isOptimizer,
+            price
         }, token, res=>{
             if(res?.code === 200){
                 showNotification({
@@ -91,8 +100,15 @@ function ProductsPage(props) {
                     color: 'green',
                     id: 'productUpdated'
                 });
-                getProducts();
+            }else{
+                console.log('error: ', res);
+                showNotification({
+                    message: res?.data,
+                    color: 'red',
+                    id: 'productUpdatedError'
+                });
             }
+            getProducts();
             setLoader(false);
         });
     }
@@ -144,6 +160,9 @@ function ProductsPage(props) {
                             <Table.Th>
                                 Making
                             </Table.Th>
+                            <Table.Th>
+                                Price
+                            </Table.Th>
                             <Table.Th/>
                         </Table.Tr>
                     </Table.Thead>
@@ -178,6 +197,9 @@ function ProductsPage(props) {
                             </Table.Td>
                             <Table.Td>
                                 {product.making === 'OUTSOURCE' ? 'Outsource' : product.making === 'IN_HOUSE' && 'In house'}
+                            </Table.Td>
+                            <Table.Td>
+                                {`Rs. ${product.price}`}
                             </Table.Td>
                             <Table.Td style={{textAlign: 'right'}}>
                                 <Menu>
@@ -226,13 +248,13 @@ function ProductsPage(props) {
             edit={editProduct}
             products={products}
             onClose={()=> {setOpenAddProductModal(false); setEditProduct(null);}}
-            addProduct={(category, type, making, isOptimizer)=> {
-                postProduct(category, type, making, isOptimizer);
+            addProduct={(category, type, making, price, isOptimizer)=> {
+                postProduct(category, type, making, price, isOptimizer);
                 setOpenAddProductModal(false);
                 setEditProduct(null);
             }}
-            editProduct={(category, type, making, isOptimizer, id)=> {
-                putProduct(category, type, making, isOptimizer, id);
+            editProduct={(category, type, making, price, isOptimizer, id)=> {
+                putProduct(category, type, making, price, isOptimizer, id);
                 setOpenAddProductModal(false);
                 setEditProduct(null);
             }}
