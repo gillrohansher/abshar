@@ -1,15 +1,18 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Fieldset, Group, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
 import { use, useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize } from '../../lib/hooks';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconSortAscending, IconSortDescending } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconSortAscending, IconSortDescending, IconGenderTransgender, IconMars, IconGenderFemale } from '@tabler/icons-react';
 import { ProductDelete, ProductGet, ProductPost, ProductPut } from '../../api/fetchApis/Products';
 import { AddProductModal } from '../../components/AddProductModal/AddProductModal';
-import { UserDelete, UsersGet } from '../../api/fetchApis/Users';
+import { UserDelete, UserPut, UsersGet } from '../../api/fetchApis/Users';
 import { AddUserModal } from '../../components/AddUserModal/AddUserModal';
+import PrideIcon from '../../helpers/svgs/pride.svg';
+import Image from 'next/image';
+import { EditUserModal } from '../../components/EditUserModal/EditUserModal';
 
 function UsersPage(props) {
     const size = useWindowSize();
@@ -20,6 +23,7 @@ function UsersPage(props) {
     const [loader, setLoader] = useState(false);
     const [contextMenu, setContextMenu] = useState(false); 
     const [openAddUserModal, setOpenAddUserModal] = useState(false);
+    const [openEditUserModal, setOpenEditUserModal] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [editUser, setEditUser] = useState(null);
     const [search, setSearch] = useState(null);
@@ -61,19 +65,16 @@ function UsersPage(props) {
         });
     }
 
-    const putUser=(category, type, making, id)=>{
+    const putUser=(data)=>{
         setLoader(true);
-        ProductPut({
-            id,
-            category, 
-            type, 
-            making
+        UserPut({
+            data
         }, token, res=>{
             if(res?.code === 200){
                 showNotification({
-                    message: 'Product updated successfully.',
+                    message: 'User updated successfully.',
                     color: 'green',
-                    id: 'productUpdated'
+                    id: 'userUpdated'
                 });
                 getUsers();
             }
@@ -113,7 +114,7 @@ function UsersPage(props) {
                 </Center>
                 :
                 users.length > 0 ?
-                <Table>
+                <Table style={{overflowX: 'scroll'}}>
                     <Table.Thead>
                         <Table.Tr>
                             <Table.Th style={{width: '30px'}}>
@@ -132,18 +133,21 @@ function UsersPage(props) {
                                 Email
                             </Table.Th>
                             <Table.Th>
+                                Phone
+                            </Table.Th>
+                            <Table.Th>
                                 Type
                             </Table.Th>
                             <Table.Th>
-                                Phone
+                                Account status
                             </Table.Th>
-                            <Table.Th/>
                         </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
                         {users.filter((user)=> search ? (user?.firstName?.toLowerCase().includes(search.toLowerCase()) || user?.lastName?.toLowerCase().includes(search.toLowerCase()) || user?.gender?.toLowerCase().includes(search.toLowerCase()) || user?.phone?.toLowerCase().includes(search.toLowerCase()) || user?.email?.toLowerCase().includes(search.toLowerCase()) || user?.type?.toLowerCase().includes(search.toLowerCase()) || user?.status?.toLowerCase().includes(search.toLowerCase())) : user)
                         // .filter((user)=> search ? user.type.includes(search) : user)
                         // .filter((user)=> search ? user.making.includes(search) : user)
+                        .filter((user)=> accountData.id !== user.id)
                         .map((user)=>
                         <Table.Tr>
                             <Table.Td>
@@ -161,17 +165,15 @@ function UsersPage(props) {
                                 }}/>
                             </Table.Td>
                             <Table.Td>
-                                <Group wrap='nowrap'>
-                                    {user.firstName}
-                                    {accountData.id === user.id && <Badge>Current login account</Badge>}
-                                </Group>
-                                
+                                {user.firstName}
                             </Table.Td>
                             <Table.Td>
                                 {user.lastName}
                             </Table.Td>
-                            <Table.Td>
-                                {user.gender}
+                            <Table.Td style={{textAlign: 'center'}}>
+                                <Group justify={'center'} align='center'>
+                                    {user.gender === 'OTHER' ? <Image src={PrideIcon} priority/> : user.gender === 'FEMALE' ? <IconGenderFemale style={{color: 'lightpink'}}/> : user.gender === 'MALE' && <IconMars style={{color: 'lightblue'}}/>}
+                                </Group>
                             </Table.Td>
                             <Table.Td>
                                 {user.email}
@@ -180,7 +182,10 @@ function UsersPage(props) {
                                 {user.phone}
                             </Table.Td>
                             <Table.Td>
-                                {user.type}
+                                <Badge>{user.type}</Badge>
+                            </Table.Td>
+                            <Table.Td>
+                                {user.status}
                             </Table.Td>
                             <Table.Td style={{textAlign: 'right'}}>
                                 {accountData.id !== user.id && <Menu>
@@ -192,7 +197,7 @@ function UsersPage(props) {
                                     <Menu.Dropdown>
                                         <Menu.Item 
                                         onClick={()=> {
-                                            setOpenAddUserModal(true);
+                                            setOpenEditUserModal(true);
                                             setEditUser(user);
                                         }}>
                                             <Group wrap={'nowrap'} gap='xs'>
@@ -229,6 +234,16 @@ function UsersPage(props) {
             getUsers={()=> { 
                 getUsers();
                 setOpenAddUserModal(false);
+            }}
+            />}
+            {openEditUserModal &&
+            <EditUserModal
+            opened={openEditUserModal}
+            onClose={()=> setOpenEditUserModal(false)}
+            userData={editUser}
+            getUsers={()=> { 
+                getUsers();
+                setOpenEditUserModal(false);
             }}
             />}
         </Stack>

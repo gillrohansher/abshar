@@ -60,6 +60,33 @@ export async function UserPost(data, token, res) {
       });
 }
 
+export async function UserPut(data, token, res) {
+    await APIClientPUT({
+      url: api_config.users.user_put,
+      data,
+      headers: {
+        Authorization: token,
+      }
+    })
+      .then(response => {
+          console.log('response.result: UserPut: ', response);
+          res(response.data);
+      })
+      .catch(e => {
+          if(e.response.data.code ===  401){
+            clearStorageRedirectLogin();
+          }else{
+            res(e.response.data);
+            console.log('response.result: UserPut: ', e.response.data.message);
+            showNotification({
+              title: 'Failed',
+              color: 'red',
+              message: e.response.data.message,
+              id: 'UserPutError'
+            });
+          }
+      });
+}
 
 export async function UserChangeRolePut(id, userType, token, res) {
   let data = new FormData();

@@ -457,6 +457,8 @@ useEffect(() => {
                     value={estimatedConsumption}
                     error={estimatedConsumptionError}
                     onChange={setEstimatedConsumption}
+                    suffix={' Liters'}
+                    placeholder={'0 Liters'}
                     hideControls
                     />
 

@@ -51,7 +51,7 @@ useEffect(() => {
     }
 }, [making, selectedCategory, othercategory, selectedType, otherType]);
   return (
-    <Modal opened={opened} onClose={onClose} title="Add product" centered>
+    <Modal opened={opened} onClose={onClose} title={edit ? "Edit product" : "Add product"} centered>
         <Stack>
             {/* Category */}
             <Select

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize } from '../../lib/hooks';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconLeaf } from '@tabler/icons-react';
 import { ProductDelete, ProductGet, ProductPost, ProductPut } from '../../api/fetchApis/Products';
 import { AddProductModal } from '../../components/AddProductModal/AddProductModal';
 
@@ -168,7 +168,10 @@ function ProductsPage(props) {
                                 }}/>
                             </Table.Td>
                             <Table.Td>
-                                {product.category}
+                                <Group wrap='nowrap' gap={'xs'}>
+                                    {product.category}
+                                    {product.isOptimizer && <IconLeaf style={{color: 'green', width: '15px'}}/>}
+                                </Group>
                             </Table.Td>
                             <Table.Td>
                                 {product.type}

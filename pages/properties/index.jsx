@@ -31,7 +31,7 @@ function PropertiesPage(props) {
     const [search, setSearch] = useState(null);
     const [openAddFeatureImageModal, setOpenAddFeatureImageModal] = useState(false);
     const [publishOnFollow, setPublishOnFollow] = useState(null);
-    const {token} = store.getState().general;
+    const {token, accountData} = store.getState().general;
     const [filterPropertyType, setFilterPropertyType] = useState([]);
     const [users, setUsers] = useState([]);
 
@@ -174,6 +174,7 @@ function PropertiesPage(props) {
                         />
                         <Group justify={'space-between'}>
                             <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>
+                            {accountData.type === 'ADMIN' &&
                             <Menu>
                                 <MenuTarget>
                                     <ActionIcon onClick={()=> null} variant="filled" aria-label="Change property status">
@@ -194,7 +195,7 @@ function PropertiesPage(props) {
                                         Completed
                                     </MenuItem>
                                 </MenuDropdown>
-                            </Menu>
+                            </Menu>}
                             
                         </Group>
                     </Group>

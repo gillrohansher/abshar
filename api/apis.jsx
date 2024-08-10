@@ -35,6 +35,7 @@ export const api_config = {
   users: {
     user_post: "user/create",
     user_get: "user/all",
+    user_put: "user/update",
     user_delete: "user/delete",
     user_change_role: "user/change/role",
     user_change_account_status: "user/change/account-status"
