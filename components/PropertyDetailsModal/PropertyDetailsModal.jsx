@@ -8,6 +8,9 @@ import 'react-slideshow-image/dist/styles.css'
 import {AddFeatureImageModal} from '../AddFeatureImageModal/AddFeatureImageModal';
 import {ExpandImageModal} from '../ExpandImageModal/ExpandImageModal';
 import { useAppStore } from '@/lib/hooks';
+import PropertiesEstimationBarChart from '../PropertiesEstimationBarChart/PropertiesEstimationBarChart';
+import { PropertiesBillEstimateGet } from '@/api/fetchApis/Properties';
+import dayjs from 'dayjs';
 
 const buttonStyle = {
     width: "30px",
@@ -28,7 +31,8 @@ export function PropertyDetailsModal({opened, onClose, selectedProperty, publish
     const [publishOnFollow, setPublishOnFollow] = useState(false);
     const [openExpandImageModal, setOpenExpandImageModal] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
-    const {accountData} = store.getState().general;
+    const {accountData, token} = store.getState().general;
+    const [propertiesEstimation, setPropertiesEstimation] = useState(null);
 
 const validate=()=>{
     return true;
@@ -38,7 +42,17 @@ useEffect(() => {
     setCurrentProperty(selectedProperty);
     console.log('selectedProperty: ', selectedProperty);
     console.log('selectedProperty: currentProperty: ', currentProperty);
+    selectedProperty.propertyStatus === 'COMPLETED' && getPropertiesBillEstimate();
 }, [selectedProperty]);
+
+const getPropertiesBillEstimate=()=>{
+    PropertiesBillEstimateGet({startDate: dayjs().startOf('year').format('YYYY-MM-DD'), endDate: dayjs().endOf('year').format('YYYY-MM-DD'), propertyId: selectedProperty.id}, token, res=>{
+        if(res?.code === 200){
+            res?.data.length > 0 && setPropertiesEstimation(res?.data[0]);
+            console.log('getPropertiesBillEstimate: ', res?.data);
+        }
+    })
+}
 
 const mapPropertyStatusValues=(propertyStatus)=>{
     switch (propertyStatus) {
@@ -60,12 +74,12 @@ const mapPropertyStatusValues=(propertyStatus)=>{
 }
 
   return (
-    <Modal size={'lg'} opened={opened} lockScroll={true} onClose={onClose} 
+    <Modal size={'xl'} opened={opened} lockScroll={true} onClose={onClose} 
     title={
     <Group>
         {currentProperty?.name}
         <Group wrap='nowrap' gap='xs'>
-            <Badge color={currentProperty?.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{mapPropertyStatusValues(currentProperty?.propertyStatus)}</Badge>
+            <Badge color={currentProperty?.propertyStatus === "ASSIGNED" ? "#5185a6" : currentProperty?.propertyStatus === "COMPLETED" ? "#10516f" : currentProperty?.propertyStatus === "IN_REVIEW" ? "#9baebc" : "gray"}>{mapPropertyStatusValues(currentProperty?.propertyStatus)}</Badge>
             {accountData.type !== 'CLIENT' && <IconEdit color='#5185a6' size={'18px'} style={{cursor: 'pointer'}} onClick={()=> editProperty(currentProperty)}/>}
         </Group>
     </Group>
@@ -216,18 +230,9 @@ const mapPropertyStatusValues=(propertyStatus)=>{
                 <Text c={'dimmed'} size="xs">Remarks</Text>
                 <Text size="sm">{currentProperty?.remarks}</Text>
             </Stack>
-            <Group grow>
-                {/* <Button fullWidth mt="md" radius="md" onClick={()=> {
-                    if(currentProperty.image.featuredImage){
-                        publishButtonClick();
-                    }else{
-                        setPublishOnFollow(true);
-                        setOpenAddFeatureImageModal(true);
-                    }
-                }}>
-                    {currentProperty?.propertyStatus === 'UNPUBLISHED' ? 'Publish' : 'Unpublish'}
-                </Button> */}
-            </Group>
+            {selectedProperty.propertyStatus === 'COMPLETED' && <Group style={{marginTop: '40px'}} grow>
+                <PropertiesEstimationBarChart propertiesEstimation={propertiesEstimation} loader={false}/>
+            </Group>}
         </Stack>
         {openAddFeatureImageModal &&
         <AddFeatureImageModal

@@ -76,7 +76,7 @@ const [files, setFiles] = useState(edit ? edit?.image?.otherImages : []);
 const [firstLoadOfData, setFirstLoadOfData] = useState(true);
 const [selectedUser, setSelectedUser] = useState(edit ? edit.requestedUserInfo?.id : null);
 const [userError, setUserError] = useState(null);
-const [selectedSurveyor, setSelectedSurveyor] = useState(edit ? edit.assignedUserInfo?.id : null);
+const [selectedSurveyor, setSelectedSurveyor] = useState(edit ? edit.assignedUserInfo?.id : accountData.type === 'SURVEYOR' ? accountData.id : null);
 const [surveyorError, setSurveyorError] = useState(null);
 const [openAddFeatureImageModal, setOpenAddFeatureImageModal] = useState(false);
 
@@ -431,7 +431,7 @@ useEffect(() => {
                 />}
 
                 {/* Assigned to surveyor */}
-                {accountData.type !== 'CLIENT' &&
+                {(accountData.type !== 'CLIENT' && accountData.type !== 'SURVEYOR') &&
                 <Select
                 label="Assigned to surveyor"
                 searchable

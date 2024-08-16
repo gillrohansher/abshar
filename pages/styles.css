@@ -55,3 +55,7 @@
 .gay-icon{
     background-color: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet, red);
 }
+
+.mantine-ChartLegend-legend{
+    flex-wrap: nowrap !important;
+}

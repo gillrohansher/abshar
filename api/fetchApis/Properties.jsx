@@ -4,8 +4,10 @@ import { APIClientDELETE, APIClientGET, APIClientPOST, APIClientPUT } from "./AP
 import { clearStorageRedirectLogin, getAuthToken } from "../../helpers/helpers";
 
 
-export async function PropertiesGet(data, token, res) {
-    let url = data ? data.requestedId !== undefined ? `${api_config.properties.property_get}?requestedId=${data.requestedId}` : data.assigneeId ? `${api_config.properties.property_get}?assigneeId=${data.assigneeId}` : api_config.properties.property_get : api_config.properties.property_get;
+export async function PropertiesGet(data, type, token, res) {
+    let baseUrl = api_config.properties.property_get;
+    let url = data ? data.requestedId !== undefined ? `${baseUrl}?requestedId=${data.requestedId}` : data.assigneeId ? `${baseUrl}?assigneeId=${data.assigneeId}` : baseUrl : baseUrl;
+    url = type ? (url.includes('?') ? url+'&type='+type : url+'?type='+type) : url;
 
     await APIClientGET({
       url,
@@ -57,6 +59,37 @@ export async function PropertiesCountGet(data, token, res) {
             color: 'red',
             message: e?.response?.data?.message,
             id: 'PropertiesGetError'
+          });
+        }
+    });
+}
+
+export async function PropertiesBillEstimateGet(data, token, res) {
+  let baseUrl= api_config.properties.property_bill_estimate_get+'?percent=85&startDate='+data?.startDate+'&endDate='+data?.endDate;
+  let url= data.summarized !== undefined ? (baseUrl+'&summarized='+data.summarized) : data.propertyId !== undefined ? (baseUrl+'&propertyId='+data.propertyId) : baseUrl;
+  await APIClientGET({
+    
+    url,
+    headers: {
+      Authorization: token,
+      Accept: 'application/json, text/plain, */*'
+    }
+  })
+    .then(response => {
+        console.log('response.result: PropertiesBillEstimateGet: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        if(e?.response?.data?.code ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e?.response?.data);
+          console.log('response.result: PropertiesBillEstimateGet: ', e?.response?.data?.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e?.response?.data?.message,
+            id: 'PropertiesBillEstimateGetError'
           });
         }
     });

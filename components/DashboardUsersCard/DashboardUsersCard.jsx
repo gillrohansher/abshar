@@ -6,26 +6,27 @@ import { DonutChart } from '@mantine/charts';
 
 import { useAppStore, useAppDispatch } from '../../lib/hooks';
 
-function DashboardPropertyTypesCard(props) {
+function DashboardUsersCard(props) {
     const store = useAppStore();
     const dispatch = useAppDispatch();
     const router = useRouter();
     // const [loader, setLoader] = useState(false);
     const [data, setData] = useState([
-        { name: 'MOSQUE', value: 0, color: '#5185a6' },
-        { name: 'COMMERCIAL', value: 0, color: '#10516f' },
-        { name: 'RESIDENTIAL', value: 0, color: '#9baebc' },
+        { name: 'ADMIN', value: 0, color: '#5185a6' },
+        { name: 'SURVEYOR', value: 0, color: '#10516f' },
+        { name: 'CLIENT', value: 0, color: '#9baebc' },
     ]);
 
     useEffect(() => {
-        setData(data.map((propertyType)=> {
-            let selectedProperty= props.properties.find((property)=> property.propertyType === propertyType.name);
-            if(selectedProperty !== undefined){
-                propertyType.value= selectedProperty.count;
+        console.log('props.users: ', props.users);
+        setData(data.map((userType)=> {
+            let selectedUsers= props.users.filter((user)=> user.type === userType.name);
+            if(selectedUsers.length > 0){
+                userType.value= selectedUsers.length;
             }
-            return propertyType;
+            return userType;
         }));
-    }, [props.properties]);
+    }, [props.users]);
 
     console.log('data: ', data);
 
@@ -38,7 +39,7 @@ function DashboardPropertyTypesCard(props) {
             :
             <Stack>
                 <Group justify="space-between" mb="xs">
-                    <Text fw={400}>Properties</Text>
+                    <Text fw={400}>Users</Text>
                 </Group>
                 <Grid>
                     <Grid.Col span={7}>
@@ -47,13 +48,13 @@ function DashboardPropertyTypesCard(props) {
                     <Grid.Col span={5}>
                         <Stack style={{height: '100%'}} justify={'center'}>
                             <Group wrap='nowrap'>
-                                <Badge color="#5185a6">{`${data.find((dt)=> dt.name === 'MOSQUE')?.value} - MOSQUE`}</Badge>
+                                <Badge color="#5185a6">{`${data.find((dt)=> dt.name === 'ADMIN')?.value} - ADMIN`}</Badge>
                             </Group>
                             <Group wrap='nowrap'>
-                                <Badge color="#10516f">{`${data.find((dt)=> dt.name === 'COMMERCIAL')?.value} - COMMERCIAL`}</Badge>
+                                <Badge color="#10516f">{`${data.find((dt)=> dt.name === 'CLIENT')?.value} - CLIENT`}</Badge>
                             </Group>
                             <Group wrap='nowrap'>
-                                <Badge color="#9baebc">{`${data.find((dt)=> dt.name === 'RESIDENTIAL')?.value} - RESIDENTIAL`}</Badge>
+                                <Badge color="#9baebc">{`${data.find((dt)=> dt.name === 'SURVEYOR')?.value} - SURVEYOR`}</Badge>
                             </Group>
                         </Stack>
                     </Grid.Col>
@@ -64,4 +65,4 @@ function DashboardPropertyTypesCard(props) {
     );
 }
 
-export default DashboardPropertyTypesCard;
+export default DashboardUsersCard;

@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, SimpleGrid, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, SimpleGrid, Stack, Table, Tabs, Text, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -34,6 +34,7 @@ function MosquesPage(props) {
     const {token, accountData} = store.getState().general;
     const [filterPropertyType, setFilterPropertyType] = useState([]);
     const [users, setUsers] = useState([]);
+    const [activeTab, setActiveTab] = useState('all');
 
     useEffect(() => {
         setLoader(true);
@@ -42,6 +43,14 @@ function MosquesPage(props) {
             getUsers();
         }, 1000);
     },[]);
+
+
+    useEffect(() => {
+        setLoader(true);
+        setTimeout(() => {
+            getProperties();
+        }, 1000);
+    },[activeTab]);
 
     const getUsers=()=>{
         setLoader(true);
@@ -56,7 +65,7 @@ function MosquesPage(props) {
     console.log('selectedProperties: ', selectedProperties);
     const getProperties=()=>{
         setLoader(true);
-        PropertiesGet(null, token, res=>{
+        PropertiesGet(activeTab === 'requested' ? {requestedId: accountData.id} : null, 'MOSQUE', token, res=>{
             if(res?.code === 200){
                 setProperties(res.data.filter((property)=> property.type === 'MOSQUE'));
                 openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
@@ -190,7 +199,7 @@ function MosquesPage(props) {
                         onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
                         />
                         <Group justify={'space-between'}>
-                            <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>
+                            {accountData.type !== 'CLIENT' && <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : property.propertyStatus === "COMPLETED" ? "#10516f" : property.propertyStatus === "IN_REVIEW" ? "#9baebc" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>}
                             {accountData.type === 'ADMIN' &&
                             <Menu>
                                 <MenuTarget>
@@ -240,7 +249,7 @@ function MosquesPage(props) {
                         <Badge color="grey">{property.type}</Badge>
                     </Group>
                     <Stack gap={2}>
-                        <Text size="sm" c="dimmed">{`${property.street && 'Street '+property.street+','} ${property.area && property.area+','} ${property.phase && 'phase '+property.phase+','} ${property.zipCode && property.zipCode+','} ${property.city && property.city+','} ${property.country && property.country}`}</Text>
+                        <Text truncate="end" size="sm" c="dimmed">{`${property.street && 'Street '+property.street+','} ${property.area && property.area+','} ${property.phase && 'phase '+property.phase+','} ${property.zipCode && property.zipCode+','} ${property.city && property.city+','} ${property.country && property.country}`}</Text>
                         {property.requestedUserInfo && <Group wrap='nowrap' align={'flex-start'} gap='xs'><Text size="sm" c="#5185a6">Requested from:</Text><Text size="sm" c="dimmed">{`${property.requestedUserInfo.name}`}</Text></Group>}
                         {property.assignedUserInfo && <Group wrap='nowrap' align={'flex-start'} gap='xs'><Text size="sm" c="#5185a6">Assigned to:</Text><Text size="sm" c="dimmed">{`${property.assignedUserInfo.name}`}</Text></Group>}
                     </Stack>
@@ -309,21 +318,33 @@ function MosquesPage(props) {
 
     return (
         <Stack>
+            <Group>
+            {accountData.type === 'CLIENT' && 
+            <Tabs value={activeTab} onChange={setActiveTab}>
+                <Tabs.List>
+                    <Tabs.Tab value="all">All</Tabs.Tab>
+                    <Tabs.Tab value="requested">Requested</Tabs.Tab>
+                    <Tabs.Tab value="subscribed">Subscribed</Tabs.Tab>
+                </Tabs.List>
+            </Tabs>}
+            </Group>
             <Group justify={'space-between'}>
-                <Group style={{flex: size.width < 650 && 1}}>
-                    <TextInput
-                    value={search}
-                    onChange={(event) => setSearch(event.currentTarget.value)}
-                    placeholder={'Search mosque name or address...'}
-                    styles={{
-                        input: {
-                            minWidth: '260px'
-                        }
-                    }}
-                    style={{flex: size.width < 650 && 1}}
-                    />
-                    {/* {size.width > 650 && renderFilterBadges()} */}
+                <Group justify={'space-between'}>
+                    <Group style={{flex: size.width < 650 && 1}}>
+                        <TextInput
+                        value={search}
+                        onChange={(event) => setSearch(event.currentTarget.value)}
+                        placeholder={'Search mosque name or address...'}
+                        styles={{
+                            input: {
+                                minWidth: '260px'
+                            }
+                        }}
+                        style={{flex: size.width < 650 && 1}}
+                        />
+                    </Group>
                 </Group>
+                
                 <Group>
                     <ActionIcon onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
                         <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>

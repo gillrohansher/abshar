@@ -57,7 +57,7 @@ function PropertiesPage(props) {
     const getProperties=()=>{
         console.log('accountData: ', accountData);
         setLoader(true);
-        PropertiesGet(accountData?.type === 'ADMIN' ? null : accountData?.type === 'CLIENT' ? {requestedId: accountData?.id} : accountData?.type === 'SURVEYOR' ? {assigneeId: accountData?.id} : null, token, res=>{
+        PropertiesGet(accountData?.type === 'ADMIN' ? null : accountData?.type === 'CLIENT' ? {requestedId: accountData?.id} : accountData?.type === 'SURVEYOR' ? {assigneeId: accountData?.id} : null, null, token, res=>{
             if(res?.code === 200){
                 setProperties(res.data.filter((property)=> property.type !== 'MOSQUE'));
                 openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
@@ -175,7 +175,7 @@ function PropertiesPage(props) {
                         onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
                         />
                         <Group justify={'space-between'}>
-                            <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>
+                        {accountData.type !== 'CLIENT' && <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : property.propertyStatus === "COMPLETED" ? "#10516f" : property.propertyStatus === "IN_REVIEW" ? "#9baebc" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>}
                             {accountData.type === 'ADMIN' &&
                             <Menu>
                                 <MenuTarget>
