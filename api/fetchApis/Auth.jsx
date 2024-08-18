@@ -13,15 +13,15 @@ export async function SignInPost(data, res) {
             res(response.data);
         })
         .catch(e => {
-            if(e.response.data.code ===  401){
-              clearStorageRedirectLogin();
-            }else{
+          if(e?.response?.status ===  401){
+            clearStorageRedirectLogin();
+          }else{
               res(e.response.data);
               console.log('response.result: SignInPost: ', e.response.data.message);
               showNotification({
                 title: 'Failed',
                 color: 'red',
-                message: e.response.data.message
+                message: e.message
               });
             }
         });
@@ -38,7 +38,7 @@ export async function SignUpPost(data, res) {
     })
     .catch(e => {
         console.log('error: ', e);
-        if(e.response.data.code ===  401){
+        if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
           res(e.response.data);
@@ -46,7 +46,7 @@ export async function SignUpPost(data, res) {
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message
+            message: e.message
           });
         }
         
@@ -63,7 +63,7 @@ export async function EmailVerificationPut(data, res) {
     })
     .catch(e => {
         console.log('error: ', e);
-        if(e.response.data.code ===  401){
+        if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
           res(e.response.data);
@@ -71,7 +71,7 @@ export async function EmailVerificationPut(data, res) {
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message
+            message: e.message
           });
         }
         
@@ -88,7 +88,7 @@ export async function ResendEmailVerificationPut(data, res) {
     })
     .catch(e => {
         console.log('error: ', e);
-        if(e.response.data.code ===  401){
+        if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
           res(e.response.data);
@@ -96,7 +96,7 @@ export async function ResendEmailVerificationPut(data, res) {
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message
+            message: e.message
           });
         }
         
@@ -114,7 +114,7 @@ export async function ResetPasswordPost(data, res) {
     })
     .catch(e => {
         console.log('error: ', e);
-        if(e.response.data.code ===  401){
+        if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
           res(e.response.data);
@@ -122,7 +122,7 @@ export async function ResetPasswordPost(data, res) {
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message
+            message: e.message
           });
         }
         
@@ -140,7 +140,7 @@ export async function ResetPasswordConfirmPost(data, res) {
     })
     .catch(e => {
         console.log('error: ', e);
-        if(e.response.data.code ===  401){
+        if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
           res(e.response.data);
@@ -148,7 +148,7 @@ export async function ResetPasswordConfirmPost(data, res) {
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message
+            message: e.message
           });
         }
         

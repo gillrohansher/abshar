@@ -17,15 +17,15 @@ export async function ProductGet(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e?.response?.data?.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e?.response?.data);
             console.log('response.result: ProductGet: ', e?.response?.data?.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e?.response?.data?.message,
+              message: e.message,
               id: 'ProductGetError'
             });
           }
@@ -45,15 +45,15 @@ export async function ProductPost(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: ProductPost: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'ProductPostError'
             });
           }
@@ -73,15 +73,15 @@ export async function ProductPut(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: ProductPut: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'ProductPutError'
             });
           }
@@ -100,15 +100,15 @@ export async function ProductDelete(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: ProductDelete: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'ProductDeleteError'
             });
           }

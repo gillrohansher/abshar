@@ -17,15 +17,15 @@ export async function UsersGet(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e?.response?.data?.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e?.response?.data);
             console.log('response.result: UsersGet: ', e?.response?.data?.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e?.response?.data?.message,
+              message: e.message,
               id: 'UsersGetError'
             });
           }
@@ -45,15 +45,15 @@ export async function UserPost(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: UserPost: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'UserPostError'
             });
           }
@@ -73,15 +73,15 @@ export async function UserPut(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: UserPut: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'UserPutError'
             });
           }
@@ -104,15 +104,15 @@ export async function UserChangeRolePut(id, userType, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: UserChangeRolePut: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'UserChangeRolePutError'
             });
           }
@@ -135,15 +135,15 @@ export async function UserChangeAccountStatusPut(id, status, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: UserChangeAccountStatusPut: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'UserChangeAccountStatusPutError'
             });
           }
@@ -166,15 +166,15 @@ export async function UserDelete(ids, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: UserDelete: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'UserDeleteError'
             });
           }

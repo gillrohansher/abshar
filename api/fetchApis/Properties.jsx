@@ -21,7 +21,7 @@ export async function PropertiesGet(data, type, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e?.response?.data?.code ===  401){
+          if(e?.response?.status ===  401){
             clearStorageRedirectLogin();
           }else{
             res(e?.response?.data);
@@ -29,7 +29,7 @@ export async function PropertiesGet(data, type, token, res) {
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e?.response?.data?.message,
+              message: e.message,
               id: 'PropertiesGetError'
             });
           }
@@ -49,15 +49,15 @@ export async function PropertiesCountGet(data, token, res) {
         res(response.data);
     })
     .catch(e => {
-        if(e?.response?.data?.code ===  401){
-          clearStorageRedirectLogin();
-        }else{
+      if(e?.response?.status ===  401){
+        clearStorageRedirectLogin();
+      }else{
           res(e?.response?.data);
           console.log('response.result: PropertiesGet: ', e?.response?.data?.message);
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e?.response?.data?.message,
+            message: e.message,
             id: 'PropertiesGetError'
           });
         }
@@ -80,15 +80,15 @@ export async function PropertiesBillEstimateGet(data, token, res) {
         res(response.data);
     })
     .catch(e => {
-        if(e?.response?.data?.code ===  401){
-          clearStorageRedirectLogin();
-        }else{
+      if(e?.response?.status ===  401){
+        clearStorageRedirectLogin();
+      }else{
           res(e?.response?.data);
           console.log('response.result: PropertiesBillEstimateGet: ', e?.response?.data?.message);
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e?.response?.data?.message,
+            message: e.message,
             id: 'PropertiesBillEstimateGetError'
           });
         }
@@ -108,15 +108,15 @@ export async function PropertiesPost(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: PropertiesPost: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'PropertiesPostError'
             });
           }
@@ -136,15 +136,15 @@ export async function PropertiesPut(data, token, res) {
         res(response.data);
     })
     .catch(e => {
-        if(e.response.data.code ===  401){
-          clearStorageRedirectLogin();
-        }else{
+      if(e?.response?.status ===  401){
+        clearStorageRedirectLogin();
+      }else{
           res(e.response.data);
           console.log('response.result: PropertiesPut: ', e.response.data.message);
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message,
+            message: e.message,
             id: 'PropertiesPutError'
           });
         }
@@ -164,15 +164,15 @@ export async function PropertyUploadImagePost(data, token, res) {
         res(response.data);
     })
     .catch(e => {
-        if(e.response.data.code ===  401){
-          clearStorageRedirectLogin();
-        }else{
+      if(e?.response?.status ===  401){
+        clearStorageRedirectLogin();
+      }else{
           res(e.response.data);
           console.log('response.result: PropertyUploadImagePost: ', e.response.data.message);
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message,
+            message: e.message,
             id: 'PropertyUploadImagePostError'
           });
         }
@@ -192,15 +192,15 @@ export async function PropertyUploadFeatureImagePost(data, token, res) {
         res(response.data);
     })
     .catch(e => {
-        if(e.response.data.code ===  401){
-          clearStorageRedirectLogin();
-        }else{
+      if(e?.response?.status ===  401){
+        clearStorageRedirectLogin();
+      }else{
           res(e.response.data);
           console.log('response.result: PropertyUploadFeatureImagePost: ', e.response.data.message);
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message,
+            message: e.message,
             id: 'PropertyUploadFeatureImagePostError'
           });
         }
@@ -223,15 +223,15 @@ export async function PropertyChangeStatusPut(id, status, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: PropertyChangeStatusPut: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'PropertyChangeStatusPutError'
             });
           }
@@ -250,15 +250,15 @@ export async function PropertiesDelete(data, token, res) {
           res(response.data);
       })
       .catch(e => {
-          if(e.response.data.code ===  401){
-            clearStorageRedirectLogin();
-          }else{
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
             res(e.response.data);
             console.log('response.result: PropertiesDelete: ', e.response.data.message);
             showNotification({
               title: 'Failed',
               color: 'red',
-              message: e.response.data.message,
+              message: e.message,
               id: 'PropertiesDeleteError'
             });
           }
@@ -281,15 +281,15 @@ export async function PropertyDeleteImages(propertyId, imageId, token, res) {
         res(response.data);
     })
     .catch(e => {
-        if(e.response.data.code ===  401){
-          clearStorageRedirectLogin();
-        }else{
+      if(e?.response?.status ===  401){
+        clearStorageRedirectLogin();
+      }else{
           res(e.response.data);
           console.log('response.result: PropertyDeleteImages: ', e.response.data.message);
           showNotification({
             title: 'Failed',
             color: 'red',
-            message: e.response.data.message,
+            message: e.message,
             id: 'PropertyDeleteImagesError'
           });
         }
