@@ -12,7 +12,7 @@ export async function PropertiesGet(data, type, token, res) {
     await APIClientGET({
       url,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
         Accept: 'application/json, text/plain, */*'
       }
     })
@@ -40,7 +40,7 @@ export async function PropertiesCountGet(data, token, res) {
   await APIClientGET({
     url: api_config.properties.property_count_get+'?userId='+data,
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
       Accept: 'application/json, text/plain, */*'
     }
   })
@@ -71,7 +71,7 @@ export async function PropertiesBillEstimateGet(data, token, res) {
     
     url,
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
       Accept: 'application/json, text/plain, */*'
     }
   })
@@ -100,7 +100,7 @@ export async function PropertiesPost(data, token, res) {
       url: api_config.properties.property_post,
       data: data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -128,7 +128,7 @@ export async function PropertiesPut(data, token, res) {
     url: api_config.properties.property_put,
     data: data,
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     }
   })
     .then(response => {
@@ -156,7 +156,7 @@ export async function PropertyUploadImagePost(data, token, res) {
     url: api_config.properties.property_upload_image,
     data: data,
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     }
   })
     .then(response => {
@@ -184,7 +184,7 @@ export async function PropertyUploadFeatureImagePost(data, token, res) {
     url: api_config.properties.property_upload_feature_image,
     data: data,
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     }
   })
     .then(response => {
@@ -215,7 +215,7 @@ export async function PropertyChangeStatusPut(id, status, token, res) {
       url: api_config.properties.property_change_status,//+`?${ids.map((id, index)=> `${index > 0 ? '&' : ''}ids=${id}`)}&status=${status}`,
       data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -242,7 +242,7 @@ export async function PropertiesDelete(data, token, res) {
     await APIClientDELETE({
       url: api_config.properties.property_delete+`${data}`,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -273,7 +273,7 @@ export async function PropertyDeleteImages(propertyId, imageId, token, res) {
     url: api_config.properties.property_delete+'images',
     data,
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     }
   })
     .then(response => {

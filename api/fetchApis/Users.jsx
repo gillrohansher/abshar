@@ -8,7 +8,7 @@ export async function UsersGet(data, token, res) {
     await APIClientGET({
       url: api_config.users.user_get,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
         Accept: 'application/json, text/plain, */*'
       }
     })
@@ -37,7 +37,7 @@ export async function UserPost(data, token, res) {
       url: api_config.users.user_post,
       data: data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -65,7 +65,7 @@ export async function UserPut(data, token, res) {
       url: api_config.users.user_put,
       data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -96,7 +96,7 @@ export async function UserChangeRolePut(id, userType, token, res) {
       url: api_config.users.user_change_role,
       data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -127,7 +127,7 @@ export async function UserChangeAccountStatusPut(id, status, token, res) {
       url: api_config.users.user_change_account_status,
       data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -158,7 +158,7 @@ export async function UserDelete(ids, token, res) {
       url: api_config.users.user_delete,
       data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {

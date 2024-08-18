@@ -8,7 +8,7 @@ export async function ProductGet(data, token, res) {
     await APIClientGET({
       url: api_config.products.product_get,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
         Accept: 'application/json, text/plain, */*'
       }
     })
@@ -37,7 +37,7 @@ export async function ProductPost(data, token, res) {
       url: api_config.products.product_post,
       data: data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -65,7 +65,7 @@ export async function ProductPut(data, token, res) {
       url: api_config.products.product_put,
       data: data,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
@@ -92,7 +92,7 @@ export async function ProductDelete(data, token, res) {
     await APIClientDELETE({
       url: api_config.products.product_delete+`${data}`,
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then(response => {
