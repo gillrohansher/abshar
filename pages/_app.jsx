@@ -162,7 +162,7 @@ function AppContent({ Component, pageProps }) {
                 label={'Logout'}
                 leftSection={<IconSquareXFilled size="1rem" stroke={1.5} color={'#5185a6'} />}
                 href={'/'}
-                onClick={()=> clearStorageRedirectLogin()}
+                onClick={()=> clearStorageRedirectLogin(true)}
                 />
             </AppShell.Section>
           </AppShell.Navbar>}
@@ -184,7 +184,7 @@ function AppContent({ Component, pageProps }) {
               {navList.map((item)=>
               <BottomNavigationAction label={item.name} value={item.path} icon={<item.icon size="1rem" stroke={1.5} />} />
               )}
-              <BottomNavigationAction label={'Logout'} onClick={()=> clearStorageRedirectLogin()} value={'/'} icon={<IconSquareXFilled size="1rem" stroke={1.5} />} />
+              <BottomNavigationAction label={'Logout'} onClick={()=> clearStorageRedirectLogin(true)} value={'/'} icon={<IconSquareXFilled size="1rem" stroke={1.5} />} />
             </BottomNavigation>
           </Paper>}
       </AppShell>

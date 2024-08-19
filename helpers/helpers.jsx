@@ -2,13 +2,16 @@ import {makeStore} from '../lib/store';
 import imageCompression from 'browser-image-compression';
 import { showNotification } from '@mantine/notifications';
 
-export function clearStorageRedirectLogin(){
-    showNotification({
-        title: 'Failed',
-        color: 'red',
-        message: 'Unauthorized',
-        id: 'unauthorizedError'
-    });
+export function clearStorageRedirectLogin(hideNotification=false){
+    if(hideNotification === false){
+        showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: 'Unauthorized',
+            id: 'unauthorizedError'
+        });
+    }
+    
     localStorage.clear();
     setTimeout(() => {
         window.location.reload();    
