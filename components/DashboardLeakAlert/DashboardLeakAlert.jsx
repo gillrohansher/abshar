@@ -77,7 +77,7 @@ function DashboardLeakAlert(props) {
                     <Text fw={400} size={'sm'}>{lastMaintenance ? lastMaintenance.format('DD MMM YYYY') : '-'}</Text>
                 </Group>
                 <Group style={{width: '100%'}} grow>
-                    <Alert style={{padding: '10px'}} variant="light" color={leakDetected ? "red" : "blue"} title="Leak alert" icon={<IconInfoCircle />}>
+                    <Alert style={{padding: '10px'}} variant="light" color={leakDetected ? "red" : "#10516f"} title="Leak alert" icon={<IconInfoCircle />}>
                         <Stack gap={0}>
                             {leakDetected ? <span>Leak detected. please contact support.</span> : <span>No leak found.</span>}
                         </Stack>

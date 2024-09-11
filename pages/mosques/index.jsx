@@ -250,8 +250,8 @@ function MosquesPage(props) {
                 </Card.Section>
                 <Divider/>
                 <Stack onClick={()=> handleOpenSelectedProperty(property)}>
-                    <Group justify="space-between" mt="md" mb="xs">
-                        <Text fw={500}>{property.name}</Text>
+                    <Group justify="space-between" mt="md" mb="xs" wrap='nowrap'>
+                        <Text truncate="end" fw={500}>{property.name}</Text>
                         <Badge color="grey">{property.type}</Badge>
                     </Group>
                     <Stack gap={2}>
@@ -371,7 +371,7 @@ function MosquesPage(props) {
                 :
                 properties.length > 0 ?
                 <Group w={'100%'}>
-                    <SimpleGrid cols={size.width < 650 ? 1 : size.width < 1100 ? 2 : 3} style={{minWidth: '100%'}}>
+                    <SimpleGrid cols={size.width < 940 ? 1 : size.width < 1100 ? 2 : 3} style={{minWidth: '100%'}}>
                         {properties.filter((property)=> search ? (property.name.toLowerCase().includes(search.toLowerCase()) || property.street.toLowerCase().includes(search.toLowerCase()) || property.phase.toLowerCase().includes(search.toLowerCase()) || property.area.toLowerCase().includes(search.toLowerCase()) || property.zipCode.toLowerCase().includes(search.toLowerCase()) || property.city.toLowerCase().includes(search.toLowerCase()) || property.type.toLowerCase().includes(search.toLowerCase())) : property)
                         .filter((property)=> filterPropertyType.length > 0 ? filterPropertyType.find((filter)=> property.type === filter) !== undefined : property)
                         .map((property)=> 

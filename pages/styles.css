@@ -1,3 +1,7 @@
+body{
+    color: #10516f !important;
+}
+
 .mantine-TextInput-label, .mantine-PasswordInput-label, .mantine-Select-label, .mantine-MultiSelect-label, .mantine-NumberInput-label, .mantine-Textarea-label, .mantine-Switch-label{
     font-weight: 400;
     font-size: 12px;
@@ -43,6 +47,10 @@
     position: absolute;
     bottom: 0 !important;    
 } */
+
+.bottom-mobile-navbar{
+    overflow-x: scroll !important;
+}
 
 .Mui-selected{
     color: #5185a6 !important;

@@ -206,7 +206,7 @@ function AppContent({ Component, pageProps }) {
               {navList.map((item)=>
               <BottomNavigationAction label={item.name} value={item.path} icon={<item.icon size="1rem" stroke={1.5} />} />
               )}
-              <BottomNavigationAction label={'Profile'} onClick={()=> setValue('/profile')} value={'/profile'} icon={<IconSettingsFilled size="1rem" stroke={1.5} />} />
+              {/* <BottomNavigationAction label={'Profile'} onClick={()=> setValue('/profile')} value={'/profile'} icon={<IconSettingsFilled size="1rem" stroke={1.5} />} /> */}
               <BottomNavigationAction label={'Logout'} onClick={()=> clearStorageRedirectLogin(true)} value={'/'} icon={<IconSquareXFilled size="1rem" stroke={1.5} />} />
             </BottomNavigation>
           </Paper>}
