@@ -71,10 +71,11 @@ function DashboardPage(props) {
             <SimpleGrid cols={size.width < 650 ? 1 : size.width < 767 ? 2 : size.width < 900 ? 1 : size.width < 1300 ? 2 : 3}>
                 <DashboardPropertyTypesCard properties={properties} loader={propertiesLoader}/>
                 {accountData.type === 'ADMIN' && <DashboardUsersCard users={users} loader={propertiesLoader}/>}
-                <DashboardWaterFlowRate/>
+                {accountData.type !== 'ADMIN' && <DashboardWaterFlowRate/>}
                 <DashboardLeakAlert/>
             </SimpleGrid>
             <SimpleGrid cols={1}>
+                {accountData.type === 'ADMIN' && <DashboardWaterFlowRate/>}
                 <PropertiesEstimationBarChart properties={properties} propertiesEstimation={propertiesEstimation} loader={propertiesLoader}/>
             </SimpleGrid>
         </Stack>

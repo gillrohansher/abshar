@@ -62,7 +62,7 @@ function PropertiesEstimationBarChart(props) {
             :
             <Stack>
                 <Group justify="space-between" mb="xs">
-                    <Text fw={400}>Estimated social impact</Text>
+                    <Text fw={'bold'}>Estimated social impact</Text>
                 </Group>
                 <Group>
                 <BarChart

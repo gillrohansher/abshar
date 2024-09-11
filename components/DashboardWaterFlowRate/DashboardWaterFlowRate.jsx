@@ -11,6 +11,7 @@ function DashboardWaterFlowRate(props) {
     const store = useAppStore();
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const {token, accountData} = store.getState().general;
     // const [loader, setLoader] = useState(false);
     const [data, setData] = useState([]);
 
@@ -42,12 +43,12 @@ function DashboardWaterFlowRate(props) {
         <Card shadow="sm" padding="lg" radius="md" withBorder style={{cursor: 'pointer'}} onClick={()=> router.push('/properties')}>
             {<Stack>
                 <Group justify="space-between" mb="xs">
-                    <Text fw={400}>Water flow rate</Text>
+                    <Text fw={'bold'}>Water flow rate</Text>
                 </Group>
                 <Group style={{width: '100%'}} align='center' justify={'center'}>
                     {data.length > 0 &&
                     <AreaChart
-                    h={180}
+                    h={accountData.type === 'ADMIN' ? 320 : 180}
                     data={data}
                     dataKey="hour"
                     series={[{ name: 'liters', color: 'blue' }]}

@@ -38,7 +38,7 @@ function DashboardPropertyTypesCard(props) {
             :
             <Stack>
                 <Group justify="space-between" mb="xs">
-                    <Text fw={400}>Properties</Text>
+                    <Text fw={'bold'}>Properties</Text>
                 </Group>
                 <Grid>
                     <Grid.Col span={7}>

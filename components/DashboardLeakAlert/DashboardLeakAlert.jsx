@@ -15,7 +15,7 @@ function DashboardLeakAlert(props) {
     const [data, setData] = useState([]);
     const [peakTime, setPeakTime] = useState(null);
     const [lastMaintenance, setLastMaintenance] = useState(null);
-    const [leakDetected, setLeakDetected] = useState(Math.random() < 0.5);
+    const [leakDetected, setLeakDetected] = useState(false);//useState(Math.random() < 0.5);
 
     // useEffect(() => {
     //     setData(data.map((propertyType)=> {
@@ -57,7 +57,7 @@ function DashboardLeakAlert(props) {
     return (
         <Card shadow="sm" padding="lg" radius="md" withBorder style={{cursor: 'pointer'}}>
             <Group justify="space-between" mb="xs">
-                <Text fw={400}>General information</Text>
+                <Text fw={'bold'}>General information</Text>
             </Group>
             {<Stack style={{height: '100%'}} gap={0}>
                 <Group justify="space-between" mb="xs">

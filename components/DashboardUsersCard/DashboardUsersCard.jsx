@@ -39,7 +39,7 @@ function DashboardUsersCard(props) {
             :
             <Stack>
                 <Group justify="space-between" mb="xs">
-                    <Text fw={400}>Users</Text>
+                    <Text fw={'bold'}>Users</Text>
                 </Group>
                 <Grid>
                     <Grid.Col span={7}>
