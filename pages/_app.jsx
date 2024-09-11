@@ -11,7 +11,7 @@ import { theme } from '../theme';
 import StoreProvider from '../StoreProvider.jsx';
 import './styles.css'
 import '@mantine/charts/styles.css';
-import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled, IconBrightnessFilled, IconLogout, IconUserFilled, IconBuildingMosque } from '@tabler/icons-react';
+import { IconLayoutDashboardFilled, IconHomeFilled, IconFlaskFilled, IconSquareXFilled, IconDropletFilled, IconBrightnessFilled, IconLogout, IconUserFilled, IconBuildingMosque, IconSettingsFilled, IconCirclePlusFilled } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
@@ -150,6 +150,21 @@ function AppContent({ Component, pageProps }) {
                 <NavLink
                 label={item.name}
                 leftSection={<item.icon size="1rem" stroke={1.5} color={'#5185a6'} />}
+                rightSection={
+                  item.name === 'Mosques' &&
+                  <ActionIcon  
+                  id='add-property-menu-button'
+                  onClick={()=> {
+                    router.push('/mosques');
+                    setTimeout(() => {
+                      document.getElementById('add-property-button').click();  
+                    }, 600);
+                  }} 
+                  variant="filled" 
+                  aria-label="Add Property">
+                    <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
+                  </ActionIcon>
+                }
                 component={Link} 
                 href={item.path}
                 //onClick={toggle}
@@ -158,6 +173,13 @@ function AppContent({ Component, pageProps }) {
                 />)}
             </AppShell.Section>
             <AppShell.Section>
+                {/* <NavLink
+                label={'Profile'}
+                leftSection={<IconSettingsFilled size="1rem" stroke={1.5} color={'#5185a6'} />}
+                href={'/profile'}
+                onClick={()=> setValue('/profile')}
+                active={pathName === '/profile'}
+                /> */}
                 <NavLink
                 label={'Logout'}
                 leftSection={<IconSquareXFilled size="1rem" stroke={1.5} color={'#5185a6'} />}
@@ -184,6 +206,7 @@ function AppContent({ Component, pageProps }) {
               {navList.map((item)=>
               <BottomNavigationAction label={item.name} value={item.path} icon={<item.icon size="1rem" stroke={1.5} />} />
               )}
+              <BottomNavigationAction label={'Profile'} onClick={()=> setValue('/profile')} value={'/profile'} icon={<IconSettingsFilled size="1rem" stroke={1.5} />} />
               <BottomNavigationAction label={'Logout'} onClick={()=> clearStorageRedirectLogin(true)} value={'/'} icon={<IconSquareXFilled size="1rem" stroke={1.5} />} />
             </BottomNavigation>
           </Paper>}

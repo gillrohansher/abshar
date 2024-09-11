@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize} from '../../lib/hooks';
+import { setSelectedProperty } from '../../lib/propertySlice';
 import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff, IconDots } from '@tabler/icons-react';
 import { PropertiesDelete, PropertiesGet, PropertiesPost, PropertyChangeStatusPut, PropertyUploadFeatureImagePost, PropertyUploadImagePost } from '../../api/fetchApis/Properties';
 import { UsersGet } from '../../api/fetchApis/Users';
@@ -136,7 +137,9 @@ function PropertiesPage(props) {
 
     const handleOpenSelectedProperty=(property)=>{
         setSelectedPropertyForDetails(property);
-        setOpenPropertyDetailsModal(true);    
+        //setOpenPropertyDetailsModal(true);  
+        dispatch(setSelectedProperty(property));
+        router.push(`/properties/${property.id}`);
     }
 
     const mapPropertyStatusValues=(propertyStatus)=>{
@@ -169,11 +172,12 @@ function PropertiesPage(props) {
             style={{cursor: 'pointer', minWidth: '100%'}}>
                 <Card.Section>
                     <Group style={{position: 'absolute', top: 10, left: 10, right: 10, width: '95%'}} justify='space-between'>
+                        {accountData.type !== 'CLIENT' &&
                         <Checkbox
                         styles={{input: {cursor: 'pointer'}}}
                         checked={selectedProperties.find((selectedProperty)=> selectedProperty === property.id)}
                         onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
-                        />
+                        />}
                         <Group justify={'space-between'}>
                         {accountData.type !== 'CLIENT' && <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : property.propertyStatus === "COMPLETED" ? "#10516f" : property.propertyStatus === "IN_REVIEW" ? "#9baebc" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>}
                             {accountData.type === 'ADMIN' &&
@@ -315,12 +319,13 @@ function PropertiesPage(props) {
                     {size.width > 650 && renderFilterBadges()}
                 </Group>
                 <Group>
-                    <ActionIcon onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
+                    <ActionIcon id='add-property-button' onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
                         <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
                     </ActionIcon>
+                    {accountData.type !== 'CLIENT' && 
                     <ActionIcon disabled={selectedProperties.length === 0} color={'red'} onClick={()=> selectedProperties.length > 0 ? selectedProperties.map((id)=> deleteProperty(id)) : showNotification({message: 'No properties selected yet', color: 'red', id: 'noPropertiesSelected'})} variant="filled" aria-label="Delete Property">
                         <IconTrashFilled style={{width: '70%', height: '70%'}}/>
-                    </ActionIcon>
+                    </ActionIcon>}
                 </Group>
             </Group>
             {size.width < 650 && renderFilterBadges()}

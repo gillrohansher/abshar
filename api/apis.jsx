@@ -25,6 +25,7 @@ export const api_config = {
   },
   properties:{
     property_get: "property/all",
+    property_single_get: "property",
     property_count_get: "property/count",
     property_bill_estimate_get: "property/bill/estimate",
     property_post: "property/add",
@@ -41,5 +42,8 @@ export const api_config = {
     user_delete: "user/delete",
     user_change_role: "user/change/role",
     user_change_account_status: "user/change/account-status"
+  },
+  payment: {
+    payment_post: "/payment/alfa/initiate/pwa"
   }
 };

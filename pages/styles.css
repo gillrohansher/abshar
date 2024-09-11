@@ -59,3 +59,15 @@
 .mantine-ChartLegend-legend{
     flex-wrap: nowrap !important;
 }
+
+.image-card{
+    background-color: rgb(0, 0, 0, 0.5);
+    height: 200px;
+    width: 280px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.image-card span{
+    color: #fff;
+}

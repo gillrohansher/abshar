@@ -7,7 +7,9 @@ import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize } from '../../lib/hooks';
 import { set_account_data, set_token } from '../../lib/generalActions/generalActions';
 import DashboardPropertyTypesCard from '../../components/DashboardPropertyTypesCard/DashboardPropertyTypesCard';
+import DashboardWaterFlowRate from '../../components/DashboardWaterFlowRate/DashboardWaterFlowRate';
 import DashboardUsersCard from '../../components/DashboardUsersCard/DashboardUsersCard';
+import DashboardLeakAlert from '../../components/DashboardLeakAlert/DashboardLeakAlert';
 import PropertiesEstimationBarChart from '../../components/PropertiesEstimationBarChart/PropertiesEstimationBarChart';
 import { IconMapPinFilled } from '@tabler/icons-react';
 import { PropertiesBillEstimateGet, PropertiesCountGet } from '@/api/fetchApis/Properties';
@@ -69,6 +71,8 @@ function DashboardPage(props) {
             <SimpleGrid cols={size.width < 650 ? 1 : size.width < 767 ? 2 : size.width < 900 ? 1 : size.width < 1300 ? 2 : 3}>
                 <DashboardPropertyTypesCard properties={properties} loader={propertiesLoader}/>
                 {accountData.type === 'ADMIN' && <DashboardUsersCard users={users} loader={propertiesLoader}/>}
+                <DashboardWaterFlowRate/>
+                <DashboardLeakAlert/>
             </SimpleGrid>
             <SimpleGrid cols={1}>
                 <PropertiesEstimationBarChart properties={properties} propertiesEstimation={propertiesEstimation} loader={propertiesLoader}/>

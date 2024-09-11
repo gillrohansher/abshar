@@ -36,6 +36,34 @@ export async function PropertiesGet(data, type, token, res) {
       });
 }
 
+export async function PropertyGet(data, token, res) {
+  await APIClientGET({
+    url: api_config.properties.property_single_get + "/" + data,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json, text/plain, */*'
+    }
+  })
+    .then(response => {
+        console.log('response.result: PropertyGet: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+        if(e?.response?.status ===  401){
+          clearStorageRedirectLogin();
+        }else{
+          res(e?.response?.data);
+          console.log('response.result: PropertyGet: ', e?.response?.data?.message);
+          showNotification({
+            title: 'Failed',
+            color: 'red',
+            message: e.message,
+            id: 'PropertyGetError'
+          });
+        }
+    });
+}
+
 export async function PropertiesCountGet(data, token, res) {
   await APIClientGET({
     url: api_config.properties.property_count_get+'?userId='+data,

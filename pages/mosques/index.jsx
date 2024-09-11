@@ -12,6 +12,8 @@ import { UsersGet } from '../../api/fetchApis/Users';
 import { AddPropertyModal } from '../../components/AddPropertyModal/AddPropertyModal';
 import { PropertyDetailsModal } from '../../components/PropertyDetailsModal/PropertyDetailsModal';
 import { AddFeatureImageModal } from '@/components/AddFeatureImageModal/AddFeatureImageModal';
+import { setSelectedProperty } from '../../lib/propertySlice';
+import { PaymentModal } from '../../components/PaymentModal/PaymentModal';
 
 
 
@@ -35,6 +37,7 @@ function MosquesPage(props) {
     const [filterPropertyType, setFilterPropertyType] = useState([]);
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('all');
+    const [openPaymentModal, setOpenPaymentModal] = useState(false);
 
     useEffect(() => {
         setLoader(true);
@@ -144,7 +147,9 @@ function MosquesPage(props) {
 
     const handleOpenSelectedProperty=(property)=>{
         setSelectedPropertyForDetails(property);
-        setOpenPropertyDetailsModal(true);    
+        //setOpenPropertyDetailsModal(true);    
+        dispatch(setSelectedProperty(property));
+        router.push(`/mosques/${property.id}`);
     }
 
     const mapPropertyStatusValues=(propertyStatus)=>{
@@ -193,11 +198,12 @@ function MosquesPage(props) {
             style={{cursor: 'pointer', minWidth: '100%'}}>
                 <Card.Section>
                     <Group style={{position: 'absolute', top: 10, left: 10, right: 10, width: '95%'}} justify='space-between'>
+                        {accountData.type !== 'CLIENT' &&
                         <Checkbox
                         styles={{input: {cursor: 'pointer'}}}
                         checked={selectedProperties.find((selectedProperty)=> selectedProperty === property.id)}
                         onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
-                        />
+                        />}
                         <Group justify={'space-between'}>
                             {accountData.type !== 'CLIENT' && <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : property.propertyStatus === "COMPLETED" ? "#10516f" : property.propertyStatus === "IN_REVIEW" ? "#9baebc" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>}
                             {accountData.type === 'ADMIN' &&
@@ -257,14 +263,15 @@ function MosquesPage(props) {
                 </Stack>
 
                 {/* <Button fullWidth mt="md" radius="md" onClick={()=> {
-                    if(property.image.featuredImage){
-                        property.propertyStatus === 'UNPUBLISHED' ? publishProperty([property.id]) : unpublishProperty([property.id])
-                    }else{
-                        setPublishOnFollow(property.id);
-                        setOpenAddFeatureImageModal(true);
-                    }
+                    // if(property.image.featuredImage){
+                    //     property.propertyStatus === 'UNPUBLISHED' ? publishProperty([property.id]) : unpublishProperty([property.id])
+                    // }else{
+                    //     setPublishOnFollow(property.id);
+                    //     setOpenAddFeatureImageModal(true);
+                    // }
+                    setOpenPaymentModal(true);
                 }}>
-                    {property.propertyStatus === 'UNPUBLISHED' ? 'Publish' : 'Unpublish'}
+                    Subscribe
                 </Button> */}
             </Card>
         )
@@ -320,15 +327,15 @@ function MosquesPage(props) {
         <Stack>
             <Group>
             {accountData.type === 'CLIENT' && 
-            <Tabs value={activeTab} onChange={setActiveTab}>
+            <Tabs variant={'outline'} value={activeTab} onChange={setActiveTab}>
                 <Tabs.List>
                     <Tabs.Tab value="all">All</Tabs.Tab>
-                    <Tabs.Tab value="requested">Requested</Tabs.Tab>
-                    <Tabs.Tab value="subscribed">Subscribed</Tabs.Tab>
+                    <Tabs.Tab value="requested">My Registered</Tabs.Tab>
+                    <Tabs.Tab value="subscribed">My Contributions</Tabs.Tab>
                 </Tabs.List>
             </Tabs>}
             </Group>
-            <Group justify={'space-between'}>
+            <Group>
                 <Group justify={'space-between'}>
                     <Group style={{flex: size.width < 650 && 1}}>
                         <TextInput
@@ -346,12 +353,13 @@ function MosquesPage(props) {
                 </Group>
                 
                 <Group>
-                    <ActionIcon onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
+                    <ActionIcon id='add-property-button' onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
                         <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
                     </ActionIcon>
+                    {accountData.type !== 'CLIENT' &&
                     <ActionIcon disabled={selectedProperties.length === 0} color={'red'} onClick={()=> selectedProperties.length > 0 ? selectedProperties.map((id)=> deleteProperty(id)) : showNotification({message: 'No properties selected yet', color: 'red', id: 'noPropertiesSelected'})} variant="filled" aria-label="Delete Property">
                         <IconTrashFilled style={{width: '70%', height: '70%'}}/>
-                    </ActionIcon>
+                    </ActionIcon>}
                 </Group>
             </Group>
             {/* {size.width < 650 && renderFilterBadges()} */}
@@ -444,6 +452,11 @@ function MosquesPage(props) {
             //         publishOnFollowProperty.propertyStatus === 'UNPUBLISHED' ? publishProperty([publishOnFollowProperty.id]) : unpublishProperty([publishOnFollowProperty.id])
             //     }
             // }}
+            />}
+            {openPaymentModal &&
+            <PaymentModal
+            opened={openPaymentModal}
+            onClose={()=> setOpenPaymentModal(false)}
             />}
         </Stack>
     );
