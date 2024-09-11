@@ -51,7 +51,7 @@ function DashboardWaterFlowRate(props) {
                     h={accountData.type === 'ADMIN' ? 320 : 180}
                     data={data}
                     dataKey="hour"
-                    series={[{ name: 'liters', color: 'blue' }]}
+                    series={[{ name: 'liters', color: '#5185a6' }]}
                     areaChartProps={{ syncId: 'groceries' }}
                     />}
                 </Group>
