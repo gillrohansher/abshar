@@ -45,6 +45,8 @@ function MosquesPage(props) {
             getProperties();
             getUsers();
         }, 1000);
+
+        console.log('accountData: ', accountData);
     },[]);
 
 
@@ -262,7 +264,8 @@ function MosquesPage(props) {
                     
                 </Stack>
 
-                {/* <Button fullWidth mt="md" radius="md" onClick={()=> {
+                {accountData.email === 'rohangill6688@gmail.com' &&
+                <Button fullWidth mt="md" radius="md" onClick={()=> {
                     // if(property.image.featuredImage){
                     //     property.propertyStatus === 'UNPUBLISHED' ? publishProperty([property.id]) : unpublishProperty([property.id])
                     // }else{
@@ -272,7 +275,7 @@ function MosquesPage(props) {
                     setOpenPaymentModal(true);
                 }}>
                     Subscribe
-                </Button> */}
+                </Button>}
             </Card>
         )
     }
