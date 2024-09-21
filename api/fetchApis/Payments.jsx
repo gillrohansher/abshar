@@ -62,7 +62,11 @@ export async function PageRedirectionRequestPost(data, token, res) {
     data: formData,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8"
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+      "Origin": "null",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "*",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization"
     }
   })
     .then(response => {
