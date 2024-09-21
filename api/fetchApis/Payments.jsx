@@ -69,22 +69,28 @@ export async function PageRedirectionRequestPost(data, token, res) {
       // "Access-Control-Allow-Headers": "Content-Type, Authorization"
     }
   })
-    .then(response => {
-        console.log('response.result: PageRedirectionRequestPost: ', response);
-        res(response.data);
-    })
-    .catch(e => {
-      if(e?.response?.status ===  401){
-        clearStorageRedirectLogin();
-      }else{
-          res(e);
-          console.log('response.result: PageRedirectionRequestPost: ', e);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e?.message,
-            id: 'PageRedirectionRequestPostError'
-          });
-        }
-    });
+  .then((response) => {
+    return response.text();
+  })
+  .then((html) => {
+    console.log('PageRedirectionRequestPost: ', html);
+  })
+    // .then(response => {
+    //     console.log('response.result: PageRedirectionRequestPost: ', response);
+    //     res(response.data);
+    // })
+    // .catch(e => {
+    //   if(e?.response?.status ===  401){
+    //     clearStorageRedirectLogin();
+    //   }else{
+    //       res(e);
+    //       console.log('response.result: PageRedirectionRequestPost: ', e);
+    //       showNotification({
+    //         title: 'Failed',
+    //         color: 'red',
+    //         message: e?.message,
+    //         id: 'PageRedirectionRequestPostError'
+    //       });
+    //     }
+    // });
 }
