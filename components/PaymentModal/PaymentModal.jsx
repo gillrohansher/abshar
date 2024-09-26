@@ -35,6 +35,7 @@ export function PaymentModal({opened, onClose}) {
         PaymentPost({totalAmount: 1000, paymentMethod: value, redirection: 0}, 
         token, 
         res=>{
+            console.log('establishConnection: ', res);
             if(res?.code === 200){
                 showNotification({
                     message: 'Payment created.',
@@ -42,15 +43,8 @@ export function PaymentModal({opened, onClose}) {
                     id: 'paymentCreated'
                 });
 
-                setPaymentPostResponse(res?.data);
-
-                PageRedirectionRequestPost({...res?.data, transactionTypeId: value}, 
-                null, 
-                res=>{
-                    console.log('PageRedirectionRequestPost: ', res);
-                });
+                window.open(res.data, '_blank');
             }
-            // setLoader(false);
         });
     }
     return (
