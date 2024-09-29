@@ -41,15 +41,14 @@ function MosquesPage(props) {
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [selectedPropertyForPayment, setSelectedPropertyForPayment] = useState(null);
 
-    useEffect(() => {
-        setLoader(true);
-        setTimeout(() => {
-            getProperties();
-            getUsers();
-        }, 1000);
+    // useEffect(() => {
+    //     setLoader(true);
+    //     setTimeout(() => {
+    //         getProperties();
+    //     }, 1000);
 
-        console.log('accountData: ', accountData);
-    },[]);
+    //     console.log('accountData: ', accountData);
+    // },[]);
 
 
     useEffect(() => {
@@ -77,7 +76,7 @@ function MosquesPage(props) {
                 setProperties(res.data.filter((property)=> property.type === 'MOSQUE'));
                 openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
             }
-            setLoader(false);
+            getUsers();
         });
     }
     
@@ -256,7 +255,7 @@ function MosquesPage(props) {
                 <Stack onClick={()=> handleOpenSelectedProperty(property)}>
                     <Group justify="space-between" mt="md" mb="xs" wrap='nowrap'>
                         <Text truncate="end" fw={500}>{property.name}</Text>
-                        <Badge color="grey">{property.type}</Badge>
+                        {/* <Badge color="grey">{property.type}</Badge> */}
                     </Group>
                     <Stack gap={2}>
                         <Text truncate="end" size="sm" c="dimmed">{`${property.street && 'Street '+property.street+','} ${property.area && property.area+','} ${property.phase && 'phase '+property.phase+','} ${property.zipCode && property.zipCode+','} ${property.city && property.city+','} ${property.country && property.country}`}</Text>
@@ -266,7 +265,8 @@ function MosquesPage(props) {
                     
                 </Stack>
 
-                {accountData.email === 'rohangill6688@gmail.com' &&
+                {(accountData.email === 'rohangill6688@gmail.com' &&
+                property.propertySubscriptionStatus) &&
                 <Button fullWidth mt="md" radius="md" onClick={()=> {
                     // if(property.image.featuredImage){
                     //     property.propertyStatus === 'UNPUBLISHED' ? publishProperty([property.id]) : unpublishProperty([property.id])
@@ -277,7 +277,7 @@ function MosquesPage(props) {
                     setOpenPaymentModal(true);
                     setSelectedPropertyForPayment(property);
                 }}>
-                    Subscribe
+                    {property.propertySubscriptionStatus === 'UNSUBSCRIBED' ? 'Subscribe' : property.propertySubscriptionStatus === 'SUBSCRIBED' && 'Unsubscribe'}
                 </Button>}
             </Card>
         )

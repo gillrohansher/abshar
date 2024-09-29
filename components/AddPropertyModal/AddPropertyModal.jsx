@@ -80,6 +80,11 @@ const [selectedSurveyor, setSelectedSurveyor] = useState(edit ? edit.assignedUse
 const [surveyorError, setSurveyorError] = useState(null);
 const [openAddFeatureImageModal, setOpenAddFeatureImageModal] = useState(false);
 
+const [frontGateImage, setFrontGateImage] = useState(null);
+const [insideGateImage, setInsideGateImage] = useState(null);
+const [wuzuAreaImage, setWuzuAreaImage] = useState(null);
+const [washroomAreaImage, setWashroomAreaImage] = useState(null);
+
 const [active, setActive] = useState(0);
 const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
 const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
@@ -135,10 +140,11 @@ const postProperty=()=>{
                 message: 'Property created successfully.',
                 color: 'green'
             });
-            if(files.length === 0 || files.find((file)=> file.id === undefined) === undefined){
+            if(files.length === 0 || files.find((file)=> file.id === undefined) === undefined || (frontGateImage !== null || insideGateImage !== null || wuzuAreaImage !== null || washroomAreaImage !== null)){
                 getProperties();
                 onClose();
             }else {
+                setFiles([...frontGateImage, ...insideGateImage, ...wuzuAreaImage, ...washroomAreaImage]);
                 postPropertyImages(res?.data[0]?.id);
             }
         }else{
@@ -337,6 +343,21 @@ const validate=()=>{
             </Group>
         )
     }
+
+    const renderImage=(imageFile)=>{
+        let url = URL.createObjectURL(imageFile);
+        return(
+        <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px', marginTop: '20px'}}>
+            <Group justify={'center'}>
+                <div style={{position: 'relative'}}>
+                    <Group style={{borderRadius: '2px', height: '200px', backgroundColor: 'black'}} align='center' justify={'center'}>
+                        <img src={url} style={{borderRadius: '2px', maxHeight: '200px', minWidth: '100px', maxWidth: '150px', objectFit: 'cover'}} />
+                    </Group>
+                </div>
+            </Group>
+        </Group>
+        )
+    }
     return (
         <Modal opened={opened} size='lg' onClose={onClose} title={accountData.type === 'CLIENT' ? (type ? "Request mosque survey" : "Request property survey") : (edit ? "Edit property" : "Add property")} centered>
             {loader ?
@@ -367,7 +388,19 @@ const validate=()=>{
                             <Text size={'sm'} fw={600}>Images</Text>
                             {selectedType !== '' ?
                             <>
+                                {edit ?
                                 <FileInput style={{marginTop: '20px'}} clearable={!edit} multiple value={files} onChange={(newFiles)=> files.length === 0 ? setFiles(newFiles) : setFiles([...files, ...newFiles])} accept="image/png,image/jpeg" />
+                                :
+                                <>
+                                    <FileInput label={'Front gate'} style={{marginTop: '20px'}} clearable={!edit} value={frontGateImage} onChange={(newFile)=> setFrontGateImage(newFile)} accept="image/png,image/jpeg" />
+                                    {frontGateImage && renderImage(frontGateImage)}
+                                    <FileInput label={'Inside gate'} style={{marginTop: '20px'}} clearable={!edit} value={insideGateImage} onChange={(newFile)=> setInsideGateImage(newFile)} accept="image/png,image/jpeg" />
+                                    {insideGateImage && renderImage(insideGateImage)}
+                                    <FileInput label={'Wuzu Area'} style={{marginTop: '20px'}} clearable={!edit} value={wuzuAreaImage} onChange={(newFile)=> setWuzuAreaImage(newFile)} accept="image/png,image/jpeg" />
+                                    {wuzuAreaImage && renderImage(wuzuAreaImage)}
+                                    <FileInput label={'Washroom Area'} style={{marginTop: '20px'}} clearable={!edit} value={washroomAreaImage} onChange={(newFile)=> setWashroomAreaImage(newFile)} accept="image/png,image/jpeg" />
+                                    {washroomAreaImage && renderImage(washroomAreaImage)}
+                                </>}
                                 {(files.length > 0 || edit?.image?.featuredImage) &&
                                 <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
                                     <SimpleGrid cols={3}>

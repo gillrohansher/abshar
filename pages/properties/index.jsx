@@ -40,7 +40,6 @@ function PropertiesPage(props) {
         setLoader(true);
         setTimeout(() => {
             getProperties();
-            getUsers();
         }, 1000);
     },[]);
 
@@ -64,7 +63,7 @@ function PropertiesPage(props) {
                 openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
                 editProperty && setEditProperty(res.data.find((property)=> property.id === editProperty?.id));
             }
-            setLoader(false);
+            getUsers();
         });
     }
     
