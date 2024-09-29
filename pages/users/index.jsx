@@ -1,11 +1,11 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Fieldset, Group, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, Select, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Loader, LoadingOverlay, Menu, NavLink, PasswordInput, Select, Stack, Table, Text, TextInput, Title, useMantineColorScheme } from '@mantine/core';
 import { use, useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize } from '../../lib/hooks';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconSortAscending, IconSortDescending, IconGenderTransgender, IconMars, IconGenderFemale } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconSortAscending, IconSortDescending, IconGenderTransgender, IconMars, IconGenderFemale, IconUserFilled } from '@tabler/icons-react';
 import { ProductDelete, ProductGet, ProductPost, ProductPut } from '../../api/fetchApis/Products';
 import { AddProductModal } from '../../components/AddProductModal/AddProductModal';
 import { UserChangeAccountStatusPut, UserDelete, UserPut, UsersGet } from '../../api/fetchApis/Users';
@@ -90,6 +90,10 @@ function UsersPage(props) {
 
     return (
         <Stack>
+            <Group gap={'xs'}>
+                <IconUserFilled size="1.125rem" stroke={1.5} color={'#5185a6'} />
+                <Title order={4}>Users</Title>
+            </Group>
             <Group justify={'space-between'}>
                 <Group style={{flex: size.width < 650 && 1}}>
                     <TextInput
@@ -103,16 +107,17 @@ function UsersPage(props) {
                     }}
                     style={{flex: size.width < 650 && 1}}
                     />
-                </Group>
-                <Group>
                     <ActionIcon onClick={()=> setOpenAddUserModal(true)} variant="filled" aria-label="Add User">
                         <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
                     </ActionIcon>
+                </Group>
+                <Group>
                     <ActionIcon disabled={selectedUsers.length === 0} color={'red'} onClick={()=> selectedUsers.length > 0 ? selectedUsers.map((id)=> deleteUser(id)) : showNotification({message: 'No users selected yet', color: 'red', id: 'noProductsSelected'})} variant="filled" aria-label="Delete Product">
                         <IconTrashFilled style={{width: '70%', height: '70%'}}/>
                     </ActionIcon>
                 </Group>
             </Group>
+            <Divider/>
             <Group>
                 {loader ?
                 <Center h={'100vh'} w={'100%'}>

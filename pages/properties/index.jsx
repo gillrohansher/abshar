@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, SimpleGrid, Stack, Table, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, SimpleGrid, Stack, Table, Text, TextInput, Title, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize} from '../../lib/hooks';
 import { setSelectedProperty } from '../../lib/propertySlice';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff, IconDots } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff, IconDots, IconHomeFilled } from '@tabler/icons-react';
 import { PropertiesDelete, PropertiesGet, PropertiesPost, PropertyChangeStatusPut, PropertyUploadFeatureImagePost, PropertyUploadImagePost } from '../../api/fetchApis/Properties';
 import { UsersGet } from '../../api/fetchApis/Users';
 import { AddPropertyModal } from '../../components/AddPropertyModal/AddPropertyModal';
@@ -170,13 +170,13 @@ function PropertiesPage(props) {
             withBorder 
             style={{cursor: 'pointer', minWidth: '100%'}}>
                 <Card.Section>
-                    <Group style={{position: 'absolute', top: 10, left: 10, right: 10, width: '95%'}} justify='space-between'>
-                        {accountData.type !== 'CLIENT' &&
+                    <Group style={{position: 'absolute', top: 10, left: 10, right: 10, width: '95%'}} justify='flex-end'>
+                        {/* {accountData.type !== 'CLIENT' &&
                         <Checkbox
                         styles={{input: {cursor: 'pointer'}}}
                         checked={selectedProperties.find((selectedProperty)=> selectedProperty === property.id)}
                         onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
-                        />}
+                        />} */}
                         <Group justify={'space-between'}>
                         {accountData.type !== 'CLIENT' && <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : property.propertyStatus === "COMPLETED" ? "#10516f" : property.propertyStatus === "IN_REVIEW" ? "#9baebc" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>}
                             {accountData.type === 'ADMIN' &&
@@ -302,7 +302,10 @@ function PropertiesPage(props) {
 
     return (
         <Stack>
-            <Group></Group>
+            <Group gap={'xs'}>
+                <IconHomeFilled size="1.125rem" stroke={1.5} color={'#5185a6'} />
+                <Title order={4}>Properties</Title>
+            </Group>
             <Group justify={'space-between'}>
                 <Group style={{flex: size.width < 650 && 1}}>
                     <TextInput
@@ -329,6 +332,7 @@ function PropertiesPage(props) {
                 </Group>
             </Group>
             {size.width < 650 && renderFilterBadges()}
+            <Divider/>
             <Group>
                 {loader ?
                 <Center h={'100vh'} w={'100%'}>

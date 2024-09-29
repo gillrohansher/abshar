@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, SimpleGrid, Stack, Table, Tabs, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, SimpleGrid, Stack, Table, Tabs, Text, TextInput, Title, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize} from '../../lib/hooks';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff, IconDots } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff, IconDots, IconBuildingMosque } from '@tabler/icons-react';
 import { PropertiesDelete, PropertiesGet, PropertiesPost, PropertyChangeStatusPut, PropertyUploadFeatureImagePost, PropertyUploadImagePost } from '../../api/fetchApis/Properties';
 import { UsersGet } from '../../api/fetchApis/Users';
 import { AddPropertyModal } from '../../components/AddPropertyModal/AddPropertyModal';
@@ -200,13 +200,13 @@ function MosquesPage(props) {
             withBorder 
             style={{cursor: 'pointer', minWidth: '100%'}}>
                 <Card.Section>
-                    <Group style={{position: 'absolute', top: 10, left: 10, right: 10, width: '95%'}} justify='space-between'>
-                        {accountData.type !== 'CLIENT' &&
+                    <Group style={{position: 'absolute', top: 10, left: 10, right: 10, width: '95%'}} justify='flex-end'>
+                        {/* {accountData.type !== 'CLIENT' &&
                         <Checkbox
                         styles={{input: {cursor: 'pointer'}}}
                         checked={selectedProperties.find((selectedProperty)=> selectedProperty === property.id)}
                         onChange={()=> setSelectedProperties(selectedProperties.find((selectedProperty)=> selectedProperty === property.id) !== undefined ? selectedProperties.filter((selectedProperty)=> selectedProperty !== property.id) : [...selectedProperties, property.id])}
-                        />}
+                        />} */}
                         <Group justify={'space-between'}>
                             {accountData.type !== 'CLIENT' && <Badge color={property.propertyStatus === "ASSIGNED" ? "#5185a6" : property.propertyStatus === "COMPLETED" ? "#10516f" : property.propertyStatus === "IN_REVIEW" ? "#9baebc" : "gray"}>{mapPropertyStatusValues(property.propertyStatus)}</Badge>}
                             {accountData.type === 'ADMIN' &&
@@ -331,16 +331,20 @@ function MosquesPage(props) {
 
     return (
         <Stack>
-            <Group>
-            {accountData.type === 'CLIENT' && 
-            <Tabs variant={'outline'} value={activeTab} onChange={setActiveTab}>
-                <Tabs.List>
-                    <Tabs.Tab value="all">All</Tabs.Tab>
-                    <Tabs.Tab value="requested">My Registered</Tabs.Tab>
-                    <Tabs.Tab value="subscribed">My Contributions</Tabs.Tab>
-                </Tabs.List>
-            </Tabs>}
+            <Group gap={'xs'}>
+                <IconBuildingMosque size="1.125rem" stroke={1.5} color={'#5185a6'} />
+                <Title order={4}>Mosques</Title>
             </Group>
+            {accountData.type === 'CLIENT' && 
+            <Group>
+                <Tabs variant={'outline'} value={activeTab} onChange={setActiveTab}>
+                    <Tabs.List>
+                        <Tabs.Tab value="all">All</Tabs.Tab>
+                        <Tabs.Tab value="requested">My Registered</Tabs.Tab>
+                        <Tabs.Tab value="subscribed">My Contributions</Tabs.Tab>
+                    </Tabs.List>
+                </Tabs>
+            </Group>}
             <Group>
                 <Group justify={'space-between'}>
                     <Group style={{flex: size.width < 650 && 1}}>
@@ -368,6 +372,7 @@ function MosquesPage(props) {
                     </ActionIcon>} */}
                 </Group>
             </Group>
+            <Divider/>
             {/* {size.width < 650 && renderFilterBadges()} */}
             <Group>
                 {loader ?

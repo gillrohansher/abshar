@@ -1,4 +1,4 @@
-import { Anchor, Badge, Button, Group, Image, Modal, NumberFormatter, Select, SimpleGrid, Stack, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { Anchor, Badge, Button, Divider, Group, Image, Modal, NumberFormatter, Select, SimpleGrid, Stack, Text, TextInput, useMantineColorScheme } from '@mantine/core';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -120,6 +120,7 @@ const handleEditProperty=()=>{
                     </Group>
                 </Group>
             </Group>
+            <Divider/>
             <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
                 <Slide {...properties}>
                     {currentProperty &&

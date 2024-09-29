@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, AppShell, Box, Burger, Button, Card, Center, Fieldset, Grid, Group, Image, LoadingOverlay, NavLink, PasswordInput, SimpleGrid, Stack, Text, TextInput, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Box, Burger, Button, Card, Center, Divider, Fieldset, Grid, Group, Image, LoadingOverlay, NavLink, PasswordInput, SimpleGrid, Stack, Text, TextInput, Title, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -11,7 +11,7 @@ import DashboardWaterFlowRate from '../../components/DashboardWaterFlowRate/Dash
 import DashboardUsersCard from '../../components/DashboardUsersCard/DashboardUsersCard';
 import DashboardLeakAlert from '../../components/DashboardLeakAlert/DashboardLeakAlert';
 import PropertiesEstimationBarChart from '../../components/PropertiesEstimationBarChart/PropertiesEstimationBarChart';
-import { IconMapPinFilled } from '@tabler/icons-react';
+import { IconMapPinFilled, IconLayoutDashboardFilled } from '@tabler/icons-react';
 import { PropertiesBillEstimateGet, PropertiesCountGet } from '@/api/fetchApis/Properties';
 import dayjs from 'dayjs';
 import { UsersGet } from '@/api/fetchApis/Users';
@@ -68,6 +68,11 @@ function DashboardPage(props) {
 
     return (
         <Stack>
+            <Group gap={'xs'}>
+                <IconLayoutDashboardFilled size="1.125rem" stroke={1.5} color={'#5185a6'} />
+                <Title order={4}>Dashboard</Title>
+            </Group>
+            <Divider/>
             <SimpleGrid cols={size.width < 650 ? 1 : size.width < 767 ? 2 : size.width < 900 ? 1 : size.width < 1300 ? 2 : 3}>
                 <DashboardPropertyTypesCard properties={properties} loader={propertiesLoader}/>
                 {accountData.type === 'ADMIN' && <DashboardUsersCard users={users} loader={propertiesLoader}/>}
