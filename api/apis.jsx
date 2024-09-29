@@ -44,6 +44,7 @@ export const api_config = {
     user_change_account_status: "user/change/account-status"
   },
   payment: {
-    payment_post: "/payment/alfa/initiate/pwa"
-  }
+    payment_post: "/payment/alfa/initiate/pwa",
+    payment_checkout_additems_post: "/checkout/addItems"
+  },
 };

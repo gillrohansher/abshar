@@ -1,16 +1,20 @@
 import { api_config } from "../apis";
 import { showNotification } from "@mantine/notifications";
 import { APIClientDELETE, APIClientGET, APIClientPOST, APIClientPUT } from "./APIClient";
-import { clearStorageRedirectLogin, getAuthToken } from "../../helpers/helpers";
+import { clearStorageRedirectLogin, errorMessage, getAuthToken } from "../../helpers/helpers";
 
 export async function PaymentPost(data, token, res) {
     let formData = new URLSearchParams();
     
-    formData.append('totalAmount', data.totalAmount);
-    formData.append('paymentMethod', data.paymentMethod);
-    formData.append('redirection', data.redirection);
+    // formData.append('totalAmount', data.totalAmount);
+    // formData.append('paymentMethod', data.paymentMethod);
+    // formData.append('redirection', data.redirection);
+
+    formData.append('redirectionUrl', data.redirectionUrl);
+    formData.append('checkoutId', data.checkoutId);
+    
     await APIClientPOST({
-      url: api_config.payment.payment_post,//+'?totalAmount='+data.totalAmount+'&paymentMethod='+data.paymentMethod+'&redirection='+data.redirection,
+      url: api_config.payment.payment_post,
       data: formData,
       headers: {
         Authorization: `Bearer ${token}`,
@@ -85,6 +89,29 @@ export async function PageRedirectionRequestPost(data, token, res) {
             message: e?.message,
             id: 'PageRedirectionRequestPostError'
           });
+        }
+    });
+}
+
+export async function CheckoutAddItemsPost(data, token, res) {
+  await APIClientPOST({
+    url: api_config.payment.payment_checkout_additems_post,
+    data,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  })
+    .then(response => {
+        console.log('response.result: CheckoutAddItemsPost: ', response);
+        res(response.data);
+    })
+    .catch(e => {
+      if(e?.response?.status ===  401){
+        clearStorageRedirectLogin();
+      }else{
+          res(e?.response?.data);
+          console.log('response.result: CheckoutAddItemsPost: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'CheckoutAddItemsPost');
         }
     });
 }

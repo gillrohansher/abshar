@@ -303,6 +303,7 @@ function PropertiesPage(props) {
 
     return (
         <Stack>
+            <Group></Group>
             <Group justify={'space-between'}>
                 <Group style={{flex: size.width < 650 && 1}}>
                     <TextInput
@@ -316,16 +317,16 @@ function PropertiesPage(props) {
                     }}
                     style={{flex: size.width < 650 && 1}}
                     />
+                    <Group>
+                        <ActionIcon id='add-property-button' onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
+                            <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
+                        </ActionIcon>
+                        {/* {accountData.type !== 'CLIENT' && 
+                        <ActionIcon disabled={selectedProperties.length === 0} color={'red'} onClick={()=> selectedProperties.length > 0 ? selectedProperties.map((id)=> deleteProperty(id)) : showNotification({message: 'No properties selected yet', color: 'red', id: 'noPropertiesSelected'})} variant="filled" aria-label="Delete Property">
+                            <IconTrashFilled style={{width: '70%', height: '70%'}}/>
+                        </ActionIcon>} */}
+                    </Group>
                     {size.width > 650 && renderFilterBadges()}
-                </Group>
-                <Group>
-                    <ActionIcon id='add-property-button' onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
-                        <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
-                    </ActionIcon>
-                    {accountData.type !== 'CLIENT' && 
-                    <ActionIcon disabled={selectedProperties.length === 0} color={'red'} onClick={()=> selectedProperties.length > 0 ? selectedProperties.map((id)=> deleteProperty(id)) : showNotification({message: 'No properties selected yet', color: 'red', id: 'noPropertiesSelected'})} variant="filled" aria-label="Delete Property">
-                        <IconTrashFilled style={{width: '70%', height: '70%'}}/>
-                    </ActionIcon>}
                 </Group>
             </Group>
             {size.width < 650 && renderFilterBadges()}

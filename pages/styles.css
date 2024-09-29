@@ -2,7 +2,7 @@ body{
     color: #10516f !important;
 }
 
-.mantine-TextInput-label, .mantine-PasswordInput-label, .mantine-Select-label, .mantine-MultiSelect-label, .mantine-NumberInput-label, .mantine-Textarea-label, .mantine-Switch-label{
+.mantine-TextInput-label, .mantine-PasswordInput-label, .mantine-Select-label, .mantine-MultiSelect-label, .mantine-NumberInput-label, .mantine-Textarea-label, .mantine-Switch-label, .mantine-RadioGroup-label{
     font-weight: 400;
     font-size: 12px;
     line-height: 20px;

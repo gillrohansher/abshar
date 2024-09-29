@@ -37,3 +37,12 @@ export const compressImage= async (file)=>{
     const compressedFile = await imageCompression(file, options);
     return compressedFile;
 }
+
+export const errorMessage=(error, id)=> {
+    showNotification({
+        title: 'Failed',
+        color: 'red',
+        message: error?.message ? error?.message : 'Please contact support team.',
+        id
+      });
+}

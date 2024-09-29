@@ -14,6 +14,7 @@ import { PropertyDetailsModal } from '../../components/PropertyDetailsModal/Prop
 import { AddFeatureImageModal } from '@/components/AddFeatureImageModal/AddFeatureImageModal';
 import { setSelectedProperty } from '../../lib/propertySlice';
 import { PaymentModal } from '../../components/PaymentModal/PaymentModal';
+import { SubscriptionSelectionModal } from '../../components/SubscriptionSelectionModal/SubscriptionSelectionModal';
 
 
 
@@ -38,6 +39,7 @@ function MosquesPage(props) {
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('all');
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
+    const [selectedPropertyForPayment, setSelectedPropertyForPayment] = useState(null);
 
     useEffect(() => {
         setLoader(true);
@@ -273,6 +275,7 @@ function MosquesPage(props) {
                     //     setOpenAddFeatureImageModal(true);
                     // }
                     setOpenPaymentModal(true);
+                    setSelectedPropertyForPayment(property);
                 }}>
                     Subscribe
                 </Button>}
@@ -359,10 +362,10 @@ function MosquesPage(props) {
                     <ActionIcon id='add-property-button' onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
                         <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
                     </ActionIcon>
-                    {accountData.type !== 'CLIENT' &&
+                    {/* {accountData.type !== 'CLIENT' &&
                     <ActionIcon disabled={selectedProperties.length === 0} color={'red'} onClick={()=> selectedProperties.length > 0 ? selectedProperties.map((id)=> deleteProperty(id)) : showNotification({message: 'No properties selected yet', color: 'red', id: 'noPropertiesSelected'})} variant="filled" aria-label="Delete Property">
                         <IconTrashFilled style={{width: '70%', height: '70%'}}/>
-                    </ActionIcon>}
+                    </ActionIcon>} */}
                 </Group>
             </Group>
             {/* {size.width < 650 && renderFilterBadges()} */}
@@ -456,10 +459,20 @@ function MosquesPage(props) {
             //     }
             // }}
             />}
-            {openPaymentModal &&
+            {/* {openPaymentModal &&
             <PaymentModal
             opened={openPaymentModal}
             onClose={()=> setOpenPaymentModal(false)}
+            />} */}
+
+            {openPaymentModal &&
+            <SubscriptionSelectionModal
+            opened={openPaymentModal}
+            propertyData={selectedPropertyForPayment}
+            onClose={()=> {
+                setOpenPaymentModal(false);
+                setSelectedPropertyForPayment(false);
+            }}
             />}
         </Stack>
     );
