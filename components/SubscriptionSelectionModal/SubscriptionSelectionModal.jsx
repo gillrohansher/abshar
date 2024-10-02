@@ -74,7 +74,19 @@ export function SubscriptionSelectionModal({opened, onClose, propertyData}) {
             numberOfMonths: 12
         }
     ];
+
+    const currencies= [
+        {
+            label: 'PKR',
+            value: 'PKR'
+        },
+        {
+            label: 'USD',
+            value: 'USD'
+        }
+    ]
     const [subscriptionValue, setSubscriptionValue] = useState("ONE_MONTH");
+    //const [selectedCurrency, setSubscriptionValue] = useState("ONE_MONTH");
     const [paymentValue, setPaymentValue] = useState('');
     const [validationFailed, setValidationFailed] = useState(false);
 
@@ -116,7 +128,8 @@ export function SubscriptionSelectionModal({opened, onClose, propertyData}) {
         },
         paymentMethod: paymentValue,
         paymentDuration: subscriptionValue,
-        paymentModel: "SUBSCRIPTION"
+        paymentModel: "SUBSCRIPTION",
+        supportedCurrency: 'PKR'
         }, 
         token, 
         res=>{
