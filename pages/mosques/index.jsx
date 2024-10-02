@@ -265,8 +265,7 @@ function MosquesPage(props) {
                     
                 </Stack>
 
-                {(accountData.email === 'rohangill6688@gmail.com' &&
-                property.propertySubscriptionStatus) &&
+                {accountData.type === 'CLIENT' &&
                 <Button fullWidth mt="md" radius="md" onClick={()=> {
                     // if(property.image.featuredImage){
                     //     property.propertyStatus === 'UNPUBLISHED' ? publishProperty([property.id]) : unpublishProperty([property.id])
