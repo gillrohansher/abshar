@@ -57,7 +57,7 @@ function DashboardPage(props) {
 
     const getPropertiesBillEstimate=()=>{
         setPropertiesEstimationLoader(true);
-        PropertiesBillEstimateGet({startDate: dayjs().startOf('year').format('YYYY-MM-DD'), endDate: dayjs().endOf('year').format('YYYY-MM-DD'), summarized: true}, token, res=>{
+        PropertiesBillEstimateGet({startDate: dayjs().startOf('year').format('YYYY-MM-DD'), endDate: dayjs().endOf('year').format('YYYY-MM-DD'), summarized: true, requestedId: accountData.type === 'CLIENT' ? accountData.id : undefined}, token, res=>{
             if(res?.code === 200){
                 res?.data.length > 0 && setPropertiesEstimation(res?.data[0]);
                 console.log('getPropertiesBillEstimate: ', res?.data);

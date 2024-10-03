@@ -94,7 +94,8 @@ export async function PropertiesCountGet(data, token, res) {
 
 export async function PropertiesBillEstimateGet(data, token, res) {
   let baseUrl= api_config.properties.property_bill_estimate_get+'?percent=80&startDate='+data?.startDate+'&endDate='+data?.endDate;
-  let url= data.summarized !== undefined ? (baseUrl+'&summarized='+data.summarized) : data.propertyId !== undefined ? (baseUrl+'&propertyId='+data.propertyId) : baseUrl;
+  //let url= data.summarized !== undefined ? (baseUrl+'&summarized='+data.summarized) : data.propertyId !== undefined ? (baseUrl+'&propertyId='+data.propertyId) : data.requestedId !== undefined ? (baseUrl+'&requestedId='+data.requestedId) : baseUrl;
+  let url= `${baseUrl}${data.summarized !== undefined ? ('&summarized='+data.summarized) : ''}${data.propertyId !== undefined ? ('&propertyId='+data.propertyId) : ''}${data.requestedId !== undefined ? ('&requestedId='+data.requestedId) : ''}`;
   await APIClientGET({
     
     url,
