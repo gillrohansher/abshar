@@ -54,19 +54,20 @@ function PropertiesEstimationBarChart(props) {
     }
 
     return (
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Card shadow="sm" padding="lg" radius={props.mosqueDetail ? "80px" : "md"} style={{backgroundColor: props.mosqueDetail && '#F8F8F8'}} withBorder>
             {props.loader ?
             <Center h={500} w={'100%'}>
                 <Loader/>
             </Center>
             :
             <Stack>
+                {!props.mosqueDetail && 
                 <Group justify="space-between" mb="xs">
                     <Text fw={'bold'}>Estimated social impact</Text>
-                </Group>
+                </Group>}
                 <Group>
                 <BarChart
-                h={500}
+                h={props.mosqueDetail ? 300 : 500}
                 p={40}
                 data={data}
                 dataKey="item"
@@ -81,6 +82,7 @@ function PropertiesEstimationBarChart(props) {
                     { name: 'Impact', color: '#10516f' }
                 ]}
                 withLegend={true}
+                legendProps={{ verticalAlign: props.mosqueDetail ? 'bottom' : 'top', height: 50 }}
                 //withXAxis={false}
                 />
                 </Group>
