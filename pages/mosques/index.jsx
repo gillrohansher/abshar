@@ -255,12 +255,11 @@ function MosquesPage(props) {
                 <Stack onClick={()=> handleOpenSelectedProperty(property)}>
                     <Group justify="space-between" mt="md" mb="xs" wrap='nowrap'>
                         <Text truncate="end" fw={500}>{property.name}</Text>
-                        {/* <Badge color="grey">{property.type}</Badge> */}
                     </Group>
                     <Stack gap={2}>
                         <Text truncate="end" size="sm" c="dimmed">{`${property.street && 'Street '+property.street+','} ${property.area && property.area+','} ${property.phase && 'phase '+property.phase+','} ${property.zipCode && property.zipCode+','} ${property.city && property.city+','} ${property.country && property.country}`}</Text>
-                        {property.requestedUserInfo && <Group wrap='nowrap' align={'flex-start'} gap='xs'><Text size="sm" c="#5185a6">Requested from:</Text><Text size="sm" c="dimmed">{`${property.requestedUserInfo.name}`}</Text></Group>}
-                        {property.assignedUserInfo && <Group wrap='nowrap' align={'flex-start'} gap='xs'><Text size="sm" c="#5185a6">Assigned to:</Text><Text size="sm" c="dimmed">{`${property.assignedUserInfo.name}`}</Text></Group>}
+                        <Group wrap='nowrap' align={'flex-start'} gap='xs'><Text size="sm" c="#5185a6">Requested from:</Text><Text size="sm" c="dimmed">{`${property?.requestedUserInfo?.name ? property.requestedUserInfo.name : '-'}`}</Text></Group>
+                        <Group wrap='nowrap' align={'flex-start'} gap='xs'><Text size="sm" c="#5185a6">Assigned to:</Text><Text size="sm" c="dimmed">{`${property?.assignedUserInfo?.name ? property.assignedUserInfo.name : '-'}`}</Text></Group>
                     </Stack>
                     
                 </Stack>

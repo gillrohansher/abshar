@@ -2,7 +2,7 @@ import { useAppStore } from '@/lib/hooks';
 import { ActionIcon, Anchor, AspectRatio, Badge, Button, Center, Divider, FileInput, Grid, Group, InputLabel, Loader, Modal, MultiSelect, NumberInput, Overlay, Select, SimpleGrid, Stack, Stepper, Text, Textarea, TextInput, useMantineColorScheme } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconTrashFilled, IconChevronLeft, IconChevronRight, IconReplace } from '@tabler/icons-react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { useGeolocated } from "react-geolocated";
 import { Slide } from 'react-slideshow-image';
@@ -34,10 +34,13 @@ const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
         suppressLocationOnMount: true
         //userDecisionTimeout: 5000,
     });
+
+
 const [name, setName] = useState(edit ? edit.name : null);
 const [nameError, setNameError] = useState(false);
 const [typeOptions, setTypeOptions] = useState(type ? ['COMMERCIAL', 'MOSQUE', 'RESIDENTIAL'] : ['COMMERCIAL', 'RESIDENTIAL']);
 const [selectedType, setSelectedType] = useState(type ? type : (edit ? edit.type : null));
+console.log('edit: ', edit, type, selectedType, typeOptions);
 const [typeError, setTypeError] = useState(false);
 const [street, setStreet] = useState(edit ? edit.street : null);
 const [streetError, setStreetError] = useState(null);
@@ -101,6 +104,8 @@ const getProducts=()=>{
     ProductGet(null, token, res=>{
         if(res?.code === 200){
             setProducts(res.data.map((product)=> ({...product, value: product.id, label: `${product.category}, type: ${product.type}, making: ${product.making}`})));
+            setNewProducts(newProducts + 1);
+            setSelectedProducts([...selectedProducts, {quantity: 1, id: res.data.find((product)=> product.category === 'TAP')?.id}]);
         }
     });
 }
@@ -201,6 +206,7 @@ const putProperty=()=>{
             }
         }else{
             setLoader(false);
+            onClose();
         }
 
         if(files.length === 0){
@@ -264,17 +270,19 @@ const deletePropertyImage=(propertyId, imageId)=>{
     })
 }
 
-const validate=()=>{
+const validate=(validateOnNext=false)=>{
     // console.log('validate: ', '92'+pocContact.toString(), /^\\d{7,15}$/.test('92'+pocContact.toString()));
-    setNameError(name ? false : 'required');
-    setTypeError(selectedType ? false : 'required');
-    setStreetError(street ? false : 'required');
-    setAreaError(area ? false : 'required');
-    setPhaseError(phase ? false : 'required');
-    setZipCodeError(zipCode ? false : 'required');
-    setCityError(city ? false : 'required');
-    accountData.type !== 'CLIENT' && setUserError(selectedUser ? false : 'required');
-    accountData.type !== 'CLIENT' && setSurveyorError(selectedSurveyor ? false : 'required');
+    if(validateOnNext && active === 1){
+        setNameError(name ? false : 'required');
+        setTypeError(selectedType ? false : 'required');
+        setStreetError(street ? false : 'required');
+        setAreaError(area ? false : 'required');
+        setPhaseError(phase ? false : 'required');
+        setZipCodeError(zipCode ? false : 'required');
+        setCityError(city ? false : 'required');
+        accountData.type !== 'CLIENT' && setUserError(selectedUser ? false : 'required');
+        accountData.type !== 'CLIENT' && setSurveyorError(selectedSurveyor ? false : 'required');
+    }
     // setSourceOfWaterError(selectedSourceOfWater.length > 0 ? false : 'required');
     // setEstimatedConsumptionError(estimatedConsumption ? false : 'required');
     // setNumberOfPeopleError(numberOfPeople ? false : 'required');
@@ -282,13 +290,38 @@ const validate=()=>{
     // setPocCommitteeContactError(pocCommitteeContact.toString().length > 0 ? (/^\\d{7,15}$/.test('+92'+pocCommitteeContact.toString()) ? false : 'phone number incorrect') : false);
     // setPocContactError(pocContact.toString().length > 0 ? (/^\\d{7,15}$/.test('+92'+pocContact.toString()) ? false : 'phone number incorrect') : false);
     setFirstLoadOfData(false);
-    if(name && selectedType && street && area && phase && zipCode && city && (accountData.type !== 'CLIENT' ? selectedUser : true) && (accountData.type !== 'CLIENT' ? selectedSurveyor : true)
-        //&& selectedSourceOfWater.length > 0 && estimatedConsumption && numberOfPeople //&& (pocCommitteeContact ? /^\\d{7,15}$/.test(pocCommitteeContact) : true) && (pocContact ? /^\\d{7,15}$/.test(pocContact) : true)
-    ){
-        return true;
-    }else{
-        return false;
+    if(active === 0){
+        if(edit ? files.length > 0 : (frontGateImage || insideGateImage || wuzuAreaImage || washroomAreaImage)){
+            return true;
+        }else{
+            validateOnNext && showNotification({message: 'Please select atleast one image to move forward.', color: 'red', id: 'informationMissing'});
+            return false;
+        }
     }
+
+    if(active === 1){
+        if(name && selectedType && street && area && phase && zipCode && city && (accountData.type !== 'CLIENT' ? selectedUser : true) && (accountData.type !== 'CLIENT' ? selectedSurveyor : true)){
+            return true;
+        }else{
+            validateOnNext && showNotification({message: 'Please fill in required information to move forward.', color: 'red', id: 'informationMissing'});
+            return false;
+        }
+    }
+
+    if(active === 2){
+        console.log('products.length: ', products.length);
+        if(selectedProducts.length > 0){
+            return true;
+        }else{
+            validateOnNext && showNotification({message: 'Please select atleast one product to move forward.', color: 'red', id: 'informationMissing'});
+            return false;
+        }
+    }
+
+    if(active === 3){
+        return true;
+    }
+    
 
     
 }
@@ -322,6 +355,8 @@ const validate=()=>{
     useEffect(() => {
         getProducts();
     }, []);
+
+    console.log('selectedProducts: ', selectedProducts);
 
     const getFilesUrlByIndex=(index)=> {
         let url = files[index]?.id !== undefined ? files[index]?.path : URL.createObjectURL(files[index]);
@@ -382,8 +417,8 @@ const validate=()=>{
                         </Group>}
                     </>} */}
 
-                <Stepper active={active} onStepClick={setActive}>
-                    <Stepper.Step label="First step" description="Select property images">
+                <Stepper active={active} onStepClick={setActive} allowNextStepsSelect={false}>
+                    <Stepper.Step label="First step" description="Select images">
                         {<>
                             <Text size={'sm'} fw={600}>Images</Text>
                             {selectedType !== '' ?
@@ -392,7 +427,7 @@ const validate=()=>{
                                 <FileInput style={{marginTop: '20px'}} clearable={!edit} multiple value={files} onChange={(newFiles)=> files.length === 0 ? setFiles(newFiles) : setFiles([...files, ...newFiles])} accept="image/png,image/jpeg" />
                                 :
                                 <>
-                                    <FileInput label={'Front gate'} style={{marginTop: '20px'}} clearable={!edit} value={frontGateImage} onChange={(newFile)=> setFrontGateImage(newFile)} accept="image/png,image/jpeg" />
+                                    <FileInput label={'Front gate'} style={{marginTop: '20px'}} styles={{section: {width: 'fit-content', marginTop: '20px'}}} clearable={!edit} value={frontGateImage} onChange={(newFile)=> setFrontGateImage(newFile)} accept="image/png,image/jpeg"/>
                                     {frontGateImage && renderImage(frontGateImage)}
                                     <FileInput label={'Inside gate'} style={{marginTop: '20px'}} clearable={!edit} value={insideGateImage} onChange={(newFile)=> setInsideGateImage(newFile)} accept="image/png,image/jpeg" />
                                     {insideGateImage && renderImage(insideGateImage)}
@@ -540,7 +575,7 @@ const validate=()=>{
                             <SimpleGrid cols={2}>
                             {/* Name */}
                             <TextInput
-                            label="Name"
+                            label="Buliding name"
                             value={name}
                             required
                             error={nameError}
@@ -797,23 +832,47 @@ const validate=()=>{
                                             <NumberInput
                                             label="quantity"
                                             value={selectedProducts[index].quantity}
-                                            onChange={(value)=> setSelectedProducts(selectedProducts.map((selectedProduct, index_s_product)=> {
-                                                if(index === index_s_product){
-                                                    return {
-                                                        ...selectedProduct,
-                                                        quantity: value,
-                                                    }
+                                            onChange={(value)=> {
+                                                if(newProducts > 1 && selectedProducts.length > 1){
+                                                    setSelectedProducts(selectedProducts.map((selectedProduct, index_s_product)=> {
+                                                        if(index === index_s_product){
+                                                            return {
+                                                                ...selectedProduct,
+                                                                quantity: value,
+                                                            }
+                                                        }else{
+                                                            return selectedProduct;
+                                                        }
+                                                    }));
                                                 }else{
-                                                    return selectedProduct;
+                                                    if(value > 0){
+                                                        setSelectedProducts(selectedProducts.map((selectedProduct, index_s_product)=> {
+                                                            if(index === index_s_product){
+                                                                return {
+                                                                    ...selectedProduct,
+                                                                    quantity: value,
+                                                                }
+                                                            }else{
+                                                                return selectedProduct;
+                                                            }
+                                                        }));
+                                                    }else{
+                                                        showNotification({message: 'Atleast one product is required to move forward.', color: 'red', id: 'informationMissing'});
+                                                    }
                                                 }
-                                            }))}
+                                            }}
+                                            min={1}
                                             />
                                             <Group 
                                             onClick={()=> {
-                                                setNewProducts(newProducts - 1);
-                                                setSelectedProducts(selectedProducts.filter((selectedProduct, index_s_product)=> index !== index_s_product));
-                                            }} style={{marginBottom: '10px', cursor: 'pointer'}}>
-                                                <IconTrashFilled color='grey' size={'18px'}/>
+                                                if(newProducts > 1 && selectedProducts.length > 1){
+                                                    setNewProducts(newProducts - 1);
+                                                    setSelectedProducts(selectedProducts.filter((selectedProduct, index_s_product)=> index !== index_s_product));
+                                                }else{
+                                                    showNotification({message: 'Atleast one product is required to move forward.', color: 'red', id: 'informationMissing'});
+                                                }
+                                            }} style={{marginBottom: '10px', cursor: 'pointer', opacity: (newProducts < 2 && selectedProducts.length < 2) ? 0.5 : 1}}>
+                                                <IconTrashFilled color='grey' size={'18px'} style={{opacity: (newProducts < 2 && selectedProducts.length < 2) ? 0.5 : 1 }}/>
                                             </Group>
                                         </Group>
                                         
@@ -825,7 +884,7 @@ const validate=()=>{
                                     <Button 
                                     onClick={()=> {
                                         setNewProducts(newProducts + 1);
-                                        setSelectedProducts([...selectedProducts, {quantity: 0, id: null}])
+                                        setSelectedProducts([...selectedProducts, {quantity: 1, id: products[0].value}])
                                     }}>Add product</Button>
                                 </Group>
                             </Stack>
@@ -839,7 +898,7 @@ const validate=()=>{
 
                 <Group justify="space-between" mt="xl">
                     <Button variant="default" onClick={()=> active === 0 ? onClose() : prevStep()}>{active === 0 ? 'Cancel' : 'Back'}</Button>
-                    <Button onClick={()=> active === 3 ? (validate() ? (edit ? putProperty() : postProperty()) : showNotification({message: 'Please first fill in required information to save.', color: 'red', id: 'informationMissing'})) : nextStep()}>{active === 3 ? edit ? 'Save' : 'Add' : 'Next step'}</Button>
+                    <Button onClick={()=> active === 3 ? (validate(true) ? (edit ? putProperty() : postProperty()) : showNotification({message: 'Please first fill in required information to save.', color: 'red', id: 'informationMissing'})) : validate(true) && nextStep()}>{active === 3 ? edit ? 'Save' : 'Add' : 'Next step'}</Button>
                 </Group>
                     
                     

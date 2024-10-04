@@ -1,7 +1,7 @@
 import { api_config } from "../apis";
 import { showNotification } from "@mantine/notifications";
 import { APIClientDELETE, APIClientGET, APIClientPOST, APIClientPUT } from "./APIClient";
-import { clearStorageRedirectLogin, getAuthToken } from "../../helpers/helpers";
+import { clearStorageRedirectLogin, errorMessage, getAuthToken } from "../../helpers/helpers";
 
 
 export async function ProductGet(data, token, res) {
@@ -14,21 +14,20 @@ export async function ProductGet(data, token, res) {
     })
       .then(response => {
           console.log('response.result: ProductGet: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'ProductGet');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e?.response?.data);
-            console.log('response.result: ProductGet: ', e?.response?.data?.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'ProductGetError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: ProductGet: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'ProductGet');
+        }
       });
 }
 
@@ -42,21 +41,20 @@ export async function ProductPost(data, token, res) {
     })
       .then(response => {
           console.log('response.result: ProductPost: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'ProductPost');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: ProductPost: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'ProductPostError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: ProductPost: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'ProductPost');
+        }
       });
 }
 
@@ -70,21 +68,20 @@ export async function ProductPut(data, token, res) {
     })
       .then(response => {
           console.log('response.result: ProductPut: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'ProductPut');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: ProductPut: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'ProductPutError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: ProductPut: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'ProductPut');
+        }
       });
 }
 
@@ -97,20 +94,19 @@ export async function ProductDelete(data, token, res) {
     })
       .then(response => {
           console.log('response.result: ProductDelete: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'ProductDelete');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: ProductDelete: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'ProductDeleteError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: ProductDelete: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'ProductDelete');
+        }
       });
 }

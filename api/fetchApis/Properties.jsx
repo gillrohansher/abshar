@@ -1,7 +1,7 @@
 import { api_config } from "../apis";
 import { showNotification } from "@mantine/notifications";
 import { APIClientDELETE, APIClientGET, APIClientPOST, APIClientPUT } from "./APIClient";
-import { clearStorageRedirectLogin, getAuthToken } from "../../helpers/helpers";
+import { clearStorageRedirectLogin, errorMessage, getAuthToken } from "../../helpers/helpers";
 
 
 export async function PropertiesGet(data, type, token, res) {
@@ -19,6 +19,9 @@ export async function PropertiesGet(data, type, token, res) {
       .then(response => {
           console.log('response.result: PropertiesGet: ', response);
           res(response.data);
+          if(response.data.code !== 200){
+            errorMessage(response.data, 'PropertiesGet');
+          }
       })
       .catch(e => {
           if(e?.response?.status ===  401){
@@ -26,12 +29,7 @@ export async function PropertiesGet(data, type, token, res) {
           }else{
             res(e?.response?.data);
             console.log('response.result: PropertiesGet: ', e?.response?.data?.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'PropertiesGetError'
-            });
+            errorMessage(e?.response?.data, 'PropertiesGet');
           }
       });
 }
@@ -47,6 +45,9 @@ export async function PropertyGet(data, token, res) {
     .then(response => {
         console.log('response.result: PropertyGet: ', response);
         res(response.data);
+        if(response.data.code !== 200){
+          errorMessage(response.data, 'PropertyGet');
+        }
     })
     .catch(e => {
         if(e?.response?.status ===  401){
@@ -54,12 +55,7 @@ export async function PropertyGet(data, token, res) {
         }else{
           res(e?.response?.data);
           console.log('response.result: PropertyGet: ', e?.response?.data?.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message,
-            id: 'PropertyGetError'
-          });
+          errorMessage(e?.response?.data, 'PropertyGet');
         }
     });
 }
@@ -73,22 +69,20 @@ export async function PropertiesCountGet(data, token, res) {
     }
   })
     .then(response => {
-        console.log('response.result: PropertiesGet: ', response);
+        console.log('response.result: PropertiesCountGet: ', response);
         res(response.data);
+        if(response.data.code !== 200){
+          errorMessage(response.data, 'PropertiesCountGet');
+        }
     })
     .catch(e => {
       if(e?.response?.status ===  401){
         clearStorageRedirectLogin();
       }else{
-          res(e?.response?.data);
-          console.log('response.result: PropertiesGet: ', e?.response?.data?.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message,
-            id: 'PropertiesGetError'
-          });
-        }
+        res(e?.response?.data);
+        console.log('response.result: PropertiesCountGet: ', e?.response?.data?.message);
+        errorMessage(e?.response?.data, 'PropertiesCountGet');
+      }
     });
 }
 
@@ -107,20 +101,18 @@ export async function PropertiesBillEstimateGet(data, token, res) {
     .then(response => {
         console.log('response.result: PropertiesBillEstimateGet: ', response);
         res(response.data);
+        if(response.data.code !== 200){
+          errorMessage(response.data, 'PropertiesBillEstimateGet');
+        }
     })
     .catch(e => {
       if(e?.response?.status ===  401){
         clearStorageRedirectLogin();
       }else{
-          res(e?.response?.data);
-          console.log('response.result: PropertiesBillEstimateGet: ', e?.response?.data?.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message,
-            id: 'PropertiesBillEstimateGetError'
-          });
-        }
+        res(e?.response?.data);
+        console.log('response.result: PropertiesBillEstimateGet: ', e?.response?.data?.message);
+        errorMessage(e?.response?.data, 'PropertiesBillEstimateGet');
+      }
     });
 }
 
@@ -135,20 +127,18 @@ export async function PropertiesPost(data, token, res) {
       .then(response => {
           console.log('response.result: PropertiesPost: ', response);
           res(response.data);
+          if(response.data.code !== 200){
+            errorMessage(response.data, 'PropertiesPost');
+          }
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: PropertiesPost: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'PropertiesPostError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: PropertiesPost: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'PropertiesPost');
+        }
       });
 }
 
@@ -163,20 +153,18 @@ export async function PropertiesPut(data, token, res) {
     .then(response => {
         console.log('response.result: PropertiesPut: ', response);
         res(response.data);
+        if(response.data.code !== 200){
+          errorMessage(response.data, 'PropertiesPut');
+        }
     })
     .catch(e => {
       if(e?.response?.status ===  401){
         clearStorageRedirectLogin();
       }else{
-          res(e.response.data);
-          console.log('response.result: PropertiesPut: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message,
-            id: 'PropertiesPutError'
-          });
-        }
+        res(e?.response?.data);
+        console.log('response.result: PropertiesPut: ', e?.response?.data?.message);
+        errorMessage(e?.response?.data, 'PropertiesPut');
+      }
     });
 }
 
@@ -191,20 +179,18 @@ export async function PropertyUploadImagePost(data, token, res) {
     .then(response => {
         console.log('response.result: PropertyUploadImagePost: ', response);
         res(response.data);
+        if(response.data.code !== 200){
+          errorMessage(response.data, 'PropertyUploadImagePost');
+        }
     })
     .catch(e => {
       if(e?.response?.status ===  401){
         clearStorageRedirectLogin();
       }else{
-          res(e.response.data);
-          console.log('response.result: PropertyUploadImagePost: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message,
-            id: 'PropertyUploadImagePostError'
-          });
-        }
+        res(e?.response?.data);
+        console.log('response.result: PropertyUploadImagePost: ', e?.response?.data?.message);
+        errorMessage(e?.response?.data, 'PropertyUploadImagePost');
+      }
     });
 }
 
@@ -219,20 +205,18 @@ export async function PropertyUploadFeatureImagePost(data, token, res) {
     .then(response => {
         console.log('response.result: PropertyUploadFeatureImagePost: ', response);
         res(response.data);
+        if(response.data.code !== 200){
+          errorMessage(response.data, 'PropertyUploadFeatureImagePost');
+        }
     })
     .catch(e => {
       if(e?.response?.status ===  401){
         clearStorageRedirectLogin();
       }else{
-          res(e.response.data);
-          console.log('response.result: PropertyUploadFeatureImagePost: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message,
-            id: 'PropertyUploadFeatureImagePostError'
-          });
-        }
+        res(e?.response?.data);
+        console.log('response.result: PropertyUploadFeatureImagePost: ', e?.response?.data?.message);
+        errorMessage(e?.response?.data, 'PropertyUploadFeatureImagePost');
+      }
     });
 }
 
@@ -250,20 +234,18 @@ export async function PropertyChangeStatusPut(id, status, token, res) {
       .then(response => {
           console.log('response.result: PropertyChangeStatusPut: ', response);
           res(response.data);
+          if(response.data.code !== 200){
+            errorMessage(response.data, 'PropertyChangeStatusPut');
+          }
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: PropertyChangeStatusPut: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'PropertyChangeStatusPutError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: PropertyChangeStatusPut: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'PropertyChangeStatusPut');
+        }
       });
 }
 
@@ -277,20 +259,18 @@ export async function PropertiesDelete(data, token, res) {
       .then(response => {
           console.log('response.result: PropertiesDelete: ', response);
           res(response.data);
+          if(response.data.code !== 200){
+            errorMessage(response.data, 'PropertiesDelete');
+          }
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: PropertiesDelete: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'PropertiesDeleteError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: PropertiesDelete: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'PropertiesDelete');
+        }
       });
 }
 
@@ -308,19 +288,17 @@ export async function PropertyDeleteImages(propertyId, imageId, token, res) {
     .then(response => {
         console.log('response.result: PropertyDeleteImages: ', response);
         res(response.data);
+        if(response.data.code !== 200){
+          errorMessage(response.data, 'PropertyDeleteImages');
+        }
     })
     .catch(e => {
       if(e?.response?.status ===  401){
         clearStorageRedirectLogin();
       }else{
-          res(e.response.data);
-          console.log('response.result: PropertyDeleteImages: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message,
-            id: 'PropertyDeleteImagesError'
-          });
-        }
+        res(e?.response?.data);
+        console.log('response.result: PropertyDeleteImages: ', e?.response?.data?.message);
+        errorMessage(e?.response?.data, 'PropertyDeleteImages');
+      }
     });
 }

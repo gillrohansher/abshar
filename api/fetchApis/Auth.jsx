@@ -10,20 +10,20 @@ export async function SignInPost(data, res) {
       })
         .then(response => {
             console.log('response.result: SignInPost: ', response);
+            if(response.data.code === 200){
             res(response.data);
+          }else{
+            errorMessage(response.data, 'SignInPost');
+          };
         })
         .catch(e => {
           if(e?.response?.status ===  401){
             clearStorageRedirectLogin();
           }else{
-              res(e.response.data);
-              console.log('response.result: SignInPost: ', e.response.data.message);
-              showNotification({
-                title: 'Failed',
-                color: 'red',
-                message: e.message
-              });
-            }
+            res(e?.response?.data);
+            console.log('response.result: SignInPost: ', e?.response?.data?.message);
+            errorMessage(e?.response?.data, 'SignInPost');
+          }
         });
 }
 
@@ -34,20 +34,20 @@ export async function SignUpPost(data, res) {
   })
     .then(response => {
         console.log('response.result: SignUpPost: ', response);
-        res(response.data);
+        if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'SignUpPost');
+          };
     })
     .catch(e => {
         console.log('error: ', e);
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-          res(e.response.data);
-          console.log('error response.result: SignUpPost: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message
-          });
+          res(e?.response?.data);
+          console.log('response.result: SignUpPost: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'SignUpPost');
         }
         
     });
@@ -59,20 +59,20 @@ export async function EmailVerificationPut(data, res) {
   })
     .then(response => {
         console.log('response.result: EmailVerificationPut: ', response);
-        res(response.data);
+        if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'EmailVerificationPut');
+          };
     })
     .catch(e => {
         console.log('error: ', e);
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-          res(e.response.data);
-          console.log('error response.result: EmailVerificationPut: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message
-          });
+          res(e?.response?.data);
+          console.log('response.result: EmailVerificationPut: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'EmailVerificationPut');
         }
         
     });
@@ -84,22 +84,21 @@ export async function ResendEmailVerificationPut(data, res) {
   })
     .then(response => {
         console.log('response.result: ResendEmailVerificationPut: ', response);
-        res(response.data);
+        if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'ResendEmailVerificationPut');
+          };
     })
     .catch(e => {
         console.log('error: ', e);
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-          res(e.response.data);
-          console.log('error response.result: ResendEmailVerificationPut: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message
-          });
+          res(e?.response?.data);
+          console.log('response.result: ResendEmailVerificationPut: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'ResendEmailVerificationPut');
         }
-        
     });
 }
 
@@ -110,22 +109,21 @@ export async function ResetPasswordPost(data, res) {
   })
     .then(response => {
         console.log('response.result: ResetPasswordPost: ', response);
-        res(response.data);
+        if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'ResetPasswordPost');
+          };
     })
     .catch(e => {
         console.log('error: ', e);
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-          res(e.response.data);
-          console.log('error response.result: ResetPasswordPost: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message
-          });
+          res(e?.response?.data);
+          console.log('response.result: ResetPasswordPost: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'ResetPasswordPost');
         }
-        
     });
 }
 
@@ -136,20 +134,20 @@ export async function ResetPasswordConfirmPost(data, res) {
   })
     .then(response => {
         console.log('response.result: ResetPasswordConfirmPost: ', response);
-        res(response.data);
+        if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'ResetPasswordConfirmPost');
+          };
     })
     .catch(e => {
         console.log('error: ', e);
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-          res(e.response.data);
-          console.log('error response.result: ResetPasswordConfirmPost: ', e.response.data.message);
-          showNotification({
-            title: 'Failed',
-            color: 'red',
-            message: e.message
-          });
+          res(e?.response?.data);
+          console.log('response.result: ResetPasswordConfirmPost: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'ResetPasswordConfirmPost');
         }
         
     });

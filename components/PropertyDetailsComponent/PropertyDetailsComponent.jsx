@@ -107,6 +107,8 @@ const handleEditProperty=()=>{
     setOpenAddPropertyModal(true);
 }
 
+console.log('images_124: ', currentProperty?.image?.featuredImage?.path ? true : false , currentProperty?.image?.otherImages.map((image)=> image?.path).length > 0);
+
   return (
     <>
         <Stack>
@@ -121,7 +123,27 @@ const handleEditProperty=()=>{
                 </Group>
             </Group>
             <Divider/>
+            {currentProperty &&
+             (currentProperty?.image?.featuredImage?.path ? true : false , currentProperty?.image?.otherImages.map((image)=> image?.path).length > 0) ?
+            <EmblaCarousel 
+            images={[currentProperty?.image?.featuredImage, ...currentProperty?.image?.otherImages].map((image)=> image.path)}  
+            options={OPTIONS}
+            onClick={(image)=> {
+                setOpenExpandImageModal(true);
+                setSelectedImage(image);
+            }} />
+            :
             <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
+                <Stack style={{height: '237px', borderRadius: '2px'}} justify='center' align={'center'}>
+                    <IconPhotoOff
+                    color={'white'}
+                    />
+                    <Text size={'xs'} style={{color: 'white'}}>{"No image available"}</Text>
+                    {accountData.type !== 'CLIENT' && <Button onClick={()=> setOpenAddFeatureImageModal(true)}>Add image</Button>}
+                </Stack>
+            </Group>
+            }
+            {/* <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
                 <Slide {...properties}>
                     {currentProperty &&
                     [currentProperty?.image?.featuredImage, ...currentProperty?.image?.otherImages].map((image, index)=>
@@ -135,7 +157,6 @@ const handleEditProperty=()=>{
                             }} 
                             style={{borderRadius: '2px', height: '237px', objectFit: 'cover', cursor: 'pointer'}}/>
                             {index === 0 && <Badge style={{position: 'absolute', top: 10, right: 10}}>Featured</Badge>}
-                            {/* {index === 0 && accountData.type !== 'CLIENT' && <Button style={{position: 'absolute', left: 0, right: 0, marginLeft: 'auto', marginRight: 'auto', maxWidth: '150px'}} onClick={()=> setOpenAddFeatureImageModal(true)}>Replace image</Button>} */}
                         </div>
                         
                         :
@@ -149,7 +170,7 @@ const handleEditProperty=()=>{
                         }
                     </Group>)}
                 </Slide>
-            </Group>
+            </Group> */}
             <SimpleGrid cols={2}>
                 <Stack gap={0}>
                     <Text c={'dimmed'} size="xs">Name</Text>

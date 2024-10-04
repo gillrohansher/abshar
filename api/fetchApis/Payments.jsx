@@ -23,21 +23,20 @@ export async function PaymentPost(data, token, res) {
     })
       .then(response => {
           console.log('response.result: PaymentPost: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'PaymentPost');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e?.response?.data);
-            console.log('response.result: PaymentPost: ', e?.response?.data?.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e?.message,
-              id: 'PaymentPostError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: PaymentPost: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'PaymentPost');
+        }
       });
 }
 
@@ -75,7 +74,11 @@ export async function PageRedirectionRequestPost(data, token, res) {
   })
     .then(response => {
         console.log('response.result: PageRedirectionRequestPost: ', response);
-        res(response.data);
+        if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'PageRedirectionRequestPost');
+          };
     })
     .catch(e => {
       if(e?.response?.status ===  401){
@@ -103,7 +106,11 @@ export async function CheckoutAddItemsPost(data, token, res) {
   })
     .then(response => {
         console.log('response.result: CheckoutAddItemsPost: ', response);
-        res(response.data);
+        if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'CheckoutAddItemsPost');
+          };
     })
     .catch(e => {
       if(e?.response?.status ===  401){

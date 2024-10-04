@@ -18,6 +18,8 @@ import { AddPropertyModal } from '../AddPropertyModal/AddPropertyModal';
 import { UsersGet } from '../../api/fetchApis/Users';
 import { PropertyGet } from '../../api/fetchApis/Properties';
 import { SubscriptionSelectionModal } from '../SubscriptionSelectionModal/SubscriptionSelectionModal';
+import useEmblaCarousel from 'embla-carousel-react'
+import EmblaCarousel from '../Embla/EmblaCarousel';
 
 const buttonStyle = {
     width: "30px",
@@ -29,6 +31,8 @@ const properties = {
     prevArrow: <button style={{ ...buttonStyle }}><IconChevronLeft color='white'/></button>,
     nextArrow: <button style={{ ...buttonStyle }}><IconChevronRight color='white'/></button>
 }
+
+const OPTIONS = { loop: true }
 
 
 export default function MosqueDetailsComponent({opened, onClose, publishButtonClick}) {
@@ -49,6 +53,7 @@ export default function MosqueDetailsComponent({opened, onClose, publishButtonCl
     const [users, setUsers] = useState([]);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [selectedPropertyForPayment, setSelectedPropertyForPayment] = useState(null);
+    const [emblaRef] = useEmblaCarousel();
 
 const validate=()=>{
     return true;
@@ -137,13 +142,14 @@ console.log('currentProperty_1213: ', currentProperty);
         <Stack>
             <Group>
                 <IconArrowLeft color='#5185a6' style={{cursor: 'pointer'}} onClick={()=> router.back()}/>
-                {/* <Group>
+                <Group>
                     {currentProperty?.name}
+                    {accountData.type !== 'CLIENT' &&
                     <Group wrap='nowrap' gap='xs'>
                         <Badge color={currentProperty?.propertyStatus === "ASSIGNED" ? "#5185a6" : currentProperty?.propertyStatus === "COMPLETED" ? "#10516f" : currentProperty?.propertyStatus === "IN_REVIEW" ? "#9baebc" : "gray"}>{mapPropertyStatusValues(currentProperty?.propertyStatus)}</Badge>
-                        {accountData.type !== 'CLIENT' && <IconEdit color='#5185a6' size={'18px'} style={{cursor: 'pointer'}} onClick={()=> handleEditProperty()}/>}
-                    </Group>
-                </Group> */}
+                        <IconEdit color='#5185a6' size={'18px'} style={{cursor: 'pointer'}} onClick={()=> handleEditProperty()}/>
+                    </Group>}
+                </Group>
             </Group>
             <Divider/>
 
@@ -159,23 +165,33 @@ console.log('currentProperty_1213: ', currentProperty);
                             <Text fw={'500'} size="50px" c={"dark"} w='400px' lh={'60px'}>Adapting and Thriving in a Changing World</Text>
                             <Text fw={'500'} size="sm" c={'dimmed'}>Our comprehensive guide to strategies for entrepreneurs and leaders offer valuable insights, practical advice.</Text>
                         </Stack>
-                        <Stack>
+                        <Stack style={{borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px', height: '450px', objectFit: 'cover', cursor: 'pointer'}}>
+                            {currentProperty?.image?.featuredImage?.path ?
                             <img src={currentProperty?.image?.featuredImage?.path} 
                             onClick={()=> {
                                 setOpenExpandImageModal(true);
                                 setSelectedImage(currentProperty?.image?.featuredImage?.path);
                             }}
                             style={{borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px', height: '450px', objectFit: 'cover', cursor: 'pointer'}}/>
+                            :
+                            <Group justify={'center'} style={{backgroundColor: 'grey', width: 'inherit', height: 'inherit', borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px'}}>
+                                <Stack style={{height: '237px', borderRadius: '2px'}} justify='center' align={'center'}>
+                                    <IconPhotoOff
+                                    color={'white'}
+                                    />
+                                    <Text size={'xs'} style={{color: 'white'}}>{"No featured image available"}</Text>
+                                    {accountData.type !== 'CLIENT' && <Button onClick={()=> setOpenAddFeatureImageModal(true)}>Add image</Button>}
+                                </Stack>
+                            </Group>}
                         </Stack>
                     </SimpleGrid>
                 </Stack>
 
                 <Stack style={{width: '100%'}}>
                     <SimpleGrid cols={2} spacing={'xl'}>
-                        {(selectedProperty?.propertyStatus === 'COMPLETED' || currentProperty?.propertyStatus === 'COMPLETED') && 
                         <Stack justify={'center'}>
-                            <PropertiesEstimationBarChart propertiesEstimation={propertiesEstimation} loader={false} mosqueDetail={true}/>
-                        </Stack>}
+                            <PropertiesEstimationBarChart propertyStatus={selectedProperty?.propertyStatus} propertiesEstimation={propertiesEstimation} loader={false} mosqueDetail={true}/>
+                        </Stack>
                         <Stack gap={'sm'} justify={'center'}>
                             <Text fw={'600'} size="sm" c={"dark"}>Get Success Together!</Text>
                             <Text fw={'500'} size="40px" c={"dark"} lh={'60px'}>Your Social Impact</Text>
@@ -240,7 +256,31 @@ console.log('currentProperty_1213: ', currentProperty);
                 {/* old stuff */}
                 <Stack gap={20}>
                     <Text size={'sm'} fw={600}>Property images</Text>
+                    {currentProperty && 
+                    (currentProperty?.image?.featuredImage?.path ? true : false , currentProperty?.image?.otherImages.map((image)=> image?.path).length > 0) ?
+                    <EmblaCarousel 
+                    images={currentProperty?.image?.featuredImage ? 
+                        [currentProperty?.image?.featuredImage, ...currentProperty?.image?.otherImages].map((image)=> image.path)
+                        :
+                        currentProperty?.image?.otherImages.map((image)=> image.path)
+                    }  
+                    options={OPTIONS}
+                    onClick={(image)=> {
+                        setOpenExpandImageModal(true);
+                        setSelectedImage(image);
+                    }} />
+                    :
                     <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
+                        <Stack style={{height: '237px', borderRadius: '2px'}} justify='center' align={'center'}>
+                            <IconPhotoOff
+                            color={'white'}
+                            />
+                            <Text size={'xs'} style={{color: 'white'}}>{"No image available"}</Text>
+                            {accountData.type !== 'CLIENT' && <Button onClick={()=> setOpenAddFeatureImageModal(true)}>Add image</Button>}
+                        </Stack>
+                    </Group>
+                    }
+                    {/* <Group grow style={{background: 'grey', padding: '10px', borderRadius: '4px'}}>
                         <Slide {...properties}>
                             {currentProperty &&
                             [currentProperty?.image?.featuredImage, ...currentProperty?.image?.otherImages].map((image, index)=>
@@ -267,7 +307,7 @@ console.log('currentProperty_1213: ', currentProperty);
                                 }
                             </Group>)}
                         </Slide>
-                    </Group>
+                    </Group> */}
                 </Stack>
                 <Stack gap={20}>
                     <Text size={'sm'} fw={600}>Property information</Text>
@@ -419,6 +459,7 @@ console.log('currentProperty_1213: ', currentProperty);
         <AddPropertyModal
         opened={openAddPropertyModal}
         edit={editProperty}
+        type={'MOSQUE'}
         users={users}
         onClose={()=> {
             setOpenAddPropertyModal(false);

@@ -12,11 +12,11 @@ export function ExpandImageModal({opened, onClose, image}) {
     <Modal opened={opened} onClose={onClose} size='auto' centered>
         <Stack>
             <Group>
-                <img src={image} style={{width: '100%', maxHeight: '100vh'}}/>
+                <img src={image} style={{width: '100%'}}/>
             </Group> 
-            <Group justify={'flex-start'} style={{width: '100%'}}>
+            {/* <Group justify={'flex-start'} style={{width: '100%'}}>
                 <Button color={'gray'} onClick={()=> onClose()}>Close</Button>
-            </Group>
+            </Group> */}
         </Stack>
     </Modal>
     );

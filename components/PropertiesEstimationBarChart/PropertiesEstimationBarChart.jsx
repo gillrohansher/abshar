@@ -13,13 +13,15 @@ function PropertiesEstimationBarChart(props) {
     const router = useRouter();
     const [data, setData] = useState([
         { item: 'Water', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedWaterConsumption, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedWaterConsumptionWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedWaterImpact },
-        { item: 'Electricity', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedElectricityUsage, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedElectricityUsageWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedElectricityImpact }
+        { item: 'Electricity', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedElectricityUsage, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedElectricityUsageWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedElectricityImpact },
+        { item: 'CO2 Emission', 'Estimation without optimizer': props?.propertiesEstimation?.emissionFactorBeforeOptimizer, 'Estimation with optimizer': props?.propertiesEstimation?.emissionFactorAfterOptimizer, 'Impact': props?.propertiesEstimation?.emissionFactorBeforeOptimizer - props?.propertiesEstimation?.emissionFactorAfterOptimizer }
     ]);
 
     useEffect(() => {
         setData([
             { item: 'Water', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedWaterConsumption, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedWaterConsumptionWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedWaterImpact },
-            { item: 'Electricity', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedElectricityUsage, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedElectricityUsageWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedElectricityImpact }
+            { item: 'Electricity', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedElectricityUsage, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedElectricityUsageWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedElectricityImpact },
+            { item: 'CO2 Emission', 'Estimation without optimizer': props?.propertiesEstimation?.emissionFactorBeforeOptimizer, 'Estimation with optimizer': props?.propertiesEstimation?.emissionFactorAfterOptimizer, 'Impact': props?.propertiesEstimation?.emissionFactorBeforeOptimizer - props?.propertiesEstimation?.emissionFactorAfterOptimizer }
         ]);
     }, [props.propertiesEstimation]);
 
@@ -41,7 +43,7 @@ function PropertiesEstimationBarChart(props) {
                                 </Text>
                             </Group>
                             <Text key={item.name} fz="sm">
-                                {accounting.formatNumber(item.value, 2)} Liters
+                                {accounting.formatNumber(item.value, 2)} {label === 'CO2 Emission' ? 'Tons' : 'Liters'}
                             </Text>
                         </Group>
                         
@@ -66,6 +68,7 @@ function PropertiesEstimationBarChart(props) {
                     <Text fw={'bold'}>Estimated social impact</Text>
                 </Group>}
                 <Group>
+                {(props?.propertyStatus === 'COMPLETED' || props?.propertyStatus === 'COMPLETED') ?
                 <BarChart
                 h={props.mosqueDetail ? 300 : 500}
                 p={40}
@@ -74,8 +77,8 @@ function PropertiesEstimationBarChart(props) {
                 orientation={props.orientation}
                 //valueFormatter={(value)=> accounting.formatNumber(value, 0)}
                 tooltipProps={{
-                    content: ({ label, payload }) => renderTooltip(label, payload),
-                  }}
+                    content: ({ label, payload }) => renderTooltip(label, payload)
+                }}
                 series={[
                     { name: 'Estimation without optimizer', color: '#9baebc' },
                     { name: 'Estimation with optimizer', color: '#5185a6' },
@@ -85,6 +88,11 @@ function PropertiesEstimationBarChart(props) {
                 legendProps={{ verticalAlign: props.mosqueDetail ? 'bottom' : 'top', height: 50 }}
                 //withXAxis={false}
                 />
+                :
+                <Stack p={40} gap={10} h={props.mosqueDetail ? 300 : 500}>
+                    <Text fw={'bold'}>Estimated social impact</Text>
+                    <Text fw={'400'} size={'sm'}>Property data is not yet complete.</Text>
+                </Stack>}
                 </Group>
                 
             </Stack>}

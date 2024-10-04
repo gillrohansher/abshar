@@ -1,7 +1,7 @@
 import { api_config } from "../apis";
 import { showNotification } from "@mantine/notifications";
 import { APIClientDELETE, APIClientGET, APIClientPOST, APIClientPUT } from "./APIClient";
-import { clearStorageRedirectLogin, getAuthToken } from "../../helpers/helpers";
+import { clearStorageRedirectLogin, errorMessage, getAuthToken } from "../../helpers/helpers";
 
 
 export async function UsersGet(data, token, res) {
@@ -14,21 +14,20 @@ export async function UsersGet(data, token, res) {
     })
       .then(response => {
           console.log('response.result: UsersGet: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'UsersGet');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e?.response?.data);
-            console.log('response.result: UsersGet: ', e?.response?.data?.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'UsersGetError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: UsersGet: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'UsersGet');
+        }
       });
 }
 
@@ -42,21 +41,20 @@ export async function UserPost(data, token, res) {
     })
       .then(response => {
           console.log('response.result: UserPost: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'UserPost');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: UserPost: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'UserPostError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: UserPost: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'UserPost');
+        }
       });
 }
 
@@ -70,21 +68,20 @@ export async function UserPut(data, token, res) {
     })
       .then(response => {
           console.log('response.result: UserPut: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'UserPut');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: UserPut: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'UserPutError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: UserPut: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'UserPut');
+        }
       });
 }
 
@@ -101,21 +98,20 @@ export async function UserChangeRolePut(id, userType, token, res) {
     })
       .then(response => {
           console.log('response.result: UserChangeRolePut: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'UserChangeRolePut');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: UserChangeRolePut: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'UserChangeRolePutError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: UserChangeRolePut: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'UserChangeRolePut');
+        }
       });
 }
 
@@ -132,21 +128,20 @@ export async function UserChangeAccountStatusPut(id, status, token, res) {
     })
       .then(response => {
           console.log('response.result: UserChangeAccountStatusPut: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'UserChangeAccountStatusPut');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: UserChangeAccountStatusPut: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'UserChangeAccountStatusPutError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: UserChangeAccountStatusPut: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'UserChangeAccountStatusPut');
+        }
       });
 }
 
@@ -163,20 +158,19 @@ export async function UserDelete(ids, token, res) {
     })
       .then(response => {
           console.log('response.result: UserDelete: ', response);
-          res(response.data);
+          if(response.data.code === 200){
+            res(response.data);
+          }else{
+            errorMessage(response.data, 'UserDelete');
+          };
       })
       .catch(e => {
         if(e?.response?.status ===  401){
           clearStorageRedirectLogin();
         }else{
-            res(e.response.data);
-            console.log('response.result: UserDelete: ', e.response.data.message);
-            showNotification({
-              title: 'Failed',
-              color: 'red',
-              message: e.message,
-              id: 'UserDeleteError'
-            });
-          }
+          res(e?.response?.data);
+          console.log('response.result: UserDelete: ', e?.response?.data?.message);
+          errorMessage(e?.response?.data, 'UserDelete');
+        }
       });
 }
