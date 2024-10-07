@@ -81,7 +81,7 @@ function DashboardPage(props) {
             </SimpleGrid>
             <SimpleGrid cols={1}>
                 {accountData.type === 'ADMIN' && <DashboardWaterFlowRate/>}
-                <PropertiesEstimationBarChart properties={properties} propertiesEstimation={propertiesEstimation} loader={propertiesLoader}/>
+                <PropertiesEstimationBarChart properties={properties} propertyStatus={propertiesEstimation ? 'COMPLETED' : null} propertiesEstimation={propertiesEstimation} loader={propertiesLoader}/>
             </SimpleGrid>
         </Stack>
     );

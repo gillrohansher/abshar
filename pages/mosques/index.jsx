@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, SimpleGrid, Stack, Table, Tabs, Text, TextInput, Title, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Anchor, AppShell, Badge, Box, Burger, Button, Card, Center, Checkbox, Divider, Drawer, Fieldset, Group, Image, Loader, LoadingOverlay, Menu, MenuDropdown, MenuItem, MenuTarget, NavLink, PasswordInput, Select, SimpleGrid, Stack, Table, Tabs, Text, TextInput, Title, Tooltip, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { useRouter } from 'next/navigation'
@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { SignInPost } from '../../api/fetchApis/Auth';
 import { useAppStore, useAppDispatch, useWindowSize} from '../../lib/hooks';
-import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff, IconDots, IconBuildingMosque } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrashFilled, IconLineDotted, IconPencil, IconDotsCircleHorizontal, IconChevronRight, IconChevronLeft, IconPhotoOff, IconDots, IconBuildingMosque, IconFilterFilled } from '@tabler/icons-react';
 import { PropertiesDelete, PropertiesGet, PropertiesPost, PropertyChangeStatusPut, PropertyUploadFeatureImagePost, PropertyUploadImagePost } from '../../api/fetchApis/Properties';
 import { UsersGet } from '../../api/fetchApis/Users';
 import { AddPropertyModal } from '../../components/AddPropertyModal/AddPropertyModal';
@@ -15,6 +15,7 @@ import { AddFeatureImageModal } from '@/components/AddFeatureImageModal/AddFeatu
 import { setSelectedProperty } from '../../lib/propertySlice';
 import { PaymentModal } from '../../components/PaymentModal/PaymentModal';
 import { SubscriptionSelectionModal } from '../../components/SubscriptionSelectionModal/SubscriptionSelectionModal';
+import { useDisclosure } from '@mantine/hooks';
 
 
 
@@ -40,6 +41,37 @@ function MosquesPage(props) {
     const [activeTab, setActiveTab] = useState('all');
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [selectedPropertyForPayment, setSelectedPropertyForPayment] = useState(null);
+
+    const [cityFilter, setCityFilter] = useState(null);
+    const [cityFilterOptions, setCityFilterOptions] = useState([]);
+
+    const [areaFilter, setAreaFilter] = useState(null);
+    const [areaFilterOptions, setAreaFilterOptions] = useState([]);
+
+    const [sizeFilter, setSizeFilter] = useState(null);
+    const [sizeFilterOptions, setSizeFilterOptions] = useState([
+        {
+            value: '100',
+            label: '100'
+        },
+        {
+            value: '200',
+            label: '200'
+        },
+        {
+            value: '300',
+            label: '300'
+        },
+        {
+            value: '400',
+            label: '400'
+        },
+        {
+            value: '500+',
+            label: '500+'
+        }
+    ]);
+    const [openFilterDrawer, { open, close }] = useDisclosure(false);
 
     // useEffect(() => {
     //     setLoader(true);
@@ -69,12 +101,30 @@ function MosquesPage(props) {
     }
 
     console.log('selectedProperties: ', selectedProperties);
+
+    console.log('cityFilterOptions: ', areaFilterOptions);
+
+    console.log('sizeFilter: ', sizeFilter, properties.filter((property)=> sizeFilter ? property.noOfPeople >= Number.parseInt(sizeFilter) : property));
     const getProperties=()=>{
         setLoader(true);
         PropertiesGet(activeTab === 'requested' ? {requestedId: accountData.id} : null, 'MOSQUE', token, res=>{
             if(res?.code === 200){
                 setProperties(res.data.filter((property)=> property.type === 'MOSQUE'));
                 openPropertyDetailsModal && setSelectedPropertyForDetails(res.data.find((property)=> property.id === selectedPropertyForDetails?.id));
+
+                let filterOptionsForCity= [];
+                let filterOptionsForArea= [];
+                res.data.map((property)=> {
+                    if(filterOptionsForCity.find((option)=> option.value === property.city) === undefined){
+                        filterOptionsForCity.push({value: property.city, label: property.city});
+                    }
+
+                    if(filterOptionsForArea.find((option)=> option.value === property.area) === undefined){
+                        filterOptionsForArea.push({value: property.area, label: property.area});
+                    }
+                })
+                setCityFilterOptions(filterOptionsForCity);
+                setAreaFilterOptions(filterOptionsForArea);
             }
             getUsers();
         });
@@ -364,10 +414,9 @@ function MosquesPage(props) {
                     <ActionIcon id='add-property-button' onClick={()=> setOpenAddPropertyModal(true)} variant="filled" aria-label="Add Property">
                         <IconCirclePlusFilled style={{width: '70%', height: '70%'}}/>
                     </ActionIcon>
-                    {/* {accountData.type !== 'CLIENT' &&
-                    <ActionIcon disabled={selectedProperties.length === 0} color={'red'} onClick={()=> selectedProperties.length > 0 ? selectedProperties.map((id)=> deleteProperty(id)) : showNotification({message: 'No properties selected yet', color: 'red', id: 'noPropertiesSelected'})} variant="filled" aria-label="Delete Property">
-                        <IconTrashFilled style={{width: '70%', height: '70%'}}/>
-                    </ActionIcon>} */}
+                    <ActionIcon id='filter-property-button' onClick={open} variant="filled" aria-label="Property Filters">
+                        <IconFilterFilled style={{width: '70%', height: '70%'}}/>
+                    </ActionIcon>
                 </Group>
             </Group>
             <Divider/>
@@ -383,6 +432,9 @@ function MosquesPage(props) {
                     <SimpleGrid cols={size.width < 940 ? 1 : size.width < 1100 ? 2 : 3} style={{minWidth: '100%'}}>
                         {properties.filter((property)=> search ? (property.name.toLowerCase().includes(search.toLowerCase()) || property.street.toLowerCase().includes(search.toLowerCase()) || property.phase.toLowerCase().includes(search.toLowerCase()) || property.area.toLowerCase().includes(search.toLowerCase()) || property.zipCode.toLowerCase().includes(search.toLowerCase()) || property.city.toLowerCase().includes(search.toLowerCase()) || property.type.toLowerCase().includes(search.toLowerCase())) : property)
                         .filter((property)=> filterPropertyType.length > 0 ? filterPropertyType.find((filter)=> property.type === filter) !== undefined : property)
+                        .filter((property)=> cityFilter ? property.city === cityFilter : property)
+                        .filter((property)=> areaFilter ? property.area === areaFilter : property)
+                        .filter((property)=> sizeFilter ? property.noOfPeople >= Number.parseInt(sizeFilter) : property)
                         .map((property)=> 
                         <Group key={property.id} style={{minWidth: '100%'}}>
                             {renderPropertyCard(property)}
@@ -477,6 +529,53 @@ function MosquesPage(props) {
                 setSelectedPropertyForPayment(false);
             }}
             />}
+            <Drawer opened={openFilterDrawer} onClose={close} title="Filters" position='right' size={'xs'}>
+                <Stack style={{width: '100%'}}>
+                    <Group grow>
+                        <Select
+                        data={cityFilterOptions.filter((option)=> 
+                        properties.filter((property)=> search ? (property.name.toLowerCase().includes(search.toLowerCase()) || property.street.toLowerCase().includes(search.toLowerCase()) || property.phase.toLowerCase().includes(search.toLowerCase()) || property.area.toLowerCase().includes(search.toLowerCase()) || property.zipCode.toLowerCase().includes(search.toLowerCase()) || property.city.toLowerCase().includes(search.toLowerCase()) || property.type.toLowerCase().includes(search.toLowerCase())) : property)
+                        .filter((property)=> filterPropertyType.length > 0 ? filterPropertyType.find((filter)=> property.type === filter) !== undefined : property)
+                        .filter((property)=> cityFilter ? property.city === cityFilter : property)
+                        .filter((property)=> areaFilter ? property.area === areaFilter : property)
+                        .filter((property)=> sizeFilter ? property.noOfPeople >= Number.parseInt(sizeFilter) : property)
+                        .find((property)=> property.city === option.value) !== undefined)}
+                        value={cityFilter}
+                        label={'City'}
+                        placeholder={'Select'}
+                        clearable
+                        onChange={setCityFilter}
+                        />
+                    </Group>
+                    <Group grow>
+                        <Select
+                        data={areaFilterOptions.filter((option)=> 
+                            properties.filter((property)=> search ? (property.name.toLowerCase().includes(search.toLowerCase()) || property.street.toLowerCase().includes(search.toLowerCase()) || property.phase.toLowerCase().includes(search.toLowerCase()) || property.area.toLowerCase().includes(search.toLowerCase()) || property.zipCode.toLowerCase().includes(search.toLowerCase()) || property.city.toLowerCase().includes(search.toLowerCase()) || property.type.toLowerCase().includes(search.toLowerCase())) : property)
+                            .filter((property)=> filterPropertyType.length > 0 ? filterPropertyType.find((filter)=> property.type === filter) !== undefined : property)
+                            .filter((property)=> cityFilter ? property.city === cityFilter : property)
+                            .filter((property)=> areaFilter ? property.area === areaFilter : property)
+                            .filter((property)=> sizeFilter ? property.noOfPeople >= Number.parseInt(sizeFilter) : property)
+                            .find((property)=> property.area === option.value) !== undefined)}
+                        value={areaFilter}
+                        label={'Area'}
+                        placeholder={'Select'}
+                        clearable
+                        onChange={setAreaFilter}
+                        renderOption={(item)=> item.option.label.length > 30 ? <Tooltip label={item.option.label}><span style={{width: '200px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{item.option.label}</span></Tooltip> : <span style={{width: '200px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{item.option.label}</span>}
+                        />
+                    </Group>
+                    <Group grow>
+                        <Select
+                        data={sizeFilterOptions}
+                        value={sizeFilter}
+                        label={'Size'}
+                        placeholder={'Select'}
+                        clearable
+                        onChange={setSizeFilter}
+                        />
+                    </Group>
+                </Stack>
+            </Drawer>
         </Stack>
     );
 }

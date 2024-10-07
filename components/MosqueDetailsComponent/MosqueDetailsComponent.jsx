@@ -20,6 +20,8 @@ import { PropertyGet } from '../../api/fetchApis/Properties';
 import { SubscriptionSelectionModal } from '../SubscriptionSelectionModal/SubscriptionSelectionModal';
 import useEmblaCarousel from 'embla-carousel-react'
 import EmblaCarousel from '../Embla/EmblaCarousel';
+import PropertiesCo2BarChart from '../PropertiesCo2BarChart/PropertiesCo2BarChart';
+import co2 from '../../helpers/svgs/co2.svg';
 
 const buttonStyle = {
     width: "30px",
@@ -77,6 +79,7 @@ useEffect(() => {
 }, [selectedProperty]);
 
 useEffect(() => {
+    // selectedProperty?.propertyStatus === 'COMPLETED' && getPropertiesBillEstimate();
     getUsers();
     return () => {
         dispatch(setSelectedProperty(null));
@@ -103,7 +106,10 @@ const getProperty=(propertyId)=>{
 }
 
 const getPropertiesBillEstimate=()=>{
-    PropertiesBillEstimateGet({startDate: dayjs().startOf('year').format('YYYY-MM-DD'), endDate: dayjs().endOf('year').format('YYYY-MM-DD'), propertyId: selectedProperty?.id}, token, res=>{
+    const urlSplit = window.location.href.split('/');
+    const propertyId = urlSplit[urlSplit.length - 1];
+    console.log('getPropertiesBillEstimate_1: ', selectedProperty, currentProperty);
+    PropertiesBillEstimateGet({startDate: dayjs().startOf('year').format('YYYY-MM-DD'), endDate: dayjs().endOf('year').format('YYYY-MM-DD'), propertyId: propertyId}, token, res=>{
         if(res?.code === 200){
             res?.data.length > 0 && setPropertiesEstimation(res?.data[0]);
             console.log('getPropertiesBillEstimate: ', res?.data);
@@ -190,8 +196,12 @@ console.log('currentProperty_1213: ', currentProperty);
                 <Stack style={{width: '100%'}}>
                     <SimpleGrid cols={2} spacing={'xl'}>
                         <Stack justify={'center'}>
-                            <PropertiesEstimationBarChart propertyStatus={selectedProperty?.propertyStatus} propertiesEstimation={propertiesEstimation} loader={false} mosqueDetail={true}/>
+                            <PropertiesEstimationBarChart propertyStatus={selectedProperty ? selectedProperty?.propertyStatus : currentProperty?.propertyStatus} propertiesEstimation={propertiesEstimation} loader={false} mosqueDetail={true}/>
+                            {/* <PropertiesCo2BarChart propertyStatus={selectedProperty ? selectedProperty?.propertyStatus : currentProperty?.propertyStatus} propertiesEstimation={propertiesEstimation} loader={false} mosqueDetail={true}/> */}
                         </Stack>
+                        {/* <Stack justify={'center'}>
+                            <PropertiesCo2BarChart propertyStatus={selectedProperty ? selectedProperty?.propertyStatus : currentProperty?.propertyStatus} propertiesEstimation={propertiesEstimation} loader={false} mosqueDetail={true}/>
+                        </Stack> */}
                         <Stack gap={'sm'} justify={'center'}>
                             <Text fw={'600'} size="sm" c={"dark"}>Get Success Together!</Text>
                             <Text fw={'500'} size="40px" c={"dark"} lh={'60px'}>Your Social Impact</Text>

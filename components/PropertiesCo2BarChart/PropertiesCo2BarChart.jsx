@@ -7,21 +7,21 @@ import { BarChart, DonutChart } from '@mantine/charts';
 import { useAppStore, useAppDispatch } from '../../lib/hooks';
 import accounting from 'accounting-js'
 
-function PropertiesEstimationBarChart(props) {
+function PropertiesCo2BarChart(props) {
     const store = useAppStore();
     const dispatch = useAppDispatch();
     const router = useRouter();
     const [data, setData] = useState([
-        { item: 'Water', 'Without optimizer': props?.propertiesEstimation?.estimatedWaterConsumption, 'With optimizer': props?.propertiesEstimation?.estimatedWaterConsumptionWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedWaterImpact },
-        { item: 'Electricity', 'Without optimizer': props?.propertiesEstimation?.estimatedElectricityUsage, 'With optimizer': props?.propertiesEstimation?.estimatedElectricityUsageWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedElectricityImpact },
-        { item: 'CO2 Emission', 'Without optimizer': props?.propertiesEstimation?.emissionFactorBeforeOptimizer * 1000, 'With optimizer': props?.propertiesEstimation?.emissionFactorAfterOptimizer * 1000, 'Impact': (props?.propertiesEstimation?.emissionFactorBeforeOptimizer - props?.propertiesEstimation?.emissionFactorAfterOptimizer) * 1000 }
+        // { item: 'Water', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedWaterConsumption, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedWaterConsumptionWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedWaterImpact },
+        // { item: 'Electricity', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedElectricityUsage, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedElectricityUsageWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedElectricityImpact },
+        { item: 'CO2 Emission', 'Estimation without optimizer': props?.propertiesEstimation?.emissionFactorBeforeOptimizer, 'Estimation with optimizer': props?.propertiesEstimation?.emissionFactorAfterOptimizer, 'Impact': props?.propertiesEstimation?.emissionFactorBeforeOptimizer - props?.propertiesEstimation?.emissionFactorAfterOptimizer }
     ]);
 
     useEffect(() => {
         setData([
-            { item: 'Water', 'Without optimizer': props?.propertiesEstimation?.estimatedWaterConsumption, 'With optimizer': props?.propertiesEstimation?.estimatedWaterConsumptionWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedWaterImpact },
-            { item: 'Electricity', 'Without optimizer': props?.propertiesEstimation?.estimatedElectricityUsage, 'With optimizer': props?.propertiesEstimation?.estimatedElectricityUsageWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedElectricityImpact },
-            { item: 'CO2 Emission', 'Without optimizer': props?.propertiesEstimation?.emissionFactorBeforeOptimizer * 1000, 'With optimizer': props?.propertiesEstimation?.emissionFactorAfterOptimizer * 1000, 'Impact': (props?.propertiesEstimation?.emissionFactorBeforeOptimizer - props?.propertiesEstimation?.emissionFactorAfterOptimizer) * 1000 }
+            // { item: 'Water', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedWaterConsumption, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedWaterConsumptionWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedWaterImpact },
+            // { item: 'Electricity', 'Estimation without optimizer': props?.propertiesEstimation?.estimatedElectricityUsage, 'Estimation with optimizer': props?.propertiesEstimation?.estimatedElectricityUsageWithOptimizer, 'Impact': props?.propertiesEstimation?.estimatedElectricityImpact },
+            { item: 'CO2 Emission', 'Estimation without optimizer': props?.propertiesEstimation?.emissionFactorBeforeOptimizer, 'Estimation with optimizer': props?.propertiesEstimation?.emissionFactorAfterOptimizer, 'Impact': props?.propertiesEstimation?.emissionFactorBeforeOptimizer - props?.propertiesEstimation?.emissionFactorAfterOptimizer }
         ]);
     }, [props.propertiesEstimation]);
 
@@ -32,11 +32,7 @@ function PropertiesEstimationBarChart(props) {
             <Card shadow="sm" padding="md" radius="md" withBorder>
                 <Stack>
                     <Text fw={500} mb={5}>
-                        {label === 'CO2 Emission' ? 
-                        <span>CO<sub style={{fontSize: '10px'}}>2</sub> Emission</span>
-                        :
-                        label
-                        }
+                        {label}
                     </Text>
                     {payload.map((item) => (
                         <Group justify={'space-between'}>
@@ -47,7 +43,7 @@ function PropertiesEstimationBarChart(props) {
                                 </Text>
                             </Group>
                             <Text key={item.name} fz="sm">
-                                {accounting.formatNumber(item.value, 2)} {label === 'CO2 Emission' ? 'Grams' : 'Liters'}
+                                {accounting.formatNumber(item.value, 2)} {label === 'CO2 Emission' ? 'Tons' : 'Liters'}
                             </Text>
                         </Group>
                         
@@ -75,7 +71,7 @@ function PropertiesEstimationBarChart(props) {
                 {(props?.propertyStatus === 'COMPLETED' || props?.propertyStatus === 'COMPLETED') ?
                 <BarChart
                 h={props.mosqueDetail ? 300 : 500}
-                p={30}
+                p={40}
                 data={data}
                 dataKey="item"
                 orientation={props.orientation}
@@ -84,10 +80,11 @@ function PropertiesEstimationBarChart(props) {
                     content: ({ label, payload }) => renderTooltip(label, payload)
                 }}
                 series={[
-                    { name: 'Without optimizer', color: '#9baebc' },
-                    { name: 'With optimizer', color: '#5185a6' },
+                    { name: 'Estimation without optimizer', color: '#9baebc' },
+                    { name: 'Estimation with optimizer', color: '#5185a6' },
                     { name: 'Impact', color: '#10516f' }
                 ]}
+                barProps={{maxBarSize: 52}}
                 withLegend={true}
                 legendProps={{ verticalAlign: props.mosqueDetail ? 'bottom' : 'top', height: 50 }}
                 //withXAxis={false}
@@ -104,4 +101,4 @@ function PropertiesEstimationBarChart(props) {
     );
 }
 
-export default PropertiesEstimationBarChart;
+export default PropertiesCo2BarChart;
