@@ -162,14 +162,14 @@ console.log('currentProperty_1213: ', currentProperty);
             <Stack gap={'80px'} style={{marginTop: '60px'}}>
                 <Stack style={{width: '100%'}} align={'center'} gap='lg' justify='center'>
                     <Text fw={'500'} size="50px" c={'#5185a6'}>{currentProperty?.name}</Text>
-                    <Text fw={'500'} size="sm" c={'dimmed'} ta='center' w='580px'>Our comprehensive guide to strategies for entrepreneurs and leaders offer valuable insights, practical advice.</Text>
+                    {/* <Text fw={'500'} size="sm" c={'dimmed'} ta='center' w='580px'>Our comprehensive guide to strategies for entrepreneurs and leaders offer valuable insights, practical advice.</Text> */}
                 </Stack>
                 <Stack style={{width: '100%'}}>
                     <SimpleGrid cols={2} spacing={'xl'}>
                         <Stack gap={'sm'} justify={'center'}>
-                            <Text fw={'600'} size="sm" c={"dark"}>Get Success Together!</Text>
-                            <Text fw={'500'} size="50px" c={"dark"} w='400px' lh={'60px'}>Adapting and Thriving in a Changing World</Text>
-                            <Text fw={'500'} size="sm" c={'dimmed'}>Our comprehensive guide to strategies for entrepreneurs and leaders offer valuable insights, practical advice.</Text>
+                            <Text fw={'600'} size="sm" c={"dark"}>Contribute To</Text>
+                            <Text fw={'500'} size="50px" c={"dark"} w='400px' lh={'60px'}>Build Your Family Home in Jannah</Text>
+                            {/* <Text fw={'500'} size="sm" c={'dimmed'}>Our comprehensive guide to strategies for entrepreneurs and leaders offer valuable insights, practical advice.</Text> */}
                         </Stack>
                         <Stack style={{borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px', height: '450px', objectFit: 'cover', cursor: 'pointer'}}>
                             {currentProperty?.image?.featuredImage?.path ?
@@ -220,7 +220,7 @@ console.log('currentProperty_1213: ', currentProperty);
                     </Group>
                 </Stack>
 
-                <Stack align={'center'} gap='60px'>
+                {/* <Stack align={'center'} gap='60px'>
                     <Text fw={'500'} size="20px" c={"dark"} lh={'60px'}>The Impact We Have Created</Text>
                     <Group h={'80px'} w={'100%'} style={{backgroundColor: '#5185a6'}} justify='center'>
                         <Group h={'100px'} p='xl' gap={'xl'} justify={'center'} align='center' style={{backgroundColor: 'white', marginTop: '-80px'}}>
@@ -261,7 +261,7 @@ console.log('currentProperty_1213: ', currentProperty);
                             </Group>
                         </Group>
                     </Group>
-                </Stack>
+                </Stack> */}
                 
                 {/* old stuff */}
                 <Stack gap={20}>
